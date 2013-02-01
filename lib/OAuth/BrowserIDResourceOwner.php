@@ -49,7 +49,7 @@ class BrowserIDResourceOwner implements IResourceOwner
         $attributesFile = $this->_c->getSectionValue('BrowserIDResourceOwner', 'attributesFile');
         $fileContents = @file_get_contents($attributesFile);
         if (FALSE === $fileContents) {
-            throw new BrowserIDResourceOwnerException("unable to read BrowserID attributes file");
+            throw new BrowserIDResourceOwnerException("unable to read attributes file");
         }
         $attributes = json_decode($fileContents, TRUE);
         if (is_array($attributes) && array_key_exists($this->getResourceOwnerId(), $attributes)) {

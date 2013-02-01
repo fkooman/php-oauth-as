@@ -1,3 +1,4 @@
 data/
 config/*.ini
+config/*.json
 extlib/
