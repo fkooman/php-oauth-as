@@ -226,7 +226,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function getAuthorizationCode($clientId, $authorizationCode, $redirectUri)
     {
-$stmt = $this->_pdo->prepare("SELECT * FROM AuthorizationCode WHERE client_id IS :client_id AND authorization_code IS :authorization_code AND redirect_uri IS :redirect_uri");
+$stmt = $this->_pdo->prepare("SELECT * FROM AuthorizationCode WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri = :redirect_uri");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
         $stmt->bindValue(":redirect_uri", $redirectUri, PDO::PARAM_STR | PDO::PARAM_NULL);
@@ -240,7 +240,7 @@ $stmt = $this->_pdo->prepare("SELECT * FROM AuthorizationCode WHERE client_id IS
 
     public function deleteAuthorizationCode($clientId, $authorizationCode, $redirectUri)
     {
-        $stmt = $this->_pdo->prepare("DELETE FROM AuthorizationCode WHERE client_id IS :client_id AND authorization_code IS :authorization_code AND redirect_uri IS :redirect_uri");
+        $stmt = $this->_pdo->prepare("DELETE FROM AuthorizationCode WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri = :redirect_uri");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
         $stmt->bindValue(":redirect_uri", $redirectUri, PDO::PARAM_STR | PDO::PARAM_NULL);
