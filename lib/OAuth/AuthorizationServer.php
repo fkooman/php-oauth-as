@@ -238,7 +238,7 @@ class AuthorizationServer
                 throw new TokenException("invalid_client", "client identity could not be established");
             }
 
-            $hasAuthenticated = FALSE;
+            $hasAuthenticated = TRUE;
         }
 
         if ("user_agent_based_application" === $client->type) {
