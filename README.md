@@ -18,6 +18,7 @@ it). Refer to the license for the exact details.
 * PDO (database abstraction layer for various databases) storage backend for
   OAuth tokens
 * OAuth v2 (authorization code and implicit grant) support
+* SimpleAuth authentication support ([php-simple-auth](https://github.com/fkooman/php-simple-auth/))
 * SAML authentication support ([simpleSAMLphp](http://www.simplesamlphp.org)) 
 * [BrowserID](http://browserid.org) authentication support using 
 ([php-browserid](https://github.com/fkooman/php-browserid/))
@@ -136,6 +137,8 @@ your system which replaces the `/PATH/TO/APP` with the actual install directory.
 There are thee plugins provided to authenticate users:
 
 * `DummyResourceOwner` - one static account configured in `config/oauth.ini`
+* `SimpleAuthResourceOwner` - very simple username/password authentication \
+  library
 * `SspResourceOwner` - simpleSAMLphp plugin for SAML authentication
 * `BrowserIDResourceOwner` - BrowserID / Mozilla Persona plugin
 
@@ -183,6 +186,20 @@ as shown in the snippet below:
 Here you can see that the resource owner will be granted the 
 `urn:x-oauth:entitlement:applications`, `foo` and `bar` entitlements. As there is only 
 one account in the `DummyResourceOwner` configuration it is quite boring.
+
+## SimpleAuthResourceOwner 
+The entitlements for the `SimpleAuthResourceOwner` are configured in the 
+attributes file, located in `config/simpleAuthAttributes.json`. An example is 
+also available. The listed attributes there also contain an 
+`eduPersonEntitlement` attribute for the users `admin` and `teacher`. These 
+users match the default example set from `php-simple-auth`. You can copy
+the example file to `config/simpleAuthAttributes.json` and modify it for your
+needs. This authentication backend is not meant for production use as it will
+require a lot of manual configuration per user. Better use the 
+`SspResourceOwner` authentication library for serious deployments.
+
+For this authentication source you also need to install and configure
+([php-simple-auth](https://github.com/fkooman/php-simple-auth/)).
 
 ## SspResourceOwner
 Now, for the `SspResourceOwner` configuration it is a little bit more complex.
