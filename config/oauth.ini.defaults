@@ -9,6 +9,7 @@ serviceResources = "protected resource"
 storageBackend = "PdoOAuthStorage"
 
 authenticationMechanism = "DummyResourceOwner"
+;authenticationMechanism = "SimpleAuthResourceOwner"
 ;authenticationMechanism = "BrowserIDResourceOwner"
 ;authenticationMechanism = "SspResourceOwner"
 
@@ -65,15 +66,24 @@ eduPersonEntitlement[] = "urn:x-oauth:entitlement:applications"
 eduPersonEntitlement[] = "foo"
 eduPersonEntitlement[] = "bar"
 
+; SimpleAuth configuration
+[SimpleAuthResourceOwner]
+simpleAuthPath = "/var/www/html/php-simple-auth"
+
+; file contains the statically configured attributes for SimpleAuth users
+; see included config/simpleAuthAttributes.json.example for an example. Copy 
+; this file to config/simpleAuthAttributes.json and modify it for your setup
+attributesFile = "/PATH/TO/APP/config/simpleAuthAttributes.json"
+
 ; BrowserID configuration
 [BrowserIDResourceOwner]
 browserIDPath   = "/var/www/html/php-browserid"
 verifierAddress = "https://browserid.org/verify"
 
 ; file contains the statically configured attributes for BrowserID users
-; see included config/attributes.json.example for an example. Copy this file
-; to config/attributes.json and modify it for your setup
-attributesFile = "/PATH/TO/APP/config/attributes.json"
+; see included config/browserIdAttributes.json.example for an example. Copy 
+; this file to config/browserIdAttributes.json and modify it for your setup
+attributesFile = "/PATH/TO/APP/config/browserIdAttributes.json"
 
 ; simpleSAMLphp configuration
 [SspResourceOwner]
