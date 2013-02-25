@@ -10,7 +10,7 @@ storageBackend = "PdoOAuthStorage"
 
 authenticationMechanism = "DummyResourceOwner"
 ;authenticationMechanism = "SimpleAuthResourceOwner"
-;authenticationMechanism = "BrowserIDResourceOwner"
+;authenticationMechanism = "PersonaResourceOwner"
 ;authenticationMechanism = "SspResourceOwner"
 
 ; makes it possible for resource owners to deselect some of the 
@@ -75,15 +75,15 @@ simpleAuthPath = "/var/www/html/php-simple-auth"
 ; this file to config/simpleAuthAttributes.json and modify it for your setup
 attributesFile = "/PATH/TO/APP/config/simpleAuthAttributes.json"
 
-; BrowserID configuration
-[BrowserIDResourceOwner]
-browserIDPath   = "/var/www/html/php-browserid"
-verifierAddress = "https://browserid.org/verify"
+; Mozilla Persona configuration
+[PersonaResourceOwner]
+personaPath   = "/var/www/html/php-browserid"
+verifierAddress = "https://verifier.login.persona.org/verify"
 
-; file contains the statically configured attributes for BrowserID users
-; see included config/browserIdAttributes.json.example for an example. Copy 
-; this file to config/browserIdAttributes.json and modify it for your setup
-attributesFile = "/PATH/TO/APP/config/browserIdAttributes.json"
+; file contains the statically configured attributes for Persona users
+; see included config/personaAttributes.json.example for an example. Copy 
+; this file to config/personaAttributes.json and modify it for your setup
+attributesFile = "/PATH/TO/APP/config/personaAttributes.json"
 
 ; simpleSAMLphp configuration
 [SspResourceOwner]

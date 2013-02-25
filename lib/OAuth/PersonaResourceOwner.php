@@ -18,9 +18,9 @@
 namespace OAuth;
 
 use \RestService\Utils\Config as Config;
-use \BrowserIDVerifier as BrowserIDVerifier;
+use \PersonaVerifier as PersonaVerifier;
 
-class BrowserIDResourceOwner implements IResourceOwner
+class PersonaResourceOwner implements IResourceOwner
 {
     private $_config;
     private $_verifier;
@@ -30,13 +30,13 @@ class BrowserIDResourceOwner implements IResourceOwner
     {
         $this->_c = $c;
 
-        $bPath = $this->_c->getSectionValue('BrowserIDResourceOwner', 'browserIDPath') . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'BrowserIDVerifier.php';
+        $bPath = $this->_c->getSectionValue('PersonaResourceOwner', 'personaPath') . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'PersonaVerifier.php';
         if (!file_exists($bPath) || !is_file($bPath) || !is_readable($bPath)) {
-            throw new BrowserIDResourceOwnerException("invalid path to php-browserid");
+            throw new PersonaResourceOwnerException("invalid path to php-browserid");
         }
         require_once $bPath;
 
-        $this->_verifier = new BrowserIDVerifier($this->_c->getSectionValue('BrowserIDResourceOwner', 'verifierAddress'));
+        $this->_verifier = new PersonaVerifier($this->_c->getSectionValue('PersonaResourceOwner', 'verifierAddress'));
     }
 
     public function setHint($resourceOwnerIdHint = NULL)
@@ -46,10 +46,10 @@ class BrowserIDResourceOwner implements IResourceOwner
 
     public function getAttributes()
     {
-        $attributesFile = $this->_c->getSectionValue('BrowserIDResourceOwner', 'attributesFile');
+        $attributesFile = $this->_c->getSectionValue('PersonaResourceOwner', 'attributesFile');
         $fileContents = @file_get_contents($attributesFile);
         if (FALSE === $fileContents) {
-            throw new BrowserIDResourceOwnerException("unable to read attributes file");
+            throw new PersonaResourceOwnerException("unable to read attributes file");
         }
         $attributes = json_decode($fileContents, TRUE);
         if (is_array($attributes) && array_key_exists($this->getResourceOwnerId(), $attributes)) {
@@ -67,7 +67,7 @@ class BrowserIDResourceOwner implements IResourceOwner
         }
 
         // "cn" is a special attribute which is used in the OAuth consent
-        // dialog, if it is not available from the file just use the BrowserID
+        // dialog, if it is not available from the file just use the Persona
         // email address
         if ("cn" === $key) {
             return array($this->getResourceOwnerId());

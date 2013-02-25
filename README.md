@@ -20,7 +20,7 @@ it). Refer to the license for the exact details.
 * OAuth v2 (authorization code and implicit grant) support
 * SimpleAuth authentication support ([php-simple-auth](https://github.com/fkooman/php-simple-auth/))
 * SAML authentication support ([simpleSAMLphp](http://www.simplesamlphp.org)) 
-* [BrowserID](http://browserid.org) authentication support using 
+* [Mozilla Persona](https://login.persona.org/) authentication support using 
 ([php-browserid](https://github.com/fkooman/php-browserid/))
 
 # Screenshots
@@ -105,8 +105,9 @@ forget to enable the management API in `config/oauth.ini`.
 # SELinux
 The install script already takes care of setting the file permissions of the
 `data/` directory to allow Apache to write to the directory. If you want to use
-the BrowserID authentication plugin you also need to give Apache permission to 
-access the network. These permissions can be given by using `setsebool` as root:
+the Mozilla Persona authentication plugin you also need to give Apache permission 
+to access the network. These permissions can be given by using `setsebool` as 
+root:
 
     $ sudo setsebool -P httpd_can_network_connect=on
 
@@ -140,7 +141,7 @@ There are thee plugins provided to authenticate users:
 * `SimpleAuthResourceOwner` - very simple username/password authentication \
   library
 * `SspResourceOwner` - simpleSAMLphp plugin for SAML authentication
-* `BrowserIDResourceOwner` - BrowserID / Mozilla Persona plugin
+* `PersonaResourceOwner` - Mozilla Persona plugin
 
 You can configure which plugin to use by modifying the `authenticationMechanism`
 setting in `config/oauth.ini`.

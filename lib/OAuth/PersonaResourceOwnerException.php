@@ -17,6 +17,6 @@
 
 namespace OAuth;
 
-class BrowserIDResourceOwnerException extends \Exception
+class PersonaResourceOwnerException extends \Exception
 {
 }
