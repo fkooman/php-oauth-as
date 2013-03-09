@@ -66,7 +66,7 @@ class SspResourceOwner implements IResourceOwner
         $this->_authenticateUser();
         $nameId = $this->_ssp->getAuthData("saml:sp:NameID");
         if ("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" !== $nameId['Format']) {
-            throw new SspResourceOwnerException("NameID format not equal to 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'");
+            throw new SspResourceOwnerException("NameID format MUST be 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent', but is '" . $nameId['Format'] . "'");
         }
 
         return $nameId['Value'];
