@@ -106,6 +106,7 @@ class ApiTest extends OAuthHelper
         // FIXME: test with non existing client_id!
         $response = $this->_api->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('{"ok":true}', $response->getContent());
     }
 
 }

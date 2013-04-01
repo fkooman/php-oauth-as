@@ -87,6 +87,7 @@ class Api
                     throw new ApiException("invalid_request", "authorization already exists for this client and resource owner");
                 }
                 $response->setStatusCode(201);
+                $response->setContent(json_encode(array("ok" => true)));
             });
 
             $request->matchRest("GET", "/authorizations/:id", function($id) use ($request, $response, $storage, $rs) {
@@ -112,6 +113,7 @@ class Api
                 if (FALSE === $storage->deleteApproval($id, $rs->getResourceOwnerId())) {
                     throw new ApiException("not_found", "the resource you are trying to delete does not exist");
                 }
+                $response->setContent(json_encode(array("ok" => true)));
             });
 
             $request->matchRest("GET", "/authorizations/", function() use ($request, $response, $storage, $rs) {
@@ -133,6 +135,7 @@ class Api
                 if (FALSE === $storage->deleteClient($id)) {
                     throw new ApiException("not_found", "the resource you are trying to delete does not exist");
                 }
+                $response->setContent(json_encode(array("ok" => true)));
             });
 
             $request->matchRest("GET", "/applications/:id", function($id) use ($request, $response, $storage, $rs) {
@@ -163,6 +166,7 @@ class Api
                         throw new ApiException("invalid_request", "application already exists");
                     }
                     $response->setStatusCode(201);
+                    $response->setContent(json_encode(array("ok" => true)));
                 } catch (ClientRegistrationException $e) {
                     throw new ApiException("invalid_request", $e->getMessage());
                 }
@@ -183,6 +187,7 @@ class Api
                 } catch (ClientRegistrationException $e) {
                     throw new ApiException("invalid_request", $e->getMessage());
                 }
+                $response->setContent(json_encode(array("ok" => true)));
             });
 
             $request->matchRestDefault(function($methodMatch, $patternMatch) use ($request, $response) {
