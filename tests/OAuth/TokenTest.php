@@ -40,7 +40,8 @@ class TokenTest extends OAuthHelper
     public function testAuthorizationCode()
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
-        $h->setHeader("Authorization", "Basic " . base64_encode("testcodeclient:abcdef"));
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n", "grant_type" => "authorization_code"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
@@ -51,7 +52,8 @@ class TokenTest extends OAuthHelper
     public function testRefreshToken()
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
-        $h->setHeader("Authorization", "Basic " . base64_encode("testcodeclient:abcdef"));
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("refresh_token" => "r3fr3sh", "grant_type" => "refresh_token"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
@@ -70,7 +72,8 @@ class TokenTest extends OAuthHelper
     public function testWithoutGrantType()
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
-        $h->setHeader("Authorization", "Basic " . base64_encode("testcodeclient:abcdef"));
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
@@ -92,7 +95,8 @@ class TokenTest extends OAuthHelper
     public function testWithInvalidClient()
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
-        $h->setHeader("Authorization", "Basic " . base64_encode("NONEXISTINGCLIENT:abcdef"));
+        $h->setBasicAuthUser("NONEXISTINGCLIENT");
+        $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
@@ -104,7 +108,8 @@ class TokenTest extends OAuthHelper
     public function testWithInvalidPassword()
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
-        $h->setHeader("Authorization", "Basic " . base64_encode("testcodeclient:WRONGPASSWORD"));
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("WRONGPASSWORD");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
@@ -116,7 +121,8 @@ class TokenTest extends OAuthHelper
     public function testClientIdUserMismatch()
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
-        $h->setHeader("Authorization", "Basic " . base64_encode("testcodeclient:abcdef"));
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n", "grant_type" => "authorization_code", "client_id" => "MISMATCH_CLIENT_ID"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
@@ -127,7 +133,8 @@ class TokenTest extends OAuthHelper
     public function testExpiredAuthorization()
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
-        $h->setHeader("Authorization", "Basic " . base64_encode("testcodeclient:abcdef"));
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "3xp1r3d4uth0r1z4t10n", "grant_type" => "authorization_code"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
@@ -148,7 +155,8 @@ class TokenTest extends OAuthHelper
     public function testInvalidCode()
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
-        $h->setHeader("Authorization", "Basic " . base64_encode("testcodeclient:abcdef"));
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "1nv4l1d4uth0r1z4t10n", "grant_type" => "authorization_code"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
@@ -159,7 +167,8 @@ class TokenTest extends OAuthHelper
     public function testCodeNotBoundToUsedClient()
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
-        $h->setHeader("Authorization", "Basic " . base64_encode("testcodeclient:abcdef"));
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "n4t1v34uth0r1z4t10n", "grant_type" => "authorization_code"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
@@ -170,7 +179,8 @@ class TokenTest extends OAuthHelper
     public function checkReuseAuthorizationCode()
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
-        $h->setHeader("Authorization", "Basic " . base64_encode("testcodeclient:abcdef"));
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n", "grant_type" => "authorization_code"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
@@ -184,7 +194,8 @@ class TokenTest extends OAuthHelper
     public function testRefreshTokenSubScope()
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
-        $h->setHeader("Authorization", "Basic " . base64_encode("testcodeclient:abcdef"));
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("refresh_token" => "r3fr3sh", "scope" => "foo", "grant_type" => "refresh_token"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
@@ -195,7 +206,8 @@ class TokenTest extends OAuthHelper
     public function testRefreshTokenNoSubScope()
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
-        $h->setHeader("Authorization", "Basic " . base64_encode("testcodeclient:abcdef"));
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("refresh_token" => "r3fr3sh", "scope" => "we want no sub scope", "grant_type" => "refresh_token"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
