@@ -34,7 +34,6 @@ CREATE TABLE IF NOT EXISTS `AccessToken` (
         ON UPDATE CASCADE ON DELETE CASCADE
 );
   
-
 CREATE TABLE IF NOT EXISTS `Approval` (
     `client_id` VARCHAR(64) NOT NULL,
     `resource_owner_id` VARCHAR(64) NOT NULL,
