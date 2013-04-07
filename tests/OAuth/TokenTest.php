@@ -35,6 +35,7 @@ class TokenTest extends OAuthHelper
         $storage->storeAuthorizationCode("4uth0r1z4t10n", "fkooman", time(), "testcodeclient", NULL, "read");
         $storage->storeAuthorizationCode("3xp1r3d4uth0r1z4t10n", "fkooman", time() - 1000, "testcodeclient", NULL, "read");
         $storage->storeAuthorizationCode("n4t1v34uth0r1z4t10n", "fkooman", time(), "testnativeclient", NULL, "read");
+        $storage->storeAuthorizationCode("authorizeRequestWithRedirectUri", "fkooman", time(), "testcodeclient", "http://localhost/php-oauth/unit/test.html", "read");
     }
 
     public function testAuthorizationCode()
@@ -43,6 +44,44 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n", "grant_type" => "authorization_code"));
+        $t = new Token($this->_config, NULL);
+        $response = $t->handleRequest($h);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}$|', $response->getContent());
+    }
+
+    public function testAuthorizationCodeWithoutRedirectUri()
+    {
+        $h = new HttpRequest("https://auth.example.org/token", "POST");
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
+        // fail because redrect_uri was part of the authorize request, so must also be
+        // there at token request
+        $h->setPostParameters(array("code" => "authorizeRequestWithRedirectUri", "grant_type" => "authorization_code"));
+        $t = new Token($this->_config, NULL);
+        $response = $t->handleRequest($h);
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code was not found"}', $response->getContent());
+    }
+
+    public function testAuthorizationCodeWithInvalidRedirectUri()
+    {
+        $h = new HttpRequest("https://auth.example.org/token", "POST");
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
+        $h->setPostParameters(array("redirect_uri" => "http://example.org/invalid", "code" => "authorizeRequestWithRedirectUri", "grant_type" => "authorization_code"));
+        $t = new Token($this->_config, NULL);
+        $response = $t->handleRequest($h);
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code was not found"}', $response->getContent());
+    }
+
+    public function testAuthorizationCodeWithRedirectUri()
+    {
+        $h = new HttpRequest("https://auth.example.org/token", "POST");
+        $h->setBasicAuthUser("testcodeclient");
+        $h->setBasicAuthPass("abcdef");
+        $h->setPostParameters(array("redirect_uri" => "http://localhost/php-oauth/unit/test.html", "code" => "authorizeRequestWithRedirectUri", "grant_type" => "authorization_code"));
         $t = new Token($this->_config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
