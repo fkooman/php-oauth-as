@@ -50,7 +50,9 @@ class OAuthHelper extends PHPUnit_Framework_TestCase
 
         // intialize storage
         $storage = new PdoOAuthStorage($this->_config);
-        $storage->initDatabase();
+        $sql = file_get_contents('schema/db.sql');
+        $storage->dbQuery($sql);
+        // FIXME: apply updates
 
         // add some clients
         $uaba = array("id" => "testclient",

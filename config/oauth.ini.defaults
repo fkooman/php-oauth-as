@@ -50,6 +50,7 @@ dsn = "sqlite:/PATH/TO/APP/data/oauth2.sqlite"
 ;dsn = "mysql:host=localhost;dbname=oauth"
 ;username = "oauth"
 ;password = "s3cr3t"
+;dsn = "pgsql:host=localhost;port=5432;dbname=XYZ;user=ABC;password=DEF"
 
 ; use a persistent DB connection, make sure to ENABLE this for PRODUCTION 
 ; systems

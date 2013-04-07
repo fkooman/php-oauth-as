@@ -37,12 +37,17 @@ class PdoOAuthStorage implements IOAuthStorage
 
         $driverOptions = array();
         if ($this->_c->getSectionValue('PdoOAuthStorage', 'persistentConnection')) {
-            $driverOptions = array(PDO::ATTR_PERSISTENT => TRUE);
+            $driverOptions[PDO::ATTR_PERSISTENT] = TRUE;
         }
 
         $this->_pdo = new PDO($this->_c->getSectionValue('PdoOAuthStorage', 'dsn'), $this->_c->getSectionValue('PdoOAuthStorage', 'username', FALSE), $this->_c->getSectionValue('PdoOAuthStorage', 'password', FALSE), $driverOptions);
+        // FIXME: update code everywhere to deal with database error exceptions
+        $this->_pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+        if (0 === strpos($this->_c->getSectionValue('PdoOAuthStorage', 'dsn'), "sqlite:")) {
+            // only for SQlite
             $this->_pdo->exec("PRAGMA foreign_keys = ON");
+        }
     }
 
     public function getClients()
@@ -93,7 +98,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":client_id", $data['id'], PDO::PARAM_STR);
         $stmt->bindValue(":name", $data['name'], PDO::PARAM_STR);
         $stmt->bindValue(":description", $data['description'], PDO::PARAM_STR);
-        $stmt->bindValue(":secret", $data['secret'], PDO::PARAM_STR | PDO::PARAM_NULL);
+        $stmt->bindValue(":secret", $data['secret'], PDO::PARAM_STR);
         $stmt->bindValue(":redirect_uri", $data['redirect_uri'], PDO::PARAM_STR);
         $stmt->bindValue(":type", $data['type'], PDO::PARAM_STR);
         $stmt->bindValue(":icon", $data['icon'], PDO::PARAM_STR);
@@ -226,10 +231,14 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function getAuthorizationCode($clientId, $authorizationCode, $redirectUri)
     {
-$stmt = $this->_pdo->prepare("SELECT * FROM AuthorizationCode WHERE client_id IS :client_id AND authorization_code IS :authorization_code AND redirect_uri IS :redirect_uri");
+        if (NULL !== $redirectUri) {
+            $stmt = $this->_pdo->prepare("SELECT * FROM AuthorizationCode WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri = :redirect_uri");
+            $stmt->bindValue(":redirect_uri", $redirectUri, PDO::PARAM_STR);
+        } else {
+            $stmt = $this->_pdo->prepare("SELECT * FROM AuthorizationCode WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri IS NULL");
+        }
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
-        $stmt->bindValue(":redirect_uri", $redirectUri, PDO::PARAM_STR | PDO::PARAM_NULL);
         $result = $stmt->execute();
         if (FALSE === $result) {
             throw new StorageException("unable to get authorization code");
@@ -240,10 +249,14 @@ $stmt = $this->_pdo->prepare("SELECT * FROM AuthorizationCode WHERE client_id IS
 
     public function deleteAuthorizationCode($clientId, $authorizationCode, $redirectUri)
     {
-        $stmt = $this->_pdo->prepare("DELETE FROM AuthorizationCode WHERE client_id IS :client_id AND authorization_code IS :authorization_code AND redirect_uri IS :redirect_uri");
+        if (NULL !== $redirectUri) {
+            $stmt = $this->_pdo->prepare("DELETE FROM AuthorizationCode WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri = :redirect_uri");
+            $stmt->bindValue(":redirect_uri", $redirectUri, PDO::PARAM_STR);
+        } else {
+            $stmt = $this->_pdo->prepare("DELETE FROM AuthorizationCode WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri IS NULL");
+        }
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
-        $stmt->bindValue(":redirect_uri", $redirectUri, PDO::PARAM_STR | PDO::PARAM_NULL);
         $result = $stmt->execute();
         if (FALSE === $result) {
             throw new StorageException("unable to delete authorization code");
@@ -334,66 +347,29 @@ $stmt = $this->_pdo->prepare("SELECT * FROM AuthorizationCode WHERE client_id IS
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
-    public function initDatabase()
+    public function getChangeInfo()
     {
-        $this->_pdo->exec("
-            CREATE TABLE IF NOT EXISTS `ResourceOwner` (
-            `id` VARCHAR(64) NOT NULL,
-            `time` INT(11) NOT NULL,
-            `attributes` TEXT DEFAULT NULL,
-            PRIMARY KEY (`id`))
-        ");
+        $stmt = $this->_pdo->prepare("SELECT MAX(patch_number) AS patch_number, description FROM db_changelog WHERE patch_number IS NOT NULL");
+        $stmt->execute();
+        // ugly hack because query will always return a result, even if there is none...
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $this->_pdo->exec("
-            CREATE TABLE IF NOT EXISTS `Client` (
-            `id` varchar(64) NOT NULL,
-            `name` text NOT NULL,
-            `description` text DEFAULT NULL,
-            `secret` text DEFAULT NULL,
-            `redirect_uri` text NOT NULL,
-            `type` text NOT NULL,
-            `icon` text DEFAULT NULL,
-            `allowed_scope` text DEFAULT NULL,
-            `contact_email` text DEFAULT NULL,
-            PRIMARY KEY (`id`))
-        ");
+        return NULL === $result['patch_number'] ? FALSE : $result;
+    }
 
-        $this->_pdo->exec("
-            CREATE TABLE IF NOT EXISTS `AccessToken` (
-            `access_token` varchar(64) NOT NULL,
-            `client_id` varchar(64) NOT NULL,
-            `resource_owner_id` varchar(64) NOT NULL,
-            `issue_time` int(11) DEFAULT NULL,
-            `expires_in` int(11) DEFAULT NULL,
-            `scope` text NOT NULL,
-            PRIMARY KEY (`access_token`),
-            FOREIGN KEY (`client_id`) REFERENCES `Client` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
-            FOREIGN KEY (`resource_owner_id`) REFERENCES `ResourceOwner` (`id`) ON UPDATE CASCADE ON DELETE CASCADE)
-        ");
+    public function addChangeInfo($patchNumber, $description)
+    {
+        $stmt = $this->_pdo->prepare("INSERT INTO db_changelog (patch_number, description) VALUES(:patch_number, :description)");
+        $stmt->bindValue(":patch_number", $patchNumber, PDO::PARAM_INT);
+        $stmt->bindValue(":description", $description, PDO::PARAM_STR);
+        $stmt->execute();
 
-        $this->_pdo->exec("
-            CREATE TABLE IF NOT EXISTS `Approval` (
-            `client_id` varchar(64) NOT NULL,
-            `resource_owner_id` varchar(64) NOT NULL,
-            `scope` text DEFAULT NULL,
-            `refresh_token` text DEFAULT NULL,
-            FOREIGN KEY (`client_id`) REFERENCES `Client` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
-            UNIQUE(`client_id`, `resource_owner_id`),
-            FOREIGN KEY (`resource_owner_id`) REFERENCES `ResourceOwner` (`id`) ON UPDATE CASCADE ON DELETE CASCADE)
-        ");
+        return 1 === $stmt->rowCount();
+    }
 
-        $this->_pdo->exec("
-            CREATE TABLE IF NOT EXISTS `AuthorizationCode` (
-            `authorization_code` varchar(64) NOT NULL,
-            `client_id` varchar(64) NOT NULL,
-            `resource_owner_id` varchar(64) NOT NULL,
-            `redirect_uri` text DEFAULT NULL,
-            `issue_time` int(11) NOT NULL,
-            `scope` text DEFAULT NULL,
-            PRIMARY KEY (`authorization_code`),
-            FOREIGN KEY (`client_id`) REFERENCES `Client` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
-            FOREIGN KEY (`resource_owner_id`) REFERENCES `ResourceOwner` (`id`) ON UPDATE CASCADE ON DELETE CASCADE)
-        ");
+    public function dbQuery($query)
+    {
+        $this->_pdo->exec($query);
     }
 
 }
