@@ -259,9 +259,9 @@ class AuthorizationServer
                 if (NULL === $code) {
                     throw new TokenException("invalid_request", "the code parameter is missing");
                 }
-                // FIXME: if all of a sudden a redirect_uri is present, it should be allowed?
-                // spec is vague about this... but then again, it doesn't make sense to not specify it
-                // in the authorize request, and now all of a sudden it is specified... ignore it?
+                // If the redirect_uri was present in the authorize request, it MUST also be there
+                // in the token request. If it was not there in authorize request, it MUST NOT be
+                // there in the token request (this is not explicit in the spec!)
                 $result = $this->_storage->getAuthorizationCode($client->id, $code, $redirectUri);
                 if (FALSE === $result) {
                     throw new TokenException("invalid_grant", "the authorization code was not found");
