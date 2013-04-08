@@ -23,7 +23,6 @@ use \PDO as PDO;
 /**
  * Class to implement storage for the OAuth Authorization Server using PDO.
  *
- * FIXME: look into throwing exceptions on error instead of returning FALSE?
  * FIXME: switch to ASSOC instead of OBJ return types
  */
 class PdoOAuthStorage implements IOAuthStorage
@@ -41,9 +40,7 @@ class PdoOAuthStorage implements IOAuthStorage
         }
 
         $this->_pdo = new PDO($this->_c->getSectionValue('PdoOAuthStorage', 'dsn'), $this->_c->getSectionValue('PdoOAuthStorage', 'username', FALSE), $this->_c->getSectionValue('PdoOAuthStorage', 'password', FALSE), $driverOptions);
-        // FIXME: update code everywhere to deal with database error exceptions
         $this->_pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
         if (0 === strpos($this->_c->getSectionValue('PdoOAuthStorage', 'dsn'), "sqlite:")) {
             // only for SQlite
             $this->_pdo->exec("PRAGMA foreign_keys = ON");
@@ -53,10 +50,7 @@ class PdoOAuthStorage implements IOAuthStorage
     public function getClients()
     {
         $stmt = $this->_pdo->prepare("SELECT id, name, description, redirect_uri, type, icon, allowed_scope FROM Client");
-        $result = $stmt->execute();
-        if (FALSE === $result) {
-            throw new StorageException("unable to retrieve clients");
-        }
+        $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -65,10 +59,7 @@ class PdoOAuthStorage implements IOAuthStorage
     {
         $stmt = $this->_pdo->prepare("SELECT * FROM Client WHERE id = :client_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
-        $result = $stmt->execute();
-        if (FALSE === $result) {
-            throw new StorageException("unable to retrieve client");
-        }
+        $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
@@ -85,9 +76,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":allowed_scope", $data['allowed_scope'], PDO::PARAM_STR);
         $stmt->bindValue(":contact_email", $data['contact_email'], PDO::PARAM_STR);
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
-        if (FALSE === $stmt->execute()) {
-            throw new StorageException("unable to update client");
-        }
+        $stmt->execute();
 
         return 1 === $stmt->rowCount();
     }
@@ -104,9 +93,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":icon", $data['icon'], PDO::PARAM_STR);
         $stmt->bindValue(":allowed_scope", $data['allowed_scope'], PDO::PARAM_STR);
         $stmt->bindValue(":contact_email", $data['contact_email'], PDO::PARAM_STR);
-        if (FALSE === $stmt->execute()) {
-            throw new StorageException("unable to add client");
-        }
+        $stmt->execute();
 
         return 1 === $stmt->rowCount();
     }
@@ -116,9 +103,7 @@ class PdoOAuthStorage implements IOAuthStorage
         // cascading in foreign keys takes care of deleting all tokens
         $stmt = $this->_pdo->prepare("DELETE FROM Client WHERE id = :client_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
-        if (FALSE === $stmt->execute()) {
-            throw new StorageException("unable to delete client");
-        }
+        $stmt->execute();
 
         return 1 === $stmt->rowCount();
     }
@@ -130,9 +115,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->bindValue(":scope", $scope, PDO::PARAM_STR);
         $stmt->bindValue(":refresh_token", $refreshToken, PDO::PARAM_STR);
-        if (FALSE === $stmt->execute()) {
-            throw new StorageException("unable to store approval");
-        }
+        $stmt->execute();
 
         return 1 === $stmt->rowCount();
     }
@@ -144,9 +127,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->bindValue(":scope", $scope, PDO::PARAM_STR);
-        if (FALSE === $stmt->execute()) {
-            throw new StorageException("unable to update approval");
-        }
+        $stmt->execute();
 
         return 1 === $stmt->rowCount();
     }
@@ -156,10 +137,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt = $this->_pdo->prepare("SELECT * FROM Approval WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
-        $result = $stmt->execute();
-        if (FALSE === $result) {
-            throw new StorageException("unable to get approval");
-        }
+        $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
@@ -169,10 +147,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt = $this->_pdo->prepare("SELECT * FROM Approval WHERE client_id = :client_id AND refresh_token = :refresh_token");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":refresh_token", $refreshToken, PDO::PARAM_STR);
-        $result = $stmt->execute();
-        if (FALSE === $result) {
-            throw new StorageException("unable to get approval");
-        }
+        $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
@@ -186,9 +161,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":expires_in", $expiry, PDO::PARAM_INT);
         $stmt->bindValue(":scope", $scope, PDO::PARAM_STR);
         $stmt->bindValue(":access_token", $accessToken, PDO::PARAM_STR);
-        if (FALSE === $stmt->execute()) {
-            throw new StorageException("unable to store access token");
-        }
+        $stmt->execute();
 
         return 1 === $stmt->rowCount();
     }
@@ -198,9 +171,9 @@ class PdoOAuthStorage implements IOAuthStorage
         // delete access tokens that expired 8 hours or longer ago
         $stmt = $this->_pdo->prepare("DELETE FROM AccessToken WHERE issue_time + expires_in < :time");
         $stmt->bindValue(":time", time() - 28800, PDO::PARAM_INT);
-        if (FALSE === $stmt->execute()) {
-            throw new StorageException("unable to delete access tokens");
-        }
+        $stmt->execute();
+
+        return TRUE;
     }
 
     public function deleteExpiredAuthorizationCodes()
@@ -208,9 +181,9 @@ class PdoOAuthStorage implements IOAuthStorage
         // delete authorization codes that expired 8 hours or longer ago
         $stmt = $this->_pdo->prepare("DELETE FROM AuthorizationCode WHERE issue_time + 600 < :time");
         $stmt->bindValue(":time", time() - 28800, PDO::PARAM_INT);
-        if (FALSE === $stmt->execute()) {
-            throw new StorageException("unable to delete authorization code");
-        }
+        $stmt->execute();
+
+        return TRUE;
     }
 
     public function storeAuthorizationCode($authorizationCode, $resourceOwnerId, $issueTime, $clientId, $redirectUri, $scope)
@@ -222,9 +195,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":redirect_uri", $redirectUri, PDO::PARAM_STR);
         $stmt->bindValue(":issue_time", $issueTime, PDO::PARAM_INT);
         $stmt->bindValue(":scope", $scope, PDO::PARAM_STR);
-        if (FALSE === $stmt->execute()) {
-            throw new StorageException("unable to store authorization code");
-        }
+        $stmt->execute();
 
         return 1 === $stmt->rowCount();
     }
@@ -239,10 +210,7 @@ class PdoOAuthStorage implements IOAuthStorage
         }
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
-        $result = $stmt->execute();
-        if (FALSE === $result) {
-            throw new StorageException("unable to get authorization code");
-        }
+        $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
@@ -257,10 +225,7 @@ class PdoOAuthStorage implements IOAuthStorage
         }
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
-        $result = $stmt->execute();
-        if (FALSE === $result) {
-            throw new StorageException("unable to delete authorization code");
-        }
+        $stmt->execute();
 
         return 1 === $stmt->rowCount();
     }
@@ -269,10 +234,7 @@ class PdoOAuthStorage implements IOAuthStorage
     {
         $stmt = $this->_pdo->prepare("SELECT * FROM AccessToken WHERE access_token = :access_token");
         $stmt->bindValue(":access_token", $accessToken, PDO::PARAM_STR);
-        $result = $stmt->execute();
-        if (FALSE === $result) {
-            throw new StorageException("unable to get access token");
-        }
+        $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
@@ -281,10 +243,7 @@ class PdoOAuthStorage implements IOAuthStorage
     {
         $stmt = $this->_pdo->prepare("SELECT a.scope, c.id, c.name, c.description, c.redirect_uri, c.type, c.icon, c.allowed_scope FROM Approval a, Client c WHERE resource_owner_id = :resource_owner_id AND a.client_id = c.id");
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
-        $result = $stmt->execute();
-        if (FALSE === $result) {
-            throw new StorageException("unable to get approvals");
-        }
+        $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -295,16 +254,13 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt = $this->_pdo->prepare("DELETE FROM AccessToken WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
-        if (FALSE === $stmt->execute()) {
-            throw new StorageException("unable to delete access token");
-        }
+        $stmt->execute();
+
         // remove approval
         $stmt = $this->_pdo->prepare("DELETE FROM Approval WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
-        if (FALSE === $stmt->execute()) {
-            throw new StorageException("unable to delete approval");
-        }
+        $stmt->execute();
 
         return 1 === $stmt->rowCount();
     }
@@ -317,9 +273,7 @@ class PdoOAuthStorage implements IOAuthStorage
             $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
             $stmt->bindValue(":time", time(), PDO::PARAM_INT);
             $stmt->bindValue(":attributes", $resourceOwnerAttributes, PDO::PARAM_STR);
-            if (FALSE === $stmt->execute()) {
-                throw new StorageException("unable to add resource owner");
-            }
+            $stmt->execute();
 
            return 1 === $stmt->rowCount();
         } else {
@@ -327,9 +281,7 @@ class PdoOAuthStorage implements IOAuthStorage
             $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
             $stmt->bindValue(":time", time(), PDO::PARAM_INT);
             $stmt->bindValue(":attributes", $resourceOwnerAttributes, PDO::PARAM_STR);
-            if (FALSE === $stmt->execute()) {
-                throw new StorageException("unable to update resource owner");
-            }
+            $stmt->execute();
 
             return 1 === $stmt->rowCount();
         }
@@ -339,10 +291,7 @@ class PdoOAuthStorage implements IOAuthStorage
     {
         $stmt = $this->_pdo->prepare("SELECT * FROM ResourceOwner WHERE id = :resource_owner_id");
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
-        $result = $stmt->execute();
-        if (FALSE === $result) {
-            throw new StorageException("unable to get resource owner");
-        }
+        $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
