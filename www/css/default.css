@@ -79,6 +79,7 @@ div.errorBox {
 
 div.warnBox {
     background-color: #ffc;
+    color: #c00;
 }
 
 div.httpCode {

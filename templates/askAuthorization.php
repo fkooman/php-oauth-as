@@ -26,7 +26,7 @@
         <?php if (!$sslEnabled) { ?>
 
             <div class="warnBox">
-            <strong>WARNING</strong>: your application is not using HTTPS!
+            <strong>INSECURE</strong> connection to this service, SSL or TLS <strong>MUST</strong> be used!
             <?php if (NULL !== $client->getContactEmail()) { ?>
             Please <a href="mailto:<?php echo $client->getContactEmail(); ?>">inform</a> the application provider.
             <?php } ?>
