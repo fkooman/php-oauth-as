@@ -44,6 +44,9 @@ try {
     // internal server error, inform resource owner through browser
     $response = new HttpResponse();
     $response->setStatusCode(500);
+    $_e = function($m) {
+        return htmlentities($m, ENT_QUOTES, "UTF-8");
+    };
     ob_start();
     require dirname(__DIR__) . DIRECTORY_SEPARATOR . "templates" . DIRECTORY_SEPARATOR . "errorPage.php";
     $response->setContent(ob_get_clean());

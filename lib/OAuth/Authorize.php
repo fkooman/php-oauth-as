@@ -64,6 +64,9 @@ class Authorize
                                 "sslEnabled" => "https" === $request->getRequestUri()->getScheme(),
                             );
                             extract($tplData);
+                            $_e = function($m) {
+                                return htmlentities($m, ENT_QUOTES, "UTF-8");
+                            };
                             ob_start();
                             require dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "templates" . DIRECTORY_SEPARATOR . "askAuthorization.php";
                             $response->setContent(ob_get_clean());
@@ -121,6 +124,9 @@ class Authorize
         } catch (ResourceOwnerException $e) {
             // tell resource owner about the error (through browser)
             $response->setStatusCode(400);
+            $_e = function($m) {
+                return htmlentities($m, ENT_QUOTES, "UTF-8");
+            };
             ob_start();
             require dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "templates" . DIRECTORY_SEPARATOR . "errorPage.php";
             $response->setContent(ob_get_clean());

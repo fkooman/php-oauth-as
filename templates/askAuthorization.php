@@ -15,20 +15,20 @@
       <div id="container">
 
         <div id="userInfo">
-            You are <strong title="<?php echo $resourceOwnerId; ?>"><?php echo $resourceOwnerCn; ?></strong>
+            You are <strong title="<?php echo $_e($resourceOwnerId); ?>"><?php echo $_e($resourceOwnerCn); ?></strong>
         </div>
 
         <form method="post" action="">
           <h2>Approval Required</h2>
 
-          <p>The application <strong><?php echo $client->getName(); ?></strong> wants to access your <strong><?php echo $config->getValue('serviceResources'); ?></strong>.</p>
+          <p>The application <strong><?php echo $_e($client->getName()); ?></strong> wants to access your <strong><?php echo $_e($config->getValue('serviceResources')); ?></strong>.</p>
 
         <?php if (!$sslEnabled) { ?>
 
             <div class="warnBox">
             <strong>INSECURE</strong> connection to this service, SSL or TLS <strong>MUST</strong> be used!
             <?php if (NULL !== $client->getContactEmail()) { ?>
-            Please <a href="mailto:<?php echo $client->getContactEmail(); ?>">inform</a> the application provider.
+            Please <a href="mailto:<?php echo $_e($client->getContactEmail()); ?>">inform</a> the application provider.
             <?php } ?>
             </div>
 
@@ -38,13 +38,13 @@
             <tr>
               <th>Application Identifier</th>
 
-              <td><?php echo $client->getId(); ?></td>
+              <td><?php echo $_e($client->getId()); ?></td>
             </tr>
 
             <tr>
               <th>Description</th>
 
-              <td><span><?php echo $client->getDescription(); ?></span></td>
+              <td><span><?php echo $_e($client->getDescription()); ?></span></td>
             </tr>
 
             <tr>
@@ -56,7 +56,7 @@
               <td>
                 <?php if ($config->getValue('allowResourceOwnerScopeFiltering')) { ?><?php foreach($scope->getScopeAsArray() as $s) { ?><label><input type="checkbox"
                 checked="checked" name="scope[]" value=
-                "<?php echo $s; ?>"> <?php echo $s; ?></label>
+                "<?php echo $_e($s); ?>"> <?php echo $_e($s); ?></label>
                 <?php } ?> <?php if ($config->getValue('allowResourceOwnerScopeFiltering')) { ?>
 
                 <div class="warnBox">
@@ -67,10 +67,10 @@
                 <ul class="permissionList">
                   <?php foreach ($scope->getScopeAsArray() as $s) { ?>
 
-                  <li><?php echo $s; ?></li>
+                  <li><?php echo $_e($s); ?></li>
 
                   <li style="list-style: none"><input type="hidden"
-                  name="scope[]" value="<?php echo $s; ?>">
+                  name="scope[]" value="<?php echo $_e($s); ?>">
                   <?php } ?></li>
                 </ul><?php } ?>
               </td>
@@ -81,7 +81,7 @@
             <tr>
               <th>Redirect URI</th>
 
-              <td><?php echo $client->getRedirectUri(); ?></td>
+              <td><?php echo $_e($client->getRedirectUri()); ?></td>
             </tr>
           </table><button id="showDetails" type=
           "button">Details</button> <input type="submit" class=
