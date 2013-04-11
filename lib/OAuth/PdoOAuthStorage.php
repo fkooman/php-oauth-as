@@ -22,8 +22,6 @@ use \PDO as PDO;
 
 /**
  * Class to implement storage for the OAuth Authorization Server using PDO.
- *
- * FIXME: switch to ASSOC instead of OBJ return types
  */
 class PdoOAuthStorage implements IOAuthStorage
 {
@@ -61,7 +59,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_OBJ);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function updateClient($clientId, $data)
@@ -139,7 +137,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_OBJ);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getApprovalByRefreshToken($clientId, $refreshToken)
@@ -149,7 +147,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":refresh_token", $refreshToken, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_OBJ);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function storeAccessToken($accessToken, $issueTime, $clientId, $resourceOwnerId, $scope, $expiry)
@@ -212,7 +210,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_OBJ);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function deleteAuthorizationCode($clientId, $authorizationCode, $redirectUri)
@@ -236,7 +234,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":access_token", $accessToken, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_OBJ);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getApprovals($resourceOwnerId)
@@ -293,7 +291,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_OBJ);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getChangeInfo()

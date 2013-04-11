@@ -61,7 +61,7 @@ class AuthorizationServer
             }
 
             if (NULL !== $redirectUri) {
-                if ($client->redirect_uri !== $redirectUri) {
+                if ($client['redirect_uri'] !== $redirectUri) {
                     throw new ResourceOwnerException('specified redirect_uri not the same as registered redirect_uri');
                 }
             }
@@ -71,20 +71,20 @@ class AuthorizationServer
                                              "native_application" => array ("token", "code"),
                                              "user_agent_based_application" => array ("token"));
 
-            if (!in_array($responseType, $allowedClientProfiles[$client->type])) {
+            if (!in_array($responseType, $allowedClientProfiles[$client['type']])) {
                 throw new ClientException("unsupported_response_type", "response_type not supported by client profile", $client, $state);
             }
 
-            if (!$scope->isSubsetOf(new Scope($client->allowed_scope))) {
+            if (!$scope->isSubsetOf(new Scope($client['allowed_scope']))) {
                 throw new ClientException("invalid_scope", "not authorized to request this scope", $client, $state);
             }
 
             $this->_storage->updateResourceOwner($resourceOwner->getResourceOwnerId(), json_encode($resourceOwner->getAttributes()));
 
             $approvedScope = $this->_storage->getApprovalByResourceOwnerId($clientId, $resourceOwner->getResourceOwnerId());
-            if (FALSE === $approvedScope || FALSE === $scope->isSubsetOf(new Scope($approvedScope->scope))) {
+            if (FALSE === $approvedScope || FALSE === $scope->isSubsetOf(new Scope($approvedScope['scope']))) {
                 $ar = new AuthorizeResult(AuthorizeResult::ASK_APPROVAL);
-                $ar->setClient(ClientRegistration::fromArray((array) $client));
+                $ar->setClient(ClientRegistration::fromArray($client));
                 $ar->setScope($scope);
 
                 return $ar;
@@ -105,7 +105,7 @@ class AuthorizationServer
                         $token += array ("state" => $state);
                     }
                     $ar = new AuthorizeResult(AuthorizeResult::REDIRECT);
-                    $ar->setRedirectUri(new Uri($client->redirect_uri . "#" . http_build_query($token)));
+                    $ar->setRedirectUri(new Uri($client['redirect_uri'] . "#" . http_build_query($token)));
 
                     return $ar;
                 } else {
@@ -117,8 +117,8 @@ class AuthorizationServer
                         $token += array ("state" => $state);
                     }
                     $ar = new AuthorizeResult(AuthorizeResult::REDIRECT);
-                    $separator = (FALSE === strpos($client->redirect_uri, "?")) ? "?" : "&";
-                    $ar->setRedirectUri(new Uri($client->redirect_uri . $separator . http_build_query($token)));
+                    $separator = (FALSE === strpos($client['redirect_uri'], "?")) ? "?" : "&";
+                    $ar->setRedirectUri(new Uri($client['redirect_uri'] . $separator . http_build_query($token)));
 
                     return $ar;
                 }
@@ -159,10 +159,10 @@ class AuthorizationServer
                     // no approved scope stored yet, new entry
                     $refreshToken = ("code" === $responseType) ? self::randomHex(16) : NULL;
                     $this->_storage->addApproval($clientId, $resourceOwner->getResourceOwnerId(), $postScope->getScope(), $refreshToken);
-                } elseif (!$postScope->isSubsetOf(new Scope($approvedScope->scope))) {
+                } elseif (!$postScope->isSubsetOf(new Scope($approvedScope['scope']))) {
                     // not a subset, merge and store the new one
                     $mergedScopes = clone $postScope;
-                    $mergedScopes->mergeWith(new Scope($approvedScope->scope));
+                    $mergedScopes->mergeWith(new Scope($approvedScope['scope']));
                     $this->_storage->updateApproval($clientId, $resourceOwner->getResourceOwnerId(), $mergedScopes->getScope());
                 } else {
                     // subset, approval for superset of scope already exists, do nothing
@@ -190,12 +190,12 @@ class AuthorizationServer
             throw new TokenInfoException("invalid_token", "the token was not found");
         }
 
-        if (time() > $accessToken->issue_time + $accessToken->expires_in) {
+        if (time() > $accessToken['issue_time'] + $accessToken['expires_in']) {
             throw new TokenInfoException("invalid_token", "the token expired");
         }
 
-        $resourceOwner = $this->_storage->getResourceOwner($accessToken->resource_owner_id);
-        $accessToken->resource_owner_attributes = json_decode($resourceOwner->attributes, TRUE);
+        $resourceOwner = $this->_storage->getResourceOwner($accessToken['resource_owner_id']);
+        $accessToken['resource_owner_attributes'] = json_decode($resourceOwner['attributes'], TRUE);
 
         return $accessToken;
     }
@@ -219,7 +219,7 @@ class AuthorizationServer
             }
 
             // check pass
-            if ($pass !== $client->secret) {
+            if ($pass !== $client['secret']) {
                 throw new TokenException("invalid_client", "client authentication failed");
             }
 
@@ -241,11 +241,11 @@ class AuthorizationServer
             $hasAuthenticated = FALSE;
         }
 
-        if ("user_agent_based_application" === $client->type) {
+        if ("user_agent_based_application" === $client['type']) {
             throw new TokenException("unauthorized_client", "this client type is not allowed to use the token endpoint");
         }
 
-        if ("web_application" === $client->type && !$hasAuthenticated) {
+        if ("web_application" === $client['type'] && !$hasAuthenticated) {
             // web_application type MUST have authenticated
             throw new TokenException("invalid_client", "client authentication failed");
         }
@@ -262,21 +262,21 @@ class AuthorizationServer
                 // If the redirect_uri was present in the authorize request, it MUST also be there
                 // in the token request. If it was not there in authorize request, it MUST NOT be
                 // there in the token request (this is not explicit in the spec!)
-                $result = $this->_storage->getAuthorizationCode($client->id, $code, $redirectUri);
+                $result = $this->_storage->getAuthorizationCode($client['id'], $code, $redirectUri);
                 if (FALSE === $result) {
                     throw new TokenException("invalid_grant", "the authorization code was not found");
                 }
-                if (time() > $result->issue_time + 600) {
+                if (time() > $result['issue_time'] + 600) {
                     throw new TokenException("invalid_grant", "the authorization code expired");
                 }
 
                 // we MUST be able to delete the authorization code, otherwise it was used before
-                if (FALSE === $this->_storage->deleteAuthorizationCode($client->id, $code, $redirectUri)) {
+                if (FALSE === $this->_storage->deleteAuthorizationCode($client['id'], $code, $redirectUri)) {
                     // check to prevent deletion race condition
                     throw new TokenException("invalid_grant", "this authorization code grant was already used");
                 }
 
-                $approval = $this->_storage->getApprovalByResourceOwnerId($client->id, $result->resource_owner_id);
+                $approval = $this->_storage->getApprovalByResourceOwnerId($client['id'], $result['resource_owner_id']);
 
                 $token = array();
                 $token['access_token'] = self::randomHex(16);
@@ -284,17 +284,17 @@ class AuthorizationServer
                 // we always grant the scope the user authorized, no further restrictions here...
                 // FIXME: the merging of authorized scopes in the authorize function is a bit of a mess!
                 // we should deal with that there and come up with a good solution...
-                $token['scope'] = $result->scope;
-                $token['refresh_token'] = $approval->refresh_token;
+                $token['scope'] = $result['scope'];
+                $token['refresh_token'] = $approval['refresh_token'];
                 $token['token_type'] = "bearer";
-                $this->_storage->storeAccessToken($token['access_token'], time(), $client->id, $result->resource_owner_id, $token['scope'], $token['expires_in']);
+                $this->_storage->storeAccessToken($token['access_token'], time(), $client['id'], $result['resource_owner_id'], $token['scope'], $token['expires_in']);
                 break;
 
             case "refresh_token":
                 if (NULL === $refreshToken) {
                     throw new TokenException("invalid_request", "the refresh_token parameter is missing");
                 }
-                $result = $this->_storage->getApprovalByRefreshToken($client->id, $refreshToken);
+                $result = $this->_storage->getApprovalByRefreshToken($client['id'], $refreshToken);
                 if (FALSE === $result) {
                     throw new TokenException("invalid_grant", "the refresh_token was not found");
                 }
@@ -305,20 +305,20 @@ class AuthorizationServer
                 if (NULL !== $scope) {
                     // the client wants to obtain a specific scope
                     $requestedScope = new Scope($scope);
-                    $authorizedScope = new Scope($result->scope);
+                    $authorizedScope = new Scope($result['scope']);
                     if ($requestedScope->isSubsetOf($authorizedScope)) {
                         // if it is a subset of the authorized scope we honor that
                         $token['scope'] = $requestedScope->getScope();
                     } else {
                         // if not the client gets the authorized scope
-                        $token['scope'] = $result->scope;
+                        $token['scope'] = $result['scope'];
                     }
                 } else {
-                    $token['scope'] = $result->scope;
+                    $token['scope'] = $result['scope'];
                 }
 
                 $token['token_type'] = "bearer";
-                $this->_storage->storeAccessToken($token['access_token'], time(), $client->id, $result->resource_owner_id, $token['scope'], $token['expires_in']);
+                $this->_storage->storeAccessToken($token['access_token'], time(), $client['id'], $result['resource_owner_id'], $token['scope'], $token['expires_in']);
                 break;
 
             default:

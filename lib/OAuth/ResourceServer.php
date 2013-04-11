@@ -50,13 +50,13 @@ class ResourceServer
         if (FALSE === $token) {
             throw new ResourceServerException("invalid_token", "the access token is invalid");
         }
-        if (time() > $token->issue_time + $token->expires_in) {
+        if (time() > $token['issue_time'] + $token['expires_in']) {
             throw new ResourceServerException("invalid_token", "the access token expired");
         }
-        $this->_resourceOwnerId = $token->resource_owner_id;
-        $this->_grantedScope = $token->scope;
-        $resourceOwner = $this->_storage->getResourceOwner($token->resource_owner_id);
-        $this->_resourceOwnerAttributes = json_decode($resourceOwner->attributes, TRUE);
+        $this->_resourceOwnerId = $token['resource_owner_id'];
+        $this->_grantedScope = $token['scope'];
+        $resourceOwner = $this->_storage->getResourceOwner($token['resource_owner_id']);
+        $this->_resourceOwnerAttributes = json_decode($resourceOwner['attributes'], TRUE);
     }
 
     public function setEntitlementEnforcement($enforce = TRUE)

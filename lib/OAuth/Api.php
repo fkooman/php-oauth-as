@@ -71,7 +71,7 @@ class Api
                 }
 
                 // scope should be part of "allowed_scope" of client registration
-                $clientAllowedScope = new Scope($client->allowed_scope);
+                $clientAllowedScope = new Scope($client['allowed_scope']);
                 $requestedScope = new Scope($data['scope']);
                 if (!$requestedScope->isSubSetOf($clientAllowedScope)) {
                     throw new ApiException("invalid_request", "invalid scope for this client");
