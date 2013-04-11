@@ -9,6 +9,7 @@ $c2->register();
 use \RestService\Utils\Config as Config;
 use \OAuth\PdoOAuthStorage as PdoOAuthStorage;
 use \OAuth\ClientRegistration as ClientRegistration;
+use \RestService\Utils\Json as Json;
 
 $config = new Config(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
 
@@ -22,7 +23,7 @@ if ($argc !== 2) {
 
 $manifestFile = $argv[1];
 $fileContents = file_get_contents($manifestFile);
-$data = json_decode($fileContents, TRUE);
+$data = Json::dec($fileContents);
 if (NULL === $data || !is_array($data)) {
         echo "ERROR: manifest seems to be in wrong format" . PHP_EOL;
         die();

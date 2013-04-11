@@ -19,6 +19,7 @@ namespace OAuth;
 
 use \RestService\Utils\Config as Config;
 use \SimpleAuth as SimpleAuth;
+use \RestService\Utils\Json as Json;
 
 class SimpleAuthResourceOwner implements IResourceOwner
 {
@@ -51,7 +52,7 @@ class SimpleAuthResourceOwner implements IResourceOwner
         if (FALSE === $fileContents) {
             throw new SimpleAuthResourceOwnerException("unable to read attributes file");
         }
-        $attributes = json_decode($fileContents, TRUE);
+        $attributes = Json::dec($fileContents);
         if (is_array($attributes) && array_key_exists($this->getResourceOwnerId(), $attributes)) {
             return $attributes[$this->getResourceOwnerId()];
         }

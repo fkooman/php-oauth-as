@@ -21,6 +21,7 @@ use \RestService\Utils\Config as Config;
 use \RestService\Http\HttpRequest as HttpRequest;
 use \RestService\Http\HttpResponse as HttpResponse;
 use \RestService\Utils\Logger as Logger;
+use \RestService\Utils\Json as Json;
 
 class Token
 {
@@ -54,7 +55,7 @@ class Token
                 $response->setHeader('Content-Type', 'application/json');
                 $response->setHeader('Cache-Control', 'no-store');
                 $response->setHeader('Pragma', 'no-cache');
-                $response->setContent(json_encode($result));
+                $response->setContent(Json::enc($result));
             }
         } catch (TokenException $e) {
             if ($e->getResponseCode() === 401) {
@@ -64,7 +65,7 @@ class Token
             $response->setContentType("application/json");
             $response->setHeader('Cache-Control', 'no-store');
             $response->setHeader('Pragma', 'no-cache');
-            $response->setContent(json_encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
+            $response->setContent(Json::enc(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
             if (NULL !== $this->_logger) {
                 $this->_logger->logFatal($e->getLogMessage(TRUE) . PHP_EOL . $request . PHP_EOL . $response);
             }

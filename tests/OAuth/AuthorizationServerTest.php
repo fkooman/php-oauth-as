@@ -99,14 +99,14 @@ class ImplicitGrantTest extends OAuthHelper
                        "code" => $matches[1]);
         $response = $this->_as->token($post, "testcodeclient", "abcdef");
 
-        $this->assertRegExp('|^[a-zA-Z0-9]+$|', $response->access_token);
-        $this->assertEquals(5, $response->expires_in);
-        $this->assertRegExp('|^[a-zA-Z0-9]+$|', $response->refresh_token);
-        $this->assertEquals("read", $response->scope);
+        $this->assertRegExp('|^[a-zA-Z0-9]+$|', $response['access_token']);
+        $this->assertEquals(5, $response['expires_in']);
+        $this->assertRegExp('|^[a-zA-Z0-9]+$|', $response['refresh_token']);
+        $this->assertEquals("read", $response['scope']);
         // .. redirect_uri
 
         // verify token
-        $this->_rs->verifyAuthorizationHeader("Bearer " . $response->access_token);
+        $this->_rs->verifyAuthorizationHeader("Bearer " . $response['access_token']);
         $this->assertEquals("1234-5678-9999", $this->_rs->getResourceOwnerId());
         $this->assertTrue($this->_rs->hasEntitlement("urn:x-oauth:entitlement:applications"));
         $this->assertFalse($this->_rs->hasEntitlement("foobar"));
@@ -133,7 +133,7 @@ class ImplicitGrantTest extends OAuthHelper
         sleep(6);
 
         try {
-            $this->_rs->verifyAuthorizationHeader("Bearer " . $response->access_token);
+            $this->_rs->verifyAuthorizationHeader("Bearer " . $response['access_token']);
             $this->assertTrue(FALSE);
         } catch (ResourceServerException $e) {
             $this->assertEquals("invalid_token", $e->getMessage());
@@ -142,11 +142,11 @@ class ImplicitGrantTest extends OAuthHelper
 
         // use the refresh token to get a new access token
         $post = array ("grant_type" => "refresh_token",
-                       "refresh_token" => $response->refresh_token);
+                       "refresh_token" => $response['refresh_token']);
         $response = $this->_as->token($post, "testcodeclient", "abcdef");
 
-        $this->assertRegExp('|^[a-zA-Z0-9]+$|', $response->access_token);
-        $this->_rs->verifyAuthorizationHeader("Bearer " . $response->access_token);
+        $this->assertRegExp('|^[a-zA-Z0-9]+$|', $response['access_token']);
+        $this->_rs->verifyAuthorizationHeader("Bearer " . $response['access_token']);
         $this->assertEquals("1234-5678-9999", $this->_rs->getResourceOwnerId());
     }
 

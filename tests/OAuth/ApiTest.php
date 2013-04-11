@@ -19,6 +19,7 @@ require_once 'OAuthHelper.php';
 
 use \OAuth\Api as Api;
 use \RestService\Http\HttpRequest as HttpRequest;
+use \RestService\Utils\Json as Json;
 
 class ApiTest extends OAuthHelper
 {
@@ -56,7 +57,7 @@ class ApiTest extends OAuthHelper
         $h->setRequestMethod("POST");
         $h->setPathInfo("/authorizations/");
         $h->setHeader("Authorization", "Bearer 12345abc");
-        $h->setContent(json_encode(array("client_id" => "testcodeclient", "scope" => "read", "refresh_token" => NULL)));
+        $h->setContent(Json::enc(array("client_id" => "testcodeclient", "scope" => "read", "refresh_token" => NULL)));
         $response = $this->_api->handleRequest($h);
         $this->assertEquals(201, $response->getStatusCode());
     }
@@ -67,7 +68,7 @@ class ApiTest extends OAuthHelper
         $h->setRequestMethod("POST");
         $h->setPathInfo("/authorizations/");
         $h->setHeader("Authorization", "Bearer 12345abc");
-        $h->setContent(json_encode(array("client_id" => "nonexistingclient", "scope" => "read")));
+        $h->setContent(Json::enc(array("client_id" => "nonexistingclient", "scope" => "read")));
         $response = $this->_api->handleRequest($h);
 
         $this->assertEquals(400, $response->getStatusCode());
@@ -80,7 +81,7 @@ class ApiTest extends OAuthHelper
         $h->setRequestMethod("POST");
         $h->setPathInfo("/authorizations/");
         $h->setHeader("Authorization", "Bearer 12345abc");
-        $h->setContent(json_encode(array("client_id" => "testcodeclient", "scope" => "UNSUPPORTED SCOPE")));
+        $h->setContent(Json::enc(array("client_id" => "testcodeclient", "scope" => "UNSUPPORTED SCOPE")));
         $response = $this->_api->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('{"error":"invalid_request","error_description":"invalid scope for this client"}', $response->getContent());

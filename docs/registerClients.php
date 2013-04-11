@@ -9,6 +9,7 @@ $c2->register();
 use \RestService\Utils\Config as Config;
 use \OAuth\PdoOAuthStorage as PdoOAuthStorage;
 use \OAuth\ClientRegistration as ClientRegistration;
+use \RestService\Utils\Json as Json;
 
 $config = new Config(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
 $storage = new PdoOAuthStorage($config);
@@ -24,7 +25,7 @@ if (!file_exists($registrationFile) || !is_file($registrationFile) || !is_readab
         die();
 }
 
-$registration = json_decode(file_get_contents($registrationFile), TRUE);
+$registration = Json::dec(file_get_contents($registrationFile));
 
 foreach ($registration as $r) {
     // first load it in ClientRegistration object to check it...

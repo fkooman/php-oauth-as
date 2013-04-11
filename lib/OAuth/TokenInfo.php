@@ -21,6 +21,7 @@ use \RestService\Utils\Config as Config;
 use \RestService\Http\HttpRequest as HttpRequest;
 use \RestService\Http\HttpResponse as HttpResponse;
 use \RestService\Utils\Logger as Logger;
+use \RestService\Utils\Json as Json;
 
 class TokenInfo
 {
@@ -63,14 +64,14 @@ class TokenInfo
                     "scope" => $result['scope'],
                     "expires_in" => $result['issue_time'] + $result['expires_in'] - time(),
                     "attributes" => $result['resource_owner_attributes']);
-                $response->setContent(json_encode($tokenInfo));
+                $response->setContent(Json::enc($tokenInfo));
             }
         } catch (TokenInfoException $e) {
             $response->setStatusCode(400);
             $response->setContentType("application/json");
             $response->setHeader('Cache-Control', 'no-store');
             $response->setHeader('Pragma', 'no-cache');
-            $response->setContent(json_encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
+            $response->setContent(Json::enc(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
             if (NULL !== $this->_logger) {
                 $this->_logger->logFatal($e->getLogMessage(TRUE) . PHP_EOL . $request . PHP_EOL . $response);
             }

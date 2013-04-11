@@ -27,6 +27,7 @@ use \RestService\Http\IncomingHttpRequest as IncomingHttpRequest;
 use \RestService\Http\HttpRequest as HttpRequest;
 use \OAuth\Token as Token;
 use \RestService\Utils\Logger as Logger;
+use \RestService\Utils\Json as Json;
 
 $logger = NULL;
 $request = NULL;
@@ -43,7 +44,7 @@ try {
     $response = new HttpResponse();
     $response->setStatusCode(500);
     $response->setHeader("Content-Type", "application/json");
-    $response->setContent(json_encode(array("error" => $e->getMessage())));
+    $response->setContent(Json::enc(array("error" => $e->getMessage())));
     if (NULL !== $logger) {
         $logger->logFatal($e->getMessage() . PHP_EOL . $request . PHP_EOL . $response);
     }

@@ -19,6 +19,7 @@ namespace OAuth;
 
 use \RestService\Utils\Config as Config;
 use \RestService\Http\Uri as Uri;
+use \RestService\Utils\Json as Json;
 
 class AuthorizationServer
 {
@@ -79,7 +80,7 @@ class AuthorizationServer
                 throw new ClientException("invalid_scope", "not authorized to request this scope", $client, $state);
             }
 
-            $this->_storage->updateResourceOwner($resourceOwner->getResourceOwnerId(), json_encode($resourceOwner->getAttributes()));
+            $this->_storage->updateResourceOwner($resourceOwner->getResourceOwnerId(), Json::enc($resourceOwner->getAttributes()));
 
             $approvedScope = $this->_storage->getApprovalByResourceOwnerId($clientId, $resourceOwner->getResourceOwnerId());
             if (FALSE === $approvedScope || FALSE === $scope->isSubsetOf(new Scope($approvedScope['scope']))) {
@@ -195,7 +196,7 @@ class AuthorizationServer
         }
 
         $resourceOwner = $this->_storage->getResourceOwner($accessToken['resource_owner_id']);
-        $accessToken['resource_owner_attributes'] = json_decode($resourceOwner['attributes'], TRUE);
+        $accessToken['resource_owner_attributes'] = Json::dec($resourceOwner['attributes']);
 
         return $accessToken;
     }
@@ -325,7 +326,7 @@ class AuthorizationServer
                 throw new TokenException("unsupported_grant_type", "the requested grant type is not supported");
         }
 
-        return (object) $token;
+        return $token;
     }
 
     private static function getParameter(array $parameters, $key)

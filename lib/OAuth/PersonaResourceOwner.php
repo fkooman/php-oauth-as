@@ -19,6 +19,7 @@ namespace OAuth;
 
 use \RestService\Utils\Config as Config;
 use \PersonaVerifier as PersonaVerifier;
+use \RestService\Utils\Json as Json;
 
 class PersonaResourceOwner implements IResourceOwner
 {
@@ -51,7 +52,7 @@ class PersonaResourceOwner implements IResourceOwner
         if (FALSE === $fileContents) {
             throw new PersonaResourceOwnerException("unable to read attributes file");
         }
-        $attributes = json_decode($fileContents, TRUE);
+        $attributes = Json::dec($fileContents);
         if (is_array($attributes) && array_key_exists($this->getResourceOwnerId(), $attributes)) {
             return $attributes[$this->getResourceOwnerId()];
         }
