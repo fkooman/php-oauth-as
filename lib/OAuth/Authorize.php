@@ -46,7 +46,7 @@ class Authorize
 
     public function handleRequest(HttpRequest $request)
     {
-        $response = new HttpResponse();
+        $response = new HttpResponse(200);
         try {
             switch ($request->getRequestMethod()) {
                 case "GET":

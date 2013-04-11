@@ -42,8 +42,7 @@ try {
 
 } catch (Exception $e) {
     // internal server error, inform resource owner through browser
-    $response = new HttpResponse();
-    $response->setStatusCode(500);
+    $response = new HttpResponse(500);
     $_e = function($m) {
         return htmlentities($m, ENT_QUOTES, "UTF-8");
     };

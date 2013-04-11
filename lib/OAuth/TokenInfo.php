@@ -43,7 +43,7 @@ class TokenInfo
 
     public function handleRequest(HttpRequest $request)
     {
-        $response = new HttpResponse();
+        $response = new HttpResponse(200, "application/json");
         try {
             if ("GET" !== $request->getRequestMethod()) {
                 // method not allowed
@@ -51,8 +51,6 @@ class TokenInfo
                 $response->setHeader("Allow", "GET");
             } else {
                 $result = $this->_as->tokenInfo($request->getQueryParameters());
-                $response->setContentType("application/json");
-                $response->setHeader('Content-Type', 'application/json');
                 $response->setHeader('Cache-Control', 'no-store');
                 $response->setHeader('Pragma', 'no-cache');
 

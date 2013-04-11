@@ -43,7 +43,7 @@ class Token
 
     public function handleRequest(HttpRequest $request)
     {
-        $response = new HttpResponse();
+        $response = new HttpResponse(200, "application/json");
         try {
             if ("POST" !== $request->getRequestMethod()) {
                 // method not allowed
@@ -51,7 +51,6 @@ class Token
                 $response->setHeader("Allow", "POST");
             } else {
                 $result = $this->_as->token($request->getPostParameters(), $request->getBasicAuthUser(), $request->getBasicAuthPass());
-                $response->setContentType("application/json");
                 $response->setHeader('Content-Type', 'application/json');
                 $response->setHeader('Cache-Control', 'no-store');
                 $response->setHeader('Pragma', 'no-cache');
@@ -62,7 +61,6 @@ class Token
                 $response->setHeader("WWW-Authenticate", 'Basic realm="OAuth Server"');
             }
             $response->setStatusCode($e->getResponseCode());
-            $response->setContentType("application/json");
             $response->setHeader('Cache-Control', 'no-store');
             $response->setHeader('Pragma', 'no-cache');
             $response->setContent(Json::enc(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));

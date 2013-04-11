@@ -42,9 +42,7 @@ try {
     $response = $a->handleRequest($request);
 
 } catch (Exception $e) {
-    // any other error thrown by any of the modules, assume internal server error
-    $response = new HttpResponse();
-    $response->setStatusCode(500);
+    $response = new HttpResponse(500, "application/json");
     $response->setContent(Json::enc(array("error" => "internal_server_error", "error_description" => $e->getMessage())));
     if (NULL !== $logger) {
         $logger->logFatal($e->getMessage() . PHP_EOL . $request . PHP_EOL . $response);

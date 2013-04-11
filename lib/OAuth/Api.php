@@ -44,8 +44,7 @@ class Api
 
     public function handleRequest(HttpRequest $request)
     {
-        $response = new HttpResponse();
-        $response->setContentType("application/json");
+        $response = new HttpResponse(200, "application/json");
 
         try {
             if (!$this->_config->getSectionValue("Api", "enableApi")) {

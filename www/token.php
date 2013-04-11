@@ -41,9 +41,7 @@ try {
     $request = HttpRequest::fromIncomingHttpRequest(new IncomingHttpRequest());
     $response = $t->handleRequest($request);
 } catch (Exception $e) {
-    $response = new HttpResponse();
-    $response->setStatusCode(500);
-    $response->setHeader("Content-Type", "application/json");
+    $response = new HttpResponse(500, "application/json");
     $response->setContent(Json::enc(array("error" => $e->getMessage())));
     if (NULL !== $logger) {
         $logger->logFatal($e->getMessage() . PHP_EOL . $request . PHP_EOL . $response);
