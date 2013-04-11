@@ -190,12 +190,12 @@ class AuthorizationServer
             throw new TokenInfoException("invalid_token", "the token was not found");
         }
 
-        if (time() > $accessToken->issue_time + $accessToken->expires_in) {
+        if (time() > $accessToken['issue_time'] + $accessToken['expires_in']) {
             throw new TokenInfoException("invalid_token", "the token expired");
         }
 
-        $resourceOwner = $this->_storage->getResourceOwner($accessToken->resource_owner_id);
-        $accessToken->resource_owner_attributes = json_decode($resourceOwner->attributes, TRUE);
+        $resourceOwner = $this->_storage->getResourceOwner($accessToken['resource_owner_id']);
+        $accessToken['resource_owner_attributes'] = json_decode($resourceOwner->attributes, TRUE);
 
         return $accessToken;
     }

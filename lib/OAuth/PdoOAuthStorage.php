@@ -236,7 +236,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":access_token", $accessToken, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_OBJ);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getApprovals($resourceOwnerId)
