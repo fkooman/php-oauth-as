@@ -82,7 +82,7 @@ class AuthorizationServer
             $this->_storage->updateResourceOwner($resourceOwner->getResourceOwnerId(), json_encode($resourceOwner->getAttributes()));
 
             $approvedScope = $this->_storage->getApprovalByResourceOwnerId($clientId, $resourceOwner->getResourceOwnerId());
-            if (FALSE === $approvedScope || FALSE === $scope->isSubsetOf(new Scope($approvedScope->scope))) {
+            if (FALSE === $approvedScope || FALSE === $scope->isSubsetOf(new Scope($approvedScope['scope']))) {
                 $ar = new AuthorizeResult(AuthorizeResult::ASK_APPROVAL);
                 $ar->setClient(ClientRegistration::fromArray((array) $client));
                 $ar->setScope($scope);
@@ -159,10 +159,10 @@ class AuthorizationServer
                     // no approved scope stored yet, new entry
                     $refreshToken = ("code" === $responseType) ? self::randomHex(16) : NULL;
                     $this->_storage->addApproval($clientId, $resourceOwner->getResourceOwnerId(), $postScope->getScope(), $refreshToken);
-                } elseif (!$postScope->isSubsetOf(new Scope($approvedScope->scope))) {
+                } elseif (!$postScope->isSubsetOf(new Scope($approvedScope['scope']))) {
                     // not a subset, merge and store the new one
                     $mergedScopes = clone $postScope;
-                    $mergedScopes->mergeWith(new Scope($approvedScope->scope));
+                    $mergedScopes->mergeWith(new Scope($approvedScope['scope']));
                     $this->_storage->updateApproval($clientId, $resourceOwner->getResourceOwnerId(), $mergedScopes->getScope());
                 } else {
                     // subset, approval for superset of scope already exists, do nothing
@@ -285,7 +285,7 @@ class AuthorizationServer
                 // FIXME: the merging of authorized scopes in the authorize function is a bit of a mess!
                 // we should deal with that there and come up with a good solution...
                 $token['scope'] = $result->scope;
-                $token['refresh_token'] = $approval->refresh_token;
+                $token['refresh_token'] = $approval['refresh_token'];
                 $token['token_type'] = "bearer";
                 $this->_storage->storeAccessToken($token['access_token'], time(), $client->id, $result->resource_owner_id, $token['scope'], $token['expires_in']);
                 break;
