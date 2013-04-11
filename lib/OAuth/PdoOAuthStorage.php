@@ -149,7 +149,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":refresh_token", $refreshToken, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_OBJ);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function storeAccessToken($accessToken, $issueTime, $clientId, $resourceOwnerId, $scope, $expiry)

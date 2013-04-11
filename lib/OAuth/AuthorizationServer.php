@@ -305,20 +305,20 @@ class AuthorizationServer
                 if (NULL !== $scope) {
                     // the client wants to obtain a specific scope
                     $requestedScope = new Scope($scope);
-                    $authorizedScope = new Scope($result->scope);
+                    $authorizedScope = new Scope($result['scope']);
                     if ($requestedScope->isSubsetOf($authorizedScope)) {
                         // if it is a subset of the authorized scope we honor that
                         $token['scope'] = $requestedScope->getScope();
                     } else {
                         // if not the client gets the authorized scope
-                        $token['scope'] = $result->scope;
+                        $token['scope'] = $result['scope'];
                     }
                 } else {
-                    $token['scope'] = $result->scope;
+                    $token['scope'] = $result['scope'];
                 }
 
                 $token['token_type'] = "bearer";
-                $this->_storage->storeAccessToken($token['access_token'], time(), $client->id, $result->resource_owner_id, $token['scope'], $token['expires_in']);
+                $this->_storage->storeAccessToken($token['access_token'], time(), $client->id, $result['resource_owner_id'], $token['scope'], $token['expires_in']);
                 break;
 
             default:
