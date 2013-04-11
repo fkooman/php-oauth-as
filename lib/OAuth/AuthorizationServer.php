@@ -266,7 +266,7 @@ class AuthorizationServer
                 if (FALSE === $result) {
                     throw new TokenException("invalid_grant", "the authorization code was not found");
                 }
-                if (time() > $result->issue_time + 600) {
+                if (time() > $result['issue_time'] + 600) {
                     throw new TokenException("invalid_grant", "the authorization code expired");
                 }
 
@@ -276,7 +276,7 @@ class AuthorizationServer
                     throw new TokenException("invalid_grant", "this authorization code grant was already used");
                 }
 
-                $approval = $this->_storage->getApprovalByResourceOwnerId($client->id, $result->resource_owner_id);
+                $approval = $this->_storage->getApprovalByResourceOwnerId($client->id, $result['resource_owner_id']);
 
                 $token = array();
                 $token['access_token'] = self::randomHex(16);
@@ -284,10 +284,10 @@ class AuthorizationServer
                 // we always grant the scope the user authorized, no further restrictions here...
                 // FIXME: the merging of authorized scopes in the authorize function is a bit of a mess!
                 // we should deal with that there and come up with a good solution...
-                $token['scope'] = $result->scope;
+                $token['scope'] = $result['scope'];
                 $token['refresh_token'] = $approval['refresh_token'];
                 $token['token_type'] = "bearer";
-                $this->_storage->storeAccessToken($token['access_token'], time(), $client->id, $result->resource_owner_id, $token['scope'], $token['expires_in']);
+                $this->_storage->storeAccessToken($token['access_token'], time(), $client->id, $result['resource_owner_id'], $token['scope'], $token['expires_in']);
                 break;
 
             case "refresh_token":

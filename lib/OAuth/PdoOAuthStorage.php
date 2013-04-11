@@ -212,7 +212,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_OBJ);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function deleteAuthorizationCode($clientId, $authorizationCode, $redirectUri)
