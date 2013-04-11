@@ -107,17 +107,17 @@ class Authorize
             // tell the client about the error
             $client = $e->getClient();
 
-            if ($client->type === "user_agent_based_application") {
+            if ($client['type'] === "user_agent_based_application") {
                 $separator = "#";
             } else {
-                $separator = (FALSE === strpos($client->redirect_uri, "?")) ? "?" : "&";
+                $separator = (FALSE === strpos($client['redirect_uri'], "?")) ? "?" : "&";
             }
             $parameters = array("error" => $e->getMessage(), "error_description" => $e->getDescription());
             if (NULL !== $e->getState()) {
                 $parameters['state'] = $e->getState();
             }
             $response->setStatusCode(302);
-            $response->setHeader("Location", $client->redirect_uri . $separator . http_build_query($parameters));
+            $response->setHeader("Location", $client['redirect_uri'] . $separator . http_build_query($parameters));
             if (NULL !== $this->_logger) {
                 $this->_logger->logFatal($e->getLogMessage(TRUE) . PHP_EOL . $request . PHP_EOL . $response);
             }
