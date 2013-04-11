@@ -22,8 +22,6 @@ use \PDO as PDO;
 
 /**
  * Class to implement storage for the OAuth Authorization Server using PDO.
- *
- * FIXME: switch to ASSOC instead of OBJ return types
  */
 class PdoOAuthStorage implements IOAuthStorage
 {
@@ -293,7 +291,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_OBJ);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getChangeInfo()

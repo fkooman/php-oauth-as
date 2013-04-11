@@ -195,7 +195,7 @@ class AuthorizationServer
         }
 
         $resourceOwner = $this->_storage->getResourceOwner($accessToken['resource_owner_id']);
-        $accessToken['resource_owner_attributes'] = json_decode($resourceOwner->attributes, TRUE);
+        $accessToken['resource_owner_attributes'] = json_decode($resourceOwner['attributes'], TRUE);
 
         return $accessToken;
     }
