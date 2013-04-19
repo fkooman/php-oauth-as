@@ -50,7 +50,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->_config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|{"active":true,"expires_at":[0-9]+,"issued_at":"[0-9]+","scope":"foo bar","client_id":"testclient","sub":"fkooman","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin"}|', $response->getContent());
+        $this->assertRegexp('|{"active":true,"expires_at":[0-9]+,"issued_at":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin"}|', $response->getContent());
     }
 
     public function testPostTokenIntrospection()
@@ -60,7 +60,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->_config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|{"active":true,"expires_at":[0-9]+,"issued_at":"[0-9]+","scope":"foo bar","client_id":"testclient","sub":"fkooman","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin"}|', $response->getContent());
+        $this->assertRegexp('|{"active":true,"expires_at":[0-9]+,"issued_at":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin"}|', $response->getContent());
     }
 
     public function testPostTokenIntrospectionNoEntitlement()
@@ -70,7 +70,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->_config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|{"active":true,"expires_at":[0-9]+,"issued_at":"[0-9]+","scope":"a b c","client_id":"testclient","sub":"frko"}|', $response->getContent());
+        $this->assertRegexp('|{"active":true,"expires_at":[0-9]+,"issued_at":[0-9]+,"scope":"a b c","client_id":"testclient","sub":"frko"}|', $response->getContent());
     }
 
     public function testMissingGetTokenIntrospection()
