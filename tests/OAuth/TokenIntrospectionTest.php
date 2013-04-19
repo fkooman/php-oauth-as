@@ -18,6 +18,7 @@
 require_once 'OAuthHelper.php';
 
 use \RestService\Http\HttpRequest as HttpRequest;
+use \RestService\Utils\Json as Json;
 use \OAuth\TokenIntrospection as TokenIntrospection;
 
 class TokenIntrospectionTest extends OAuthHelper
@@ -29,8 +30,18 @@ class TokenIntrospectionTest extends OAuthHelper
         $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
         $storage = new $oauthStorageBackend($this->_config);
 
-        $storage->updateResourceOwner('fkooman', NULL, NULL);
+        $attributes = array (
+            "eduPersonEntitlement" => array (
+                "urn:x-foo:service:access",
+                "urn:x-bar:privilege:admin"
+            ),
+        );
+        $storage->updateResourceOwner('fkooman', Json::enc($attributes));
+        $storage->updateResourceOwner('frko', NULL);
+
         $storage->storeAccessToken("foo", time(), "testclient", "fkooman", "foo bar", 1234);
+        $storage->storeAccessToken("bar", time(), "testclient", "frko", "a b c", 1234);
+
     }
 
     public function testGetTokenIntrospection()
@@ -39,7 +50,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->_config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|{"active":true,"expires_at":[0-9]+,"issued_at":"[0-9]+","scope":"foo bar","client_id":"testclient","sub":"fkooman"}|', $response->getContent());
+        $this->assertRegexp('|{"active":true,"expires_at":[0-9]+,"issued_at":"[0-9]+","scope":"foo bar","client_id":"testclient","sub":"fkooman","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin"}|', $response->getContent());
     }
 
     public function testPostTokenIntrospection()
@@ -49,7 +60,17 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->_config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|{"active":true,"expires_at":[0-9]+,"issued_at":"[0-9]+","scope":"foo bar","client_id":"testclient","sub":"fkooman"}|', $response->getContent());
+        $this->assertRegexp('|{"active":true,"expires_at":[0-9]+,"issued_at":"[0-9]+","scope":"foo bar","client_id":"testclient","sub":"fkooman","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin"}|', $response->getContent());
+    }
+
+    public function testPostTokenIntrospectionNoEntitlement()
+    {
+        $h = new HttpRequest("https://auth.example.org/introspect", "POST");
+        $h->setPostParameters(array("token" => "bar"));
+        $t = new TokenIntrospection($this->_config, NULL);
+        $response = $t->handleRequest($h);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertRegexp('|{"active":true,"expires_at":[0-9]+,"issued_at":"[0-9]+","scope":"a b c","client_id":"testclient","sub":"frko"}|', $response->getContent());
     }
 
     public function testMissingGetTokenIntrospection()

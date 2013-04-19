@@ -29,7 +29,7 @@ class TokenTest extends OAuthHelper
         $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
         $storage = new $oauthStorageBackend($this->_config);
 
-        $storage->updateResourceOwner('fkooman', NULL, NULL);
+        $storage->updateResourceOwner('fkooman', NULL);
         $storage->addApproval('testcodeclient', 'fkooman', 'read write foo', 'r3fr3sh');
         $storage->addApproval('testnativeclient', 'fkooman', 'read', 'n4t1v3r3fr3sh');
         $storage->storeAuthorizationCode("4uth0r1z4t10n", "fkooman", time(), "testcodeclient", NULL, "read");

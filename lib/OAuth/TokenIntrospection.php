@@ -94,9 +94,18 @@ class TokenIntrospection
             $r['scope'] = $accessToken['scope'];
             $r['client_id'] = $accessToken['client_id'];
             $r['sub'] = $accessToken['resource_owner_id'];
-
             // as long as we have no RS registration we cannot set the audience...
             // $response['aud'] = 'foo';
+
+            // add proprietary "x-entitlement"
+            $resourceOwner = $this->_storage->getResourceOwner($accessToken['resource_owner_id']);
+            if (isset($resourceOwner['attributes'])) {
+                $jsonAttr = Json::dec($resourceOwner['attributes']);
+                if (isset($jsonAttr['eduPersonEntitlement'])) {
+                    $entitlement = implode(" ", $jsonAttr['eduPersonEntitlement']);
+                    $r['x-entitlement'] = $entitlement;
+                }
+            }
         }
 
         return $r;
