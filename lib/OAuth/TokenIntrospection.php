@@ -105,6 +105,10 @@ class TokenIntrospection
                     $entitlement = implode(" ", $jsonAttr['eduPersonEntitlement']);
                     $r['x-entitlement'] = $entitlement;
                 }
+                // add proprietary "x-attributes" if attributes are available
+                if (is_array($jsonAttr) && 0 !== count($jsonAttr)) {
+                    $r['x-attributes'] = $jsonAttr;
+                }
             }
         }
 
