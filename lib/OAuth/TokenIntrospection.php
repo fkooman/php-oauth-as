@@ -89,11 +89,13 @@ class TokenIntrospection
         } else {
             // token exists and did not expire
             $r['active'] = TRUE;
-            $r['expires_at'] = (int) ($accessToken['issue_time'] + $accessToken['expires_in']);
-            $r['issued_at'] = (int) $accessToken['issue_time'];
+            $r['exp'] = (int) ($accessToken['issue_time'] + $accessToken['expires_in']);
+            $r['iat'] = (int) $accessToken['issue_time'];
             $r['scope'] = $accessToken['scope'];
             $r['client_id'] = $accessToken['client_id'];
             $r['sub'] = $accessToken['resource_owner_id'];
+            $r['token_type'] = 'bearer';
+            
             // as long as we have no RS registration we cannot set the audience...
             // $response['aud'] = 'foo';
 
