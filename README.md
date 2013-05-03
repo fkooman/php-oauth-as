@@ -22,6 +22,7 @@ it). Refer to the license for the exact details.
 * SAML authentication support ([simpleSAMLphp](http://www.simplesamlphp.org)) 
 * [Mozilla Persona](https://login.persona.org/) authentication support using 
 ([php-browserid](https://github.com/fkooman/php-browserid/))
+* Token introspection for resource servers
 
 # Screenshots
 Below are some screenshots of the OAuth consent dialog, the first one is the 
@@ -42,6 +43,8 @@ On Debian/Ubuntu:
 
 # Installation
 *NOTE*: in the `chown` line you need to use your own user account name!
+*NOTE*: On Ubuntu (Debian) you would typically install in `/var/www/php-oauth` and not 
+in `/var/www/html/php-oauth` and you use `sudo` instead of `su -c`.
 
     $ cd /var/www/html
     $ su -c 'mkdir php-oauth'
@@ -86,9 +89,6 @@ then load them in the database:
 
 This should take care of the initial setup and you can now move to installing 
 the management clients, see below.
-
-*NOTE*: On Ubuntu (Debian) you would typically install in `/var/www/php-oauth` and not 
-in `/var/www/html/php-oauth` and you use `sudo` instead of `su -c`.
 
 # Management Clients
 There are two reference management clients available:
@@ -238,7 +238,6 @@ by the simpleSAMLphp as SP:
                 'urn2name',
             ),
         ),
-
     );
 
 You need to modify this (the URLs and the certificate fingerprint) to work with 
@@ -251,8 +250,8 @@ other `urn:mace` prefixed attributes.
 
 # Resource Servers
 If you are writing a resource server (RS) an API is available to verify the 
-`Bearer` token you receive from the client. It is the same API as 
-[used by Google](https://developers.google.com/accounts/docs/OAuth2Login#validatingtoken).
+`Bearer` token you receive from the client. Currently a draft specification
+(draft-richer-oauth-introspection-04) is implemented to support this.
 
 An example, the RS gets the following `Authorization` header from the client:
 
@@ -260,67 +259,47 @@ An example, the RS gets the following `Authorization` header from the client:
 
 Now in order to verify it, the RS can send a request to the OAuth service:
 
-    $ curl http://localhost/php-oauth/tokeninfo.php?access_token=eeae9c3366af8cb7acb74dd5635c44e6
+    $ curl http://localhost/php-oauth/introspect.php?token=eeae9c3366af8cb7acb74dd5635c44e6
 
 If the token is valid, a response (formatted here for display purposes) will be 
 given back to the RS:
 
     {
-        "attributes": {
-            "displayName": [
-                "Margie Korn"
-            ], 
-            "eduPersonEntitlement": [
-                "urn:x-oauth:entitlement:administration"
-            ], 
-            "uid": [
-                "teacher"
-            ]
-        }, 
-        "audience": "html-view-grades", 
-        "client_id": "html-view-grades", 
-        "expires_in": 3567, 
-        "resource_owner_id": "6b976124bc1747b3e8b249fe3bd6edff16d546ac", 
-        "scope": "grades", 
-        "user_id": "6b976124bc1747b3e8b249fe3bd6edff16d546ac"
+        "active": true,
+        "client_id": "testclient",
+        "exp": 2366377846,
+        "iat": 1366376612,
+        "scope": "foo bar",
+        "sub": "fkooman",
+        "x-entitlement": "urn:x-foo:service:access urn:x-bar:privilege:admin"
     }
 
 The RS can now figure out more about the resource owner. If you provide an 
-invalid access token, an error is returned:
+invalid access token, the following response is returned:
 
-    HTTP/1.1 400 Bad Request
+    {
+        "active": false
+    }
 
-    {"error":"invalid_token","error_description":"the token was not found"}
+If your service needs to provision a user, the field `sub` SHOULD to be used 
+for that. The `scope` field can be used to determine the scope the client was 
+granted by the resource owner.
 
-If your service needs to provision a user, the field `resource_owner_id` or 
-its alias `user_id` SHOULD to be used for that. The `scope` field can be used
-to determine the scope the client was granted by the resource owner.
+There are two proprietary extensions to this format: `x-entitlement` and 
+`x-attributes`. The former one shows the entitlement values space separated, 
+similar to the `scope` field. The `x-attributes` provides additional 
+"raw" information obtained through the authentication framework. For instance
+all SAML attributes released are placed in this `x-attributes` field. They 
+can contain for instance an email address or display name.
 
-An example RS that uses this protocol written in PHP is available 
-[here](https://github.com/fkooman/php-oauth-example-rs). As this is so simple, 
-it should be straightforward to implement this token verification in any 
-language.
-
-# Clients
-Clients can also verify the access token and retrieve more information about
-the resource owner. It is the same API as 
-[used by Google](https://developers.google.com/accounts/docs/OAuth2Login#validatingtoken). 
-However, this endpoint is no replacement for proper 
-authentication at the service. One SHOULD NOT use the OAuth authorization 
-server to authenticate users! The only clients that SHOULD ever use this 
-endpoint are "user-agent-based-applications" as defined in the OAuth 
-specification, i.e.: applications written in HTML, JavaScript and CSS where the 
-endpoint is used to retrieve information from the authenticated user to 
-customize the application view.
-
-If clients use the access token verification endpoint they should make sure 
-that the `client_id` field or its alias `audience` matches the OAuth client ID
-they registered at the service.
+A library written in PHP to access the introspection endpoint is available 
+[here](https://github.com/fkooman/php-oauth-libs-rs).
 
 # Resource Owner Data
-Whenever a resource owner successfully authenticates, the attributes belonging
-to that user are stored in the database. This is done to give the information
-to registered clients and to resource servers that have a valid access token.
+Whenever a resource owner successfully authenticates using some of the supported
+authentication mechanisms, the attributes belonging to that user are stored in 
+the database. This is done to give the information to registered clients and to 
+resource servers that have a valid access token.
 
 Care should be taken in making sure that only the attributes that are needed
 for a correct service operation are provided as attributes. Also, this data, 
