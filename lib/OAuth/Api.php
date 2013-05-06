@@ -172,6 +172,13 @@ class Api
                 }
             });
 
+            $request->matchRest("GET", "/stats/", function() use ($request, $response, $storage, $rs) {
+                $rs->requireScope("applications");
+                $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
+                $data = $storage->getStats();
+                $response->setContent(Json::enc($data));
+            });
+
             $request->matchRest("PUT", "/applications/:id", function($id) use ($request, $response, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");

@@ -294,6 +294,31 @@ class PdoOAuthStorage implements IOAuthStorage
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getStats()
+    {
+        $data = array();
+
+        // determine number of valid access tokens per client/user
+        $stmt = $this->_pdo->prepare("SELECT client_id, COUNT(resource_owner_id) AS active_tokens FROM AccessToken GROUP BY client_id");
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($result as $r) {
+            $data[$r['client_id']]['active_access_tokens'] = $r['active_tokens'];
+        }
+
+        // determine number of consents per client/user
+        $stmt = $this->_pdo->prepare("SELECT client_id, COUNT(resource_owner_id) AS consent_given FROM Approval GROUP BY client_id");
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($result as $r) {
+            $data[$r['client_id']]['consent_given'] = $r['consent_given'];
+        }
+
+        return $data;
+    }
+
     public function getChangeInfo()
     {
         $stmt = $this->_pdo->prepare("SELECT MAX(patch_number) AS patch_number, description FROM db_changelog WHERE patch_number IS NOT NULL");
