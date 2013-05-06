@@ -1,0 +1,13 @@
+# active access tokens
+SELECT 
+    client_id, COUNT(resource_owner_id)
+FROM
+    AccessToken
+GROUP BY client_id
+
+# given consent (not necessarily active access tokens)
+SELECT 
+    client_id, COUNT(resource_owner_id)
+FROM
+    Approval
+GROUP BY client_id;
