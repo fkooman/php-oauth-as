@@ -69,7 +69,7 @@ class TokenIntrospection
     }
 
     /**
-     * Implementation of https://tools.ietf.org/html/draft-richer-oauth-introspection-03
+     * Implementation of https://tools.ietf.org/html/draft-richer-oauth-introspection
      */
     private function _introspectToken(array $param)
     {
