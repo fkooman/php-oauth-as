@@ -36,6 +36,12 @@ class Token
 
         $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
         $this->_storage = new $oauthStorageBackend($this->_config);
+
+        // occasionally delete expired access tokens and authorization codes
+        if (3 === rand(0,5)) {
+            $this->_storage->deleteExpiredAccessTokens();
+            $this->_storage->deleteExpiredAuthorizationCodes();
+        }
     }
 
     public function handleRequest(HttpRequest $request)
