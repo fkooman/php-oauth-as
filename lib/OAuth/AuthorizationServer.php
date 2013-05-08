@@ -180,27 +180,6 @@ class AuthorizationServer
         }
     }
 
-    public function tokenInfo(array $get)
-    {
-        $token = self::getParameter($get, 'access_token');
-        if (NULL === $token) {
-            throw new TokenInfoException("invalid_token", "the token parameter is missing");
-        }
-        $accessToken = $this->_storage->getAccessToken($token);
-        if (FALSE === $accessToken) {
-            throw new TokenInfoException("invalid_token", "the token was not found");
-        }
-
-        if (time() > $accessToken['issue_time'] + $accessToken['expires_in']) {
-            throw new TokenInfoException("invalid_token", "the token expired");
-        }
-
-        $resourceOwner = $this->_storage->getResourceOwner($accessToken['resource_owner_id']);
-        $accessToken['resource_owner_attributes'] = Json::dec($resourceOwner['attributes']);
-
-        return $accessToken;
-    }
-
     public function token(array $post, $user = NULL, $pass = NULL)
     {
         // exchange authorization code for access token
