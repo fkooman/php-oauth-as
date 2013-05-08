@@ -15,9 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once 'lib/SplClassLoader.php';
-$c1 =  new SplClassLoader("OAuth", "lib");
-$c1->register();
+require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "_autoload.php";
 
 use \OAuth\Scope as Scope;
 use \OAuth\ScopeException as ScopeException;

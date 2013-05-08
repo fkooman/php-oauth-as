@@ -95,7 +95,7 @@ class TokenIntrospection
             $r['client_id'] = $accessToken['client_id'];
             $r['sub'] = $accessToken['resource_owner_id'];
             $r['token_type'] = 'bearer';
-            
+
             // as long as we have no RS registration we cannot set the audience...
             // $response['aud'] = 'foo';
 

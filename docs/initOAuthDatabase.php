@@ -1,10 +1,6 @@
 <?php
 
-require_once 'lib/SplClassLoader.php';
-$c1 = new SplClassLoader("RestService", "extlib/php-rest-service/lib");
-$c1->register();
-$c2 =  new SplClassLoader("OAuth", "lib");
-$c2->register();
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "_autoload.php";
 
 use \RestService\Utils\Config as Config;
 use \OAuth\PdoOAuthStorage as PdoOAuthStorage;
