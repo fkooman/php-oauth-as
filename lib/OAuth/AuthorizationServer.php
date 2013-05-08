@@ -41,12 +41,12 @@ class AuthorizationServer
     public function authorize(IResourceOwner $resourceOwner, array $get)
     {
         try {
-            $clientId     = self::getParameter($get, 'client_id');
-            $responseType = self::getParameter($get, 'response_type');
-            $redirectUri  = self::getParameter($get, 'redirect_uri');
+            $clientId     = Utils::getParameter($get, 'client_id');
+            $responseType = Utils::getParameter($get, 'response_type');
+            $redirectUri  = Utils::getParameter($get, 'redirect_uri');
             // FIXME: scope can never be empty, if the client requests no scope we should have a default scope!
-            $scope        = new Scope(self::getParameter($get, 'scope'));
-            $state        = self::getParameter($get, 'state');
+            $scope        = new Scope(Utils::getParameter($get, 'scope'));
+            $state        = Utils::getParameter($get, 'state');
 
             if (NULL === $clientId) {
                 throw new ResourceOwnerException('client_id missing');
@@ -93,7 +93,7 @@ class AuthorizationServer
                 if ("token" === $responseType) {
                     // implicit grant
                     // FIXME: return existing access token if it exists for this exact client, resource owner and scope?
-                    $accessToken = self::randomHex(16);
+                    $accessToken = Utils::randomHex(16);
                     $this->_storage->storeAccessToken($accessToken, time(), $clientId, $resourceOwner->getResourceOwnerId(), $scope->getScope(), $this->_c->getValue('accessTokenExpiry'));
                     $token = array("access_token" => $accessToken,
                                    "expires_in" => $this->_c->getValue('accessTokenExpiry'),
@@ -111,7 +111,7 @@ class AuthorizationServer
                     return $ar;
                 } else {
                     // authorization code grant
-                    $authorizationCode = self::randomHex(16);
+                    $authorizationCode = Utils::randomHex(16);
                     $this->_storage->storeAuthorizationCode($authorizationCode, $resourceOwner->getResourceOwnerId(), time(), $clientId, $redirectUri, $scope->getScope());
                     $token = array("code" => $authorizationCode);
                     if (NULL !== $state) {
@@ -132,19 +132,19 @@ class AuthorizationServer
     public function approve(IResourceOwner $resourceOwner, array $get, array $post)
     {
         try {
-            $clientId     = self::getParameter($get, 'client_id');
-            $responseType = self::getParameter($get, 'response_type');
-            $redirectUri  = self::getParameter($get, 'redirect_uri');
-            $scope        = new Scope(self::getParameter($get, 'scope'));
-            $state        = self::getParameter($get, 'state');
+            $clientId     = Utils::getParameter($get, 'client_id');
+            $responseType = Utils::getParameter($get, 'response_type');
+            $redirectUri  = Utils::getParameter($get, 'redirect_uri');
+            $scope        = new Scope(Utils::getParameter($get, 'scope'));
+            $state        = Utils::getParameter($get, 'state');
 
             $result = $this->authorize($resourceOwner, $get);
             if (AuthorizeResult::ASK_APPROVAL !== $result->getAction()) {
                 return $result;
             }
 
-            $postScope = new Scope(self::getParameter($post, 'scope'));
-            $approval = self::getParameter($post, 'approval');
+            $postScope = new Scope(Utils::getParameter($post, 'scope'));
+            $approval = Utils::getParameter($post, 'approval');
 
             // FIXME: are we sure this client is always valid?
             $client = $this->_storage->getClient($clientId);
@@ -158,7 +158,7 @@ class AuthorizationServer
                 $approvedScope = $this->_storage->getApprovalByResourceOwnerId($clientId, $resourceOwner->getResourceOwnerId());
                 if (FALSE === $approvedScope) {
                     // no approved scope stored yet, new entry
-                    $refreshToken = ("code" === $responseType) ? self::randomHex(16) : NULL;
+                    $refreshToken = ("code" === $responseType) ? Utils::randomHex(16) : NULL;
                     $this->_storage->addApproval($clientId, $resourceOwner->getResourceOwnerId(), $postScope->getScope(), $refreshToken);
                 } elseif (!$postScope->isSubsetOf(new Scope($approvedScope['scope']))) {
                     // not a subset, merge and store the new one
@@ -178,150 +178,6 @@ class AuthorizationServer
         } catch (ScopeException $e) {
             throw new ClientException("invalid_scope", "malformed scope", $client, $state);
         }
-    }
-
-    public function token(array $post, $user = NULL, $pass = NULL)
-    {
-        // exchange authorization code for access token
-        $grantType    = self::getParameter($post, 'grant_type');
-        $code         = self::getParameter($post, 'code');
-        $redirectUri  = self::getParameter($post, 'redirect_uri');
-        $refreshToken = self::getParameter($post, 'refresh_token');
-        $token        = self::getParameter($post, 'token');
-        $clientId     = self::getParameter($post, 'client_id');
-        $scope        = self::getParameter($post, 'scope');
-
-        if (NULL !== $user && !empty($user) && NULL !== $pass && !empty($pass)) {
-            // client provided authentication, it MUST be valid now...
-            $client = $this->_storage->getClient($user);
-            if (FALSE === $client) {
-                throw new TokenException("invalid_client", "client authentication failed");
-            }
-
-            // check pass
-            if ($pass !== $client['secret']) {
-                throw new TokenException("invalid_client", "client authentication failed");
-            }
-
-            // if client_id in POST is set, it must match the user
-            if (NULL !== $clientId && $clientId !== $user) {
-                throw new TokenException("invalid_grant", "client_id inconsistency: authenticating user must match POST body client_id");
-            }
-            $hasAuthenticated = TRUE;
-        } else {
-            // client provided no authentication, client_id must be in POST body
-            if (NULL === $clientId || empty($clientId)) {
-                throw new TokenException("invalid_request", "no client authentication used nor client_id POST parameter");
-            }
-            $client = $this->_storage->getClient($clientId);
-            if (FALSE === $client) {
-                throw new TokenException("invalid_client", "client identity could not be established");
-            }
-
-            $hasAuthenticated = FALSE;
-        }
-
-        if ("user_agent_based_application" === $client['type']) {
-            throw new TokenException("unauthorized_client", "this client type is not allowed to use the token endpoint");
-        }
-
-        if ("web_application" === $client['type'] && !$hasAuthenticated) {
-            // web_application type MUST have authenticated
-            throw new TokenException("invalid_client", "client authentication failed");
-        }
-
-        if (NULL === $grantType) {
-            throw new TokenException("invalid_request", "the grant_type parameter is missing");
-        }
-
-        switch ($grantType) {
-            case "authorization_code":
-                if (NULL === $code) {
-                    throw new TokenException("invalid_request", "the code parameter is missing");
-                }
-                // If the redirect_uri was present in the authorize request, it MUST also be there
-                // in the token request. If it was not there in authorize request, it MUST NOT be
-                // there in the token request (this is not explicit in the spec!)
-                $result = $this->_storage->getAuthorizationCode($client['id'], $code, $redirectUri);
-                if (FALSE === $result) {
-                    throw new TokenException("invalid_grant", "the authorization code was not found");
-                }
-                if (time() > $result['issue_time'] + 600) {
-                    throw new TokenException("invalid_grant", "the authorization code expired");
-                }
-
-                // we MUST be able to delete the authorization code, otherwise it was used before
-                if (FALSE === $this->_storage->deleteAuthorizationCode($client['id'], $code, $redirectUri)) {
-                    // check to prevent deletion race condition
-                    throw new TokenException("invalid_grant", "this authorization code grant was already used");
-                }
-
-                $approval = $this->_storage->getApprovalByResourceOwnerId($client['id'], $result['resource_owner_id']);
-
-                $token = array();
-                $token['access_token'] = self::randomHex(16);
-                $token['expires_in'] = $this->_c->getValue('accessTokenExpiry');
-                // we always grant the scope the user authorized, no further restrictions here...
-                // FIXME: the merging of authorized scopes in the authorize function is a bit of a mess!
-                // we should deal with that there and come up with a good solution...
-                $token['scope'] = $result['scope'];
-                $token['refresh_token'] = $approval['refresh_token'];
-                $token['token_type'] = "bearer";
-                $this->_storage->storeAccessToken($token['access_token'], time(), $client['id'], $result['resource_owner_id'], $token['scope'], $token['expires_in']);
-                break;
-
-            case "refresh_token":
-                if (NULL === $refreshToken) {
-                    throw new TokenException("invalid_request", "the refresh_token parameter is missing");
-                }
-                $result = $this->_storage->getApprovalByRefreshToken($client['id'], $refreshToken);
-                if (FALSE === $result) {
-                    throw new TokenException("invalid_grant", "the refresh_token was not found");
-                }
-
-                $token = array();
-                $token['access_token'] = self::randomHex(16);
-                $token['expires_in'] = $this->_c->getValue('accessTokenExpiry');
-                if (NULL !== $scope) {
-                    // the client wants to obtain a specific scope
-                    $requestedScope = new Scope($scope);
-                    $authorizedScope = new Scope($result['scope']);
-                    if ($requestedScope->isSubsetOf($authorizedScope)) {
-                        // if it is a subset of the authorized scope we honor that
-                        $token['scope'] = $requestedScope->getScope();
-                    } else {
-                        // if not the client gets the authorized scope
-                        $token['scope'] = $result['scope'];
-                    }
-                } else {
-                    $token['scope'] = $result['scope'];
-                }
-
-                $token['token_type'] = "bearer";
-                $this->_storage->storeAccessToken($token['access_token'], time(), $client['id'], $result['resource_owner_id'], $token['scope'], $token['expires_in']);
-                break;
-
-            default:
-                throw new TokenException("unsupported_grant_type", "the requested grant type is not supported");
-        }
-
-        return $token;
-    }
-
-    public static function getParameter(array $parameters, $key)
-    {
-        return (array_key_exists($key, $parameters) && !empty($parameters[$key])) ? $parameters[$key] : NULL;
-    }
-
-    public static function randomHex($len = 16)
-    {
-        $randomString = bin2hex(openssl_random_pseudo_bytes($len, $strong));
-        // @codeCoverageIgnoreStart
-        if (FALSE === $strong) {
-            throw new Exception("unable to securely generate random string");
-        }
-        // @codeCoverageIgnoreEnd
-        return $randomString;
     }
 
 }

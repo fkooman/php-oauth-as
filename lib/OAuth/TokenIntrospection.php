@@ -75,7 +75,7 @@ class TokenIntrospection
     {
         $r = array();
 
-        $token = AuthorizationServer::getParameter($param, 'token');
+        $token = Utils::getParameter($param, 'token');
         if (NULL === $token) {
             throw new TokenIntrospectionException("invalid_token", "the token parameter is missing");
         }

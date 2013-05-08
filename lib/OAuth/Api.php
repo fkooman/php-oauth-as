@@ -76,7 +76,7 @@ class Api
                 if (!$requestedScope->isSubSetOf($clientAllowedScope)) {
                     throw new ApiException("invalid_request", "invalid scope for this client");
                 }
-                $refreshToken = (array_key_exists("refresh_token", $data) && $data['refresh_token']) ? AuthorizationServer::randomHex(16) : NULL;
+                $refreshToken = (array_key_exists("refresh_token", $data) && $data['refresh_token']) ? Utils::randomHex(16) : NULL;
 
                 // check to see if an authorization for this client/resource_owner already exists
                 if (FALSE === $storage->getApprovalByResourceOwnerId($clientId, $rs->getResourceOwnerId())) {
