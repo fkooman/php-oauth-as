@@ -44,6 +44,6 @@ interface IOAuthStorage
     public function updateApproval           ($clientId, $resourceOwnerId, $scope);
     public function deleteApproval           ($clientId, $resourceOwnerId);
 
-    public function updateResourceOwner      ($resourceOwnerId, $resourceOwnerAttributes);
+    public function updateResourceOwner      (IResourceOwner $resourceOwner);
     public function getResourceOwner         ($resourceOwnerId);
 }

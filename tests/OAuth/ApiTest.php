@@ -18,6 +18,8 @@
 require_once 'OAuthHelper.php';
 
 use \OAuth\Api as Api;
+use \OAuth\MockResourceOwner as MockResourceOwner;
+
 use \RestService\Http\HttpRequest as HttpRequest;
 use \RestService\Utils\Json as Json;
 
@@ -35,7 +37,14 @@ class ApiTest extends OAuthHelper
         $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
         $storage = new $oauthStorageBackend($this->_config);
 
-        $storage->updateResourceOwner('fkooman', NULL);
+        $resourceOwner = array(
+            "id" => "fkooman",
+            "display_name" => "François Kooman",
+            "entitlements" => array(),
+            "attributes" => array()
+        );
+        $storage->updateResourceOwner(new MockResourceOwner($resourceOwner));
+
         $storage->addApproval('testclient', 'fkooman', 'read', NULL);
         $storage->storeAccessToken('12345abc', time(), 'testcodeclient', 'fkooman', 'authorizations', 3600);
     }

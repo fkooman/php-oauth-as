@@ -19,6 +19,7 @@ require_once 'OAuthHelper.php';
 
 use \RestService\Http\HttpRequest as HttpRequest;
 use \OAuth\Token as Token;
+use \OAuth\MockResourceOwner as MockResourceOwner;
 
 class TokenTest extends OAuthHelper
 {
@@ -29,7 +30,14 @@ class TokenTest extends OAuthHelper
         $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
         $storage = new $oauthStorageBackend($this->_config);
 
-        $storage->updateResourceOwner('fkooman', NULL);
+        $resourceOwner = array(
+            "id" => "fkooman",
+            "display_name" => "François Kooman",
+            "entitlements" => array(),
+            "attributes" => array()
+        );
+        $storage->updateResourceOwner(new MockResourceOwner($resourceOwner));
+
         $storage->addApproval('testcodeclient', 'fkooman', 'read write foo', 'r3fr3sh');
         $storage->addApproval('testnativeclient', 'fkooman', 'read', 'n4t1v3r3fr3sh');
         $storage->storeAuthorizationCode("4uth0r1z4t10n", "fkooman", time(), "testcodeclient", NULL, "read");

@@ -18,8 +18,8 @@
 require_once 'OAuthHelper.php';
 
 use \RestService\Http\HttpRequest as HttpRequest;
-use \RestService\Utils\Json as Json;
 use \OAuth\TokenIntrospection as TokenIntrospection;
+use \OAuth\MockResourceOwner as MockResourceOwner;
 
 class TokenIntrospectionTest extends OAuthHelper
 {
@@ -30,14 +30,21 @@ class TokenIntrospectionTest extends OAuthHelper
         $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
         $storage = new $oauthStorageBackend($this->_config);
 
-        $attributes = array (
-            "eduPersonEntitlement" => array (
-                "urn:x-foo:service:access",
-                "urn:x-bar:privilege:admin"
-            ),
+        $resourceOwnerOne = array(
+            "id" => "fkooman",
+            "display_name" => "François Kooman",
+            "entitlements" => array ("urn:x-foo:service:access", "urn:x-bar:privilege:admin"),
+            "attributes" => array()
         );
-        $storage->updateResourceOwner('fkooman', Json::enc($attributes));
-        $storage->updateResourceOwner('frko', NULL);
+        $resourceOwnerTwo = array(
+            "id" => "frko",
+            "display_name" => "Fr. Ko.",
+            "entitlements" => array (),
+            "attributes" => array()
+        );
+
+        $storage->updateResourceOwner(new MockResourceOwner($resourceOwnerOne));
+        $storage->updateResourceOwner(new MockResourceOwner($resourceOwnerTwo));
 
         $storage->storeAccessToken("foo", time(), "testclient", "fkooman", "foo bar", 1234);
         $storage->storeAccessToken("bar", time(), "testclient", "frko", "a b c", 1234);
@@ -50,7 +57,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->_config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin","x-attributes":{"eduPersonEntitlement":\["urn:x-foo:service:access","urn:x-bar:privilege:admin"\]}}|', $response->getContent());
+        $this->assertRegexp('|{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin"}|', $response->getContent());
     }
 
     public function testPostTokenIntrospection()
@@ -60,7 +67,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->_config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin","x-attributes":{"eduPersonEntitlement":\["urn:x-foo:service:access","urn:x-bar:privilege:admin"\]}}', $response->getContent());
+        $this->assertRegexp('{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin"}', $response->getContent());
     }
 
     public function testPostTokenIntrospectionNoEntitlement()

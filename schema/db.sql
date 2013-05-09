@@ -1,6 +1,7 @@
-CREATE TABLE IF NOT EXISTS ResourceOwner (
-    id VARCHAR(64) NOT NULL,
-    time INTEGER NOT NULL,
+CREATE TABLE IF NOT EXISTS resource_owner (
+    id VARCHAR(255) NOT NULL,
+    display_name TEXT DEFAULT NULL,
+    entitlements TEXT DEFAULT NULL,
     attributes TEXT DEFAULT NULL,
     PRIMARY KEY (id)
 );
@@ -30,7 +31,7 @@ CREATE TABLE IF NOT EXISTS AccessToken (
         REFERENCES Client (id)
         ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (resource_owner_id)
-        REFERENCES ResourceOwner (id)
+        REFERENCES resource_owner (id)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
   
@@ -44,7 +45,7 @@ CREATE TABLE IF NOT EXISTS Approval (
         ON UPDATE CASCADE ON DELETE CASCADE,
     UNIQUE (client_id , resource_owner_id),
     FOREIGN KEY (resource_owner_id)
-        REFERENCES ResourceOwner (id)
+        REFERENCES resource_owner (id)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -60,7 +61,7 @@ CREATE TABLE IF NOT EXISTS AuthorizationCode (
         REFERENCES Client (id)
         ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (resource_owner_id)
-        REFERENCES ResourceOwner (id)
+        REFERENCES resource_owner (id)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 

@@ -101,15 +101,16 @@ class TokenIntrospection
 
             // add proprietary "x-entitlement"
             $resourceOwner = $this->_storage->getResourceOwner($accessToken['resource_owner_id']);
-            if (isset($resourceOwner['attributes'])) {
-                $jsonAttr = Json::dec($resourceOwner['attributes']);
-                if (isset($jsonAttr['eduPersonEntitlement'])) {
-                    $entitlement = implode(" ", $jsonAttr['eduPersonEntitlement']);
-                    $r['x-entitlement'] = $entitlement;
+            if (isset($resourceOwner['entitlements'])) {
+                $e = Json::dec($resourceOwner['entitlements']);
+                if (0 !== count($e)) {
+                    $r['x-entitlement'] = implode(" ", $e);
                 }
-                // add proprietary "x-attributes" if attributes are available
-                if (is_array($jsonAttr) && 0 !== count($jsonAttr)) {
-                    $r['x-attributes'] = $jsonAttr;
+            }
+            if (isset($resourceOwner['attributes'])) {
+                $e = Json::dec($resourceOwner['attributes']);
+                if (0 !== count($e)) {
+                    $r['x-attributes'] = $e;
                 }
             }
         }

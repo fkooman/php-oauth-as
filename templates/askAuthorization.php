@@ -15,7 +15,7 @@
       <div id="container">
 
         <div id="userInfo">
-            You are <strong title="<?php echo $_e($resourceOwnerId); ?>"><?php echo $_e($resourceOwnerCn); ?></strong>
+            You are <strong title="<?php echo $_e($resourceOwnerId); ?>"><?php echo $_e($resourceOwnerDisplayName); ?></strong>
         </div>
 
         <form method="post" action="">

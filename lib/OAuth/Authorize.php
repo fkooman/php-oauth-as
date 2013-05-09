@@ -21,7 +21,6 @@ use \RestService\Utils\Config as Config;
 use \RestService\Http\HttpRequest as HttpRequest;
 use \RestService\Http\HttpResponse as HttpResponse;
 use \RestService\Utils\Logger as Logger;
-use \RestService\Utils\Json as Json;
 use \RestService\Http\Uri as Uri;
 
 class Authorize
@@ -54,10 +53,9 @@ class Authorize
                         if (AuthorizeResult::ASK_APPROVAL === $result->getAction()) {
                             // FIXME: should this be true also for the POST?
                             $response->setHeader("X-Frame-Options", "deny");
-                            $resourceOwnerCnArray = $this->_resourceOwner->getAttribute("cn");
                             $tplData = array(
-                                "resourceOwnerId" => $this->_resourceOwner->getResourceOwnerId(),
-                                "resourceOwnerCn" => $resourceOwnerCnArray[0],
+                                "resourceOwnerId" => $this->_resourceOwner->getId(),
+                                "resourceOwnerDisplayName" => $this->_resourceOwner->getDisplayName(),
                                 "config" => $this->_config,
                                 "client" => $result->getClient(),
                                 "scope" => $result->getScope(),
@@ -180,9 +178,9 @@ class Authorize
                 throw new ClientException("invalid_scope", "not authorized to request this scope", $client, $state);
             }
 
-            $this->_storage->updateResourceOwner($resourceOwner->getResourceOwnerId(), Json::enc($resourceOwner->getAttributes()));
+            $this->_storage->updateResourceOwner($resourceOwner);
 
-            $approvedScope = $this->_storage->getApprovalByResourceOwnerId($clientId, $resourceOwner->getResourceOwnerId());
+            $approvedScope = $this->_storage->getApprovalByResourceOwnerId($clientId, $resourceOwner->getId());
             if (FALSE === $approvedScope || FALSE === $scope->isSubsetOf(new Scope($approvedScope['scope']))) {
                 $ar = new AuthorizeResult(AuthorizeResult::ASK_APPROVAL);
                 $ar->setClient(ClientRegistration::fromArray($client));
@@ -194,7 +192,7 @@ class Authorize
                     // implicit grant
                     // FIXME: return existing access token if it exists for this exact client, resource owner and scope?
                     $accessToken = Utils::randomHex(16);
-                    $this->_storage->storeAccessToken($accessToken, time(), $clientId, $resourceOwner->getResourceOwnerId(), $scope->getScope(), $this->_config->getValue('accessTokenExpiry'));
+                    $this->_storage->storeAccessToken($accessToken, time(), $clientId, $resourceOwner->getId(), $scope->getScope(), $this->_config->getValue('accessTokenExpiry'));
                     $token = array("access_token" => $accessToken,
                                    "expires_in" => $this->_config->getValue('accessTokenExpiry'),
                                    "token_type" => "bearer");
@@ -212,7 +210,7 @@ class Authorize
                 } else {
                     // authorization code grant
                     $authorizationCode = Utils::randomHex(16);
-                    $this->_storage->storeAuthorizationCode($authorizationCode, $resourceOwner->getResourceOwnerId(), time(), $clientId, $redirectUri, $scope->getScope());
+                    $this->_storage->storeAuthorizationCode($authorizationCode, $resourceOwner->getId(), time(), $clientId, $redirectUri, $scope->getScope());
                     $token = array("code" => $authorizationCode);
                     if (NULL !== $state) {
                         $token += array ("state" => $state);
@@ -255,16 +253,16 @@ class Authorize
                     throw new ClientException("invalid_scope", "approved scope is not a subset of requested scope", $client, $state);
                 }
 
-                $approvedScope = $this->_storage->getApprovalByResourceOwnerId($clientId, $resourceOwner->getResourceOwnerId());
+                $approvedScope = $this->_storage->getApprovalByResourceOwnerId($clientId, $resourceOwner->getId());
                 if (FALSE === $approvedScope) {
                     // no approved scope stored yet, new entry
                     $refreshToken = ("code" === $responseType) ? Utils::randomHex(16) : NULL;
-                    $this->_storage->addApproval($clientId, $resourceOwner->getResourceOwnerId(), $postScope->getScope(), $refreshToken);
+                    $this->_storage->addApproval($clientId, $resourceOwner->getId(), $postScope->getScope(), $refreshToken);
                 } elseif (!$postScope->isSubsetOf(new Scope($approvedScope['scope']))) {
                     // not a subset, merge and store the new one
                     $mergedScopes = clone $postScope;
                     $mergedScopes->mergeWith(new Scope($approvedScope['scope']));
-                    $this->_storage->updateApproval($clientId, $resourceOwner->getResourceOwnerId(), $mergedScopes->getScope());
+                    $this->_storage->updateApproval($clientId, $resourceOwner->getId(), $mergedScopes->getScope());
                 } else {
                     // subset, approval for superset of scope already exists, do nothing
                 }
