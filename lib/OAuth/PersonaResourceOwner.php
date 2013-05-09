@@ -50,7 +50,7 @@ class PersonaResourceOwner implements IResourceOwner
         return $this->getId();
     }
 
-    public function getEntitlement()
+    public function getEntitlements()
     {
         $attributesFile = $this->_c->getSectionValue('PersonaResourceOwner', 'entitlementsFile');
         $fileContents = @file_get_contents($attributesFile);

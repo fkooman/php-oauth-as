@@ -37,14 +37,39 @@ class SspResourceOwner implements IResourceOwner
         $this->_ssp = new SimpleSAML_Auth_Simple($this->_c->getSectionValue('SspResourceOwner', 'authSource'));
     }
 
-    public function setHint($resourceOwnerIdHint = NULL)
+    public function getId()
     {
-        // this resource owner class does not support hinting
+        $this->_authenticateUser();
+
+        $nameId = $this->_ssp->getAuthData("saml:sp:NameID");
+        if ("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" !== $nameId['Format']) {
+            throw new SspResourceOwnerException("NameID format MUST be 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent', but is '" . $nameId['Format'] . "'");
+        }
+
+        return $nameId['Value'];
     }
 
-    private function _authenticateUser()
+    public function getDisplayName()
     {
-        $this->_ssp->requireAuth(array("saml:NameIDPolicy" => "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"));
+        $attr = $this->getAttributes();
+        if (isset($attr['displayName']) && is_array($attr['displayName'])) {
+            return $attr['displayName'][0];
+        }
+        if (isset($attr['cn']) && is_array($attr['cn'])) {
+            return $attr['cn'][0];
+        }
+
+        return $this->getId();
+    }
+
+    public function getEntitlements()
+    {
+        $attr = $this->getAttributes();
+        if (isset($attr['eduPersonEntitlement']) && is_array($attr['eduPersonEntitlement'])) {
+            return $attr['eduPersonEntitlement'];
+        }
+
+        return array();
     }
 
     public function getAttributes()
@@ -54,28 +79,9 @@ class SspResourceOwner implements IResourceOwner
         return $this->_ssp->getAttributes();
     }
 
-    public function getAttribute($key)
+    private function _authenticateUser()
     {
-        $attributes = $this->getAttributes();
-
-        return array_key_exists($key, $attributes) ? $attributes[$key] : NULL;
-    }
-
-    public function getResourceOwnerId()
-    {
-        $this->_authenticateUser();
-        $nameId = $this->_ssp->getAuthData("saml:sp:NameID");
-        if ("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" !== $nameId['Format']) {
-            throw new SspResourceOwnerException("NameID format MUST be 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent', but is '" . $nameId['Format'] . "'");
-        }
-
-        return $nameId['Value'];
-    }
-
-    /* FIXME: DEPRECATED */
-    public function getEntitlement()
-    {
-        return $this->getAttribute("eduPersonEntitlement");
+        $this->_ssp->requireAuth(array("saml:NameIDPolicy" => "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"));
     }
 
 }

@@ -38,7 +38,7 @@ class DummyResourceOwner implements IResourceOwner
         return $this->_c->getSectionValue('DummyResourceOwner', 'displayName');
     }
 
-    public function getEntitlement()
+    public function getEntitlements()
     {
         return $this->_c->getSectionValue('DummyResourceOwner', 'entitlements');
     }
