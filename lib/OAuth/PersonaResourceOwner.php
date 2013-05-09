@@ -23,9 +23,8 @@ use \RestService\Utils\Json as Json;
 
 class PersonaResourceOwner implements IResourceOwner
 {
-    private $_config;
+    private $_c;
     private $_verifier;
-    private $_resourceOwnerIdHint;
 
     public function __construct(Config $c)
     {
@@ -40,52 +39,37 @@ class PersonaResourceOwner implements IResourceOwner
         $this->_verifier = new PersonaVerifier($this->_c->getSectionValue('PersonaResourceOwner', 'verifierAddress'));
     }
 
-    public function setHint($resourceOwnerIdHint = NULL)
+    public function getId()
     {
-        $this->_resourceOwnerIdHint = $resourceOwnerIdHint;
+        return $this->_verifier->authenticate();
     }
 
-    public function getAttributes()
+    public function getDisplayName()
     {
-        $attributesFile = $this->_c->getSectionValue('PersonaResourceOwner', 'attributesFile');
+        // we just return the email address
+        return $this->getId();
+    }
+
+    public function getEntitlement()
+    {
+        $attributesFile = $this->_c->getSectionValue('PersonaResourceOwner', 'entitlementsFile');
         $fileContents = @file_get_contents($attributesFile);
         if (FALSE === $fileContents) {
-            throw new PersonaResourceOwnerException("unable to read attributes file");
+            // no entitlements file, so no entitlements
+            return array();
         }
-        $attributes = Json::dec($fileContents);
-        if (is_array($attributes) && array_key_exists($this->getResourceOwnerId(), $attributes)) {
-            return $attributes[$this->getResourceOwnerId()];
+        $entitlements = Json::dec($fileContents);
+        if (is_array($entitlements) && isset($entitlements[$this->getId()]) && is_array($entitlements[$this->getId()])) {
+            return $entitlements[$this->getId()];
         }
 
         return array();
     }
 
-    public function getAttribute($key)
+    public function getAttributes()
     {
-        $attributes = $this->getAttributes();
-        if (array_key_exists($key, $attributes)) {
-            return $attributes[$key];
-        }
-
-        // "cn" is a special attribute which is used in the OAuth consent
-        // dialog, if it is not available from the file just use the Persona
-        // email address
-        if ("cn" === $key) {
-            return array($this->getResourceOwnerId());
-        }
-
-        return NULL;
-    }
-
-    public function getResourceOwnerId()
-    {
-        return $this->_verifier->authenticate($this->_resourceOwnerIdHint);
-    }
-
-    /* FIXME: DEPRECATED */
-    public function getEntitlement()
-    {
-        return $this->getAttribute("eduPersonEntitlement");
+        // unsupported
+        return array();
     }
 
 }

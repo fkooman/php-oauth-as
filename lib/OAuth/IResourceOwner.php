@@ -19,11 +19,9 @@ namespace OAuth;
 
 interface IResourceOwner
 {
-    public function setHint                    ($resourceOwnerIdHint = NULL);
-    public function getAttributes              ();
-    public function getAttribute               ($key);
-    public function getResourceOwnerId         ();
+    public function getId();
+    public function getDisplayName();
+    public function getEntitlement();
+    public function getAttributes();
 
-    /* FIXME: DEPRECATED */
-    public function getEntitlement             ();
 }

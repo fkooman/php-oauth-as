@@ -40,52 +40,37 @@ class SimpleAuthResourceOwner implements IResourceOwner
         $this->_simpleAuth = new SimpleAuth();
     }
 
-    public function setHint($resourceOwnerIdHint = NULL)
+    public function getId()
     {
-        $this->_resourceOwnerIdHint = $resourceOwnerIdHint;
+        return $this->_simpleAuth->authenticate($this->_resourceOwnerIdHint);
     }
 
-    public function getAttributes()
+    public function getDisplayName()
     {
-        $attributesFile = $this->_c->getSectionValue('SimpleAuthResourceOwner', 'attributesFile');
+        // we just return the user names
+        return $this->getId();
+    }
+
+    public function getEntitlements()
+    {
+        $attributesFile = $this->_c->getSectionValue('SimpleAuthResourceOwner', 'entitlementsFile');
         $fileContents = @file_get_contents($attributesFile);
         if (FALSE === $fileContents) {
-            throw new SimpleAuthResourceOwnerException("unable to read attributes file");
+            // no entitlements file, so no entitlements
+            return array();
         }
-        $attributes = Json::dec($fileContents);
-        if (is_array($attributes) && array_key_exists($this->getResourceOwnerId(), $attributes)) {
-            return $attributes[$this->getResourceOwnerId()];
+        $entitlements = Json::dec($fileContents);
+        if (is_array($entitlements) && isset($entitlements[$this->getId()]) && is_array($entitlements[$this->getId()])) {
+            return $entitlements[$this->getId()];
         }
 
         return array();
     }
 
-    public function getAttribute($key)
+    public function getAttributes()
     {
-        $attributes = $this->getAttributes();
-        if (array_key_exists($key, $attributes)) {
-            return $attributes[$key];
-        }
-
-        // "cn" is a special attribute which is used in the OAuth consent
-        // dialog, if it is not available from the file just use the SimpleAuth
-        // userId
-        if ("cn" === $key) {
-            return array($this->getResourceOwnerId());
-        }
-
-        return NULL;
-    }
-
-    public function getResourceOwnerId()
-    {
-        return $this->_simpleAuth->authenticate($this->_resourceOwnerIdHint);
-    }
-
-    /* FIXME: DEPRECATED */
-    public function getEntitlement()
-    {
-        return $this->getAttribute("eduPersonEntitlement");
+        // unsupported
+        return array();
     }
 
 }

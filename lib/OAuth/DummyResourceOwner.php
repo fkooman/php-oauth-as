@@ -28,34 +28,25 @@ class DummyResourceOwner implements IResourceOwner
         $this->_c = $c;
     }
 
-    public function setHint($resourceOwnerIdHint = NULL)
+    public function getId()
     {
-        // this resource owner class does not support hinting
+        return $this->_c->getSectionValue('DummyResourceOwner', 'uid');
+    }
+
+    public function getDisplayName()
+    {
+        return $this->_c->getSectionValue('DummyResourceOwner', 'displayName');
+    }
+
+    public function getEntitlement()
+    {
+        return $this->_c->getSectionValue('DummyResourceOwner', 'entitlements');
     }
 
     public function getAttributes()
     {
-        $attributes = $this->_c->getSectionValues('DummyResourceOwnerAttributes', FALSE);
-
-        return (NULL !== $attributes) ? $attributes : array();
-    }
-
-    public function getAttribute($key)
-    {
-        $attributes = $this->getAttributes();
-
-        return array_key_exists($key, $attributes) ? $attributes[$key] : NULL;
-    }
-
-    public function getResourceOwnerId()
-    {
-        return $this->_c->getSectionValue('DummyResourceOwner', 'resourceOwnerId');
-    }
-
-    /* FIXME: DEPRECATED */
-    public function getEntitlement()
-    {
-        return $this->getAttribute("eduPersonEntitlement");
+        // unsupported
+        return array();
     }
 
 }

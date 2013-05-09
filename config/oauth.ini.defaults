@@ -58,33 +58,31 @@ persistentConnection = FALSE
 
 ; Dummy Configuration
 [DummyResourceOwner]
-resourceOwnerId = "1234-5678-9999"
-
-[DummyResourceOwnerAttributes]
-uid[]                  = "fkooman"
-cn[]                   = "François Kooman"
-eduPersonEntitlement[] = "urn:x-oauth:entitlement:applications"
-eduPersonEntitlement[] = "foo"
-eduPersonEntitlement[] = "bar"
+uid            = "fkooman"
+displayName    = "François Kooman"
+entitlements[] = "urn:x-oauth:entitlement:applications"
+entitlements[] = "urn:x-oauth:entitlement:administration"
 
 ; SimpleAuth configuration
 [SimpleAuthResourceOwner]
 simpleAuthPath = "/var/www/html/php-simple-auth"
 
-; file contains the statically configured attributes for SimpleAuth users
-; see included config/simpleAuthAttributes.json.example for an example. Copy 
-; this file to config/simpleAuthAttributes.json and modify it for your setup
-attributesFile = "/PATH/TO/APP/config/simpleAuthAttributes.json"
+; file contains entitlements for (some) SimpleAuth users. See included 
+; config/simpleAuthEntitlements.json.example for an example. Copy this file to 
+; config/simpleAuthEntitlements.json and modify it to set entitlements for 
+; user identifiers you want to give certain entitlements
+entitlementsFile = "/PATH/TO/APP/config/simpleAuthEntitlements.json"
 
 ; Mozilla Persona configuration
 [PersonaResourceOwner]
 personaPath   = "/var/www/html/php-browserid"
 verifierAddress = "https://verifier.login.persona.org/verify"
 
-; file contains the statically configured attributes for Persona users
-; see included config/personaAttributes.json.example for an example. Copy 
-; this file to config/personaAttributes.json and modify it for your setup
-attributesFile = "/PATH/TO/APP/config/personaAttributes.json"
+; file contains entitlements for (some) Persona users. See included 
+; config/personaEntitlements.json.example for an example. Copy this file to 
+; config/personaEntitlements.json and modify it to set entitlements for 
+; email addresses you want to give certain entitlements
+entitlementsFile = "/PATH/TO/APP/config/personaEntitlements.json"
 
 ; simpleSAMLphp configuration
 [SspResourceOwner]

@@ -1,0 +1,6 @@
+{
+    "fkooman@tuxed.net": [
+        "urn:x-oauth:entitlement:applications", 
+        "urn:x-oauth:entitlement:administration"
+    ]
+}
