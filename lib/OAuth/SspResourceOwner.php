@@ -41,12 +41,22 @@ class SspResourceOwner implements IResourceOwner
     {
         $this->_authenticateUser();
 
-        $nameId = $this->_ssp->getAuthData("saml:sp:NameID");
-        if ("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" !== $nameId['Format']) {
-            throw new SspResourceOwnerException("NameID format MUST be 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent', but is '" . $nameId['Format'] . "'");
-        }
+        $resourceOwnerIdAttribute = $this->_c->getSectionValue('SspResourceOwner', 'resourceOwnerIdAttribute', FALSE);
+        if (NULL === $resourceOwnerIdAttribute) {
+            $nameId = $this->_ssp->getAuthData("saml:sp:NameID");
+            if ("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" !== $nameId['Format']) {
+                throw new SspResourceOwnerException("NameID format MUST be 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent', but is '" . $nameId['Format'] . "'");
+            }
 
-        return $nameId['Value'];
+            return $nameId['Value'];
+        } else {
+            // use the attribute from resourceOwnerIdAttribute
+            $attr = $this->getAttributes();
+            if (isset($attr[$resourceOwnerIdAttribute]) && is_array($attr[$resourceOwnerIdAttribute])) {
+                return $attr[$resourceOwnerIdAttribute][0];
+            }
+            throw new SspResourceOwnerException(sprintf("attribute '%s' for resource owner identifier is not available", $resourceOwnerIdAttribute));
+        }
     }
 
     public function getDisplayName()
@@ -81,7 +91,12 @@ class SspResourceOwner implements IResourceOwner
 
     private function _authenticateUser()
     {
-        $this->_ssp->requireAuth(array("saml:NameIDPolicy" => "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"));
+        $resourceOwnerIdAttribute = $this->_c->getSectionValue('SspResourceOwner', 'resourceOwnerIdAttribute', FALSE);
+        if (NULL === $resourceOwnerIdAttribute) {
+            $this->_ssp->requireAuth(array("saml:NameIDPolicy" => "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"));
+        } else {
+            $this->_ssp->requireAuth();
+        }
     }
 
 }

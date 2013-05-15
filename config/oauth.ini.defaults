@@ -88,3 +88,7 @@ entitlementsFile = "/PATH/TO/APP/config/personaEntitlements.json"
 [SspResourceOwner]
 sspPath    = "/var/simplesamlphp"
 authSource = "default-sp"
+
+; if you want to use an attribute for the resource owner identifier instead of 
+; the persistent NameID value set it below
+;resourceOwnerIdAttribute = "eduPersonPrincipalName"
