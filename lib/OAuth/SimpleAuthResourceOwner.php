@@ -51,23 +51,23 @@ class SimpleAuthResourceOwner implements IResourceOwner
         return $this->getId();
     }
 
-    public function getEntitlements()
+    public function getEntitlement()
     {
-        $attributesFile = $this->_c->getSectionValue('SimpleAuthResourceOwner', 'entitlementsFile');
-        $fileContents = @file_get_contents($attributesFile);
+        $entitlementFile = $this->_c->getSectionValue('SimpleAuthResourceOwner', 'entitlementFile');
+        $fileContents = @file_get_contents($entitlementFile);
         if (FALSE === $fileContents) {
-            // no entitlements file, so no entitlements
+            // no entitlement file, so no entitlement
             return array();
         }
-        $entitlements = Json::dec($fileContents);
-        if (is_array($entitlements) && isset($entitlements[$this->getId()]) && is_array($entitlements[$this->getId()])) {
-            return $entitlements[$this->getId()];
+        $entitlement = Json::dec($fileContents);
+        if (is_array($entitlement) && isset($entitlement[$this->getId()]) && is_array($entitlement[$this->getId()])) {
+            return $entitlement[$this->getId()];
         }
 
         return array();
     }
 
-    public function getAttributes()
+    public function getExt()
     {
         // unsupported
         return array();

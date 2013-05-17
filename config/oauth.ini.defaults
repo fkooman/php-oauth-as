@@ -60,18 +60,18 @@ persistentConnection = FALSE
 [DummyResourceOwner]
 uid            = "fkooman"
 displayName    = "François Kooman"
-entitlements[] = "urn:x-oauth:entitlement:applications"
-entitlements[] = "urn:x-oauth:entitlement:administration"
+entitlement[] = "urn:x-oauth:entitlement:applications"
+entitlement[] = "urn:x-oauth:entitlement:administration"
 
 ; SimpleAuth configuration
 [SimpleAuthResourceOwner]
 simpleAuthPath = "/var/www/html/php-simple-auth"
 
 ; file contains entitlements for (some) SimpleAuth users. See included 
-; config/simpleAuthEntitlements.json.example for an example. Copy this file to 
-; config/simpleAuthEntitlements.json and modify it to set entitlements for 
+; config/simpleAuthEntitlement.json.example for an example. Copy this file to 
+; config/simpleAuthEntitlement.json and modify it to set entitlements for 
 ; user identifiers you want to give certain entitlements
-entitlementsFile = "/PATH/TO/APP/config/simpleAuthEntitlements.json"
+entitlementFile = "/PATH/TO/APP/config/simpleAuthEntitlement.json"
 
 ; Mozilla Persona configuration
 [PersonaResourceOwner]
@@ -79,10 +79,10 @@ personaPath   = "/var/www/html/php-browserid"
 verifierAddress = "https://verifier.login.persona.org/verify"
 
 ; file contains entitlements for (some) Persona users. See included 
-; config/personaEntitlements.json.example for an example. Copy this file to 
-; config/personaEntitlements.json and modify it to set entitlements for 
+; config/personaEntitlement.json.example for an example. Copy this file to 
+; config/personaEntitlement.json and modify it to set entitlements for 
 ; email addresses you want to give certain entitlements
-entitlementsFile = "/PATH/TO/APP/config/personaEntitlements.json"
+entitlementFile = "/PATH/TO/APP/config/personaEntitlement.json"
 
 ; simpleSAMLphp configuration
 [SspResourceOwner]

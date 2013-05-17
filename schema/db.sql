@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS resource_owner (
     id VARCHAR(255) NOT NULL,
     display_name TEXT DEFAULT NULL,
-    entitlements TEXT DEFAULT NULL,
-    attributes TEXT DEFAULT NULL,
+    entitlement TEXT DEFAULT NULL,
+    ext TEXT DEFAULT NULL,
     PRIMARY KEY (id)
 );
 

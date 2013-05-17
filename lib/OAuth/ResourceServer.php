@@ -25,7 +25,8 @@ class ResourceServer
     private $_entitlementEnforcement;
     private $_resourceOwnerId;
     private $_grantedScope;
-    private $_resourceOwnerAttributes;
+    private $_resourceOwnerEntitlement;
+    private $_resourceOwnerExt;
 
     public function __construct(IOAuthStorage $s)
     {
@@ -33,7 +34,8 @@ class ResourceServer
         $this->_entitlementEnforcement = TRUE;
         $this->_resourceOwnerId = NULL;
         $this->_grantedScope = NULL;
-        $this->_resourceOwnerAttributes = NULL;
+        $this->_resourceOwnerEntitlement = array();
+        $this->_resourceOwnerExt = array();
     }
 
     public function verifyAuthorizationHeader($authorizationHeader)
@@ -58,7 +60,8 @@ class ResourceServer
         $this->_resourceOwnerId = $token['resource_owner_id'];
         $this->_grantedScope = $token['scope'];
         $resourceOwner = $this->_storage->getResourceOwner($token['resource_owner_id']);
-        $this->_resourceOwnerAttributes = Json::dec($resourceOwner['attributes']);
+        $this->_resourceOwnerEntitlement = Json::dec($resourceOwner['entitlement']);
+        $this->_resourceOwnerExt = Json::dec($resourceOwner['ext']);
     }
 
     public function setEntitlementEnforcement($enforce = TRUE)
@@ -74,11 +77,7 @@ class ResourceServer
 
     public function getEntitlement()
     {
-        if (!array_key_exists('eduPersonEntitlement', $this->_resourceOwnerAttributes)) {
-            return array();
-        }
-
-        return $this->_resourceOwnerAttributes['eduPersonEntitlement'];
+        return $this->_resourceOwnerEntitlement;
     }
 
     public function hasScope($scope)
@@ -98,11 +97,7 @@ class ResourceServer
 
     public function hasEntitlement($entitlement)
     {
-        if (!array_key_exists('eduPersonEntitlement', $this->_resourceOwnerAttributes)) {
-            return FALSE;
-        }
-
-        return in_array($entitlement, $this->_resourceOwnerAttributes['eduPersonEntitlement']);
+        return in_array($entitlement, $this->_resourceOwnerEntitlement);
     }
 
     public function requireEntitlement($entitlement)
@@ -114,16 +109,16 @@ class ResourceServer
         }
     }
 
-    public function getAttributes()
+    public function getExt()
     {
-        return $this->_resourceOwnerAttributes;
+        return $this->_resourceOwnerExt;
     }
 
-    public function getAttribute($key)
+    public function getExtKey($key)
     {
-        $attributes = $this->getAttributes();
+        $ext = $this->getExt();
 
-        return array_key_exists($key, $attributes) ? $attributes[$key] : NULL;
+        return array_key_exists($key, $ext) ? $ext[$key] : NULL;
     }
 
 }

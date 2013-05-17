@@ -40,8 +40,8 @@ class ApiTest extends OAuthHelper
         $resourceOwner = array(
             "id" => "fkooman",
             "display_name" => "François Kooman",
-            "entitlements" => array(),
-            "attributes" => array()
+            "entitlement" => array(),
+            "ext" => array()
         );
         $storage->updateResourceOwner(new MockResourceOwner($resourceOwner));
 

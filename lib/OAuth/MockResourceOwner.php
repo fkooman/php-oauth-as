@@ -11,8 +11,8 @@ class MockResourceOwner implements IResourceOwner
         $this->_data = array();
         $this->_data['id'] = $resourceOwner['id'];
         $this->_data['display_name'] = $resourceOwner['display_name'];
-        $this->_data['entitlements'] = $resourceOwner['entitlements'];
-        $this->_data['attributes'] = $resourceOwner['attributes'];
+        $this->_data['entitlement'] = $resourceOwner['entitlement'];
+        $this->_data['ext'] = $resourceOwner['ext'];
     }
 
     public function getId()
@@ -26,15 +26,15 @@ class MockResourceOwner implements IResourceOwner
 
     }
 
-    public function getEntitlements()
+    public function getEntitlement()
     {
-        return $this->_data['entitlements'];
+        return $this->_data['entitlement'];
 
     }
 
-    public function getAttributes()
+    public function getExt()
     {
-        return $this->_data['attributes'];
+        return $this->_data['ext'];
 
     }
 

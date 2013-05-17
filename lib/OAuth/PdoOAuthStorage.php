@@ -269,20 +269,20 @@ class PdoOAuthStorage implements IOAuthStorage
     {
         $result = $this->getResourceOwner($resourceOwner->getId());
         if (FALSE === $result) {
-            $stmt = $this->_pdo->prepare("INSERT INTO resource_owner (id, display_name, entitlements, attributes) VALUES(:id, :display_name, :entitlements, :attributes)");
+            $stmt = $this->_pdo->prepare("INSERT INTO resource_owner (id, display_name, entitlement, ext) VALUES(:id, :display_name, :entitlement, :ext)");
             $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
             $stmt->bindValue(":display_name", $resourceOwner->getDisplayName(), PDO::PARAM_STR);
-            $stmt->bindValue(":entitlements", Json::enc($resourceOwner->getEntitlements()), PDO::PARAM_STR);
-            $stmt->bindValue(":attributes", Json::enc($resourceOwner->getAttributes()), PDO::PARAM_STR);
+            $stmt->bindValue(":entitlement", Json::enc($resourceOwner->getEntitlement()), PDO::PARAM_STR);
+            $stmt->bindValue(":ext", Json::enc($resourceOwner->getExt()), PDO::PARAM_STR);
             $stmt->execute();
 
            return 1 === $stmt->rowCount();
         } else {
-            $stmt = $this->_pdo->prepare("UPDATE resource_owner SET display_name = :display_name, entitlements = :entitlements, attributes = :attributes WHERE id = :id");
+            $stmt = $this->_pdo->prepare("UPDATE resource_owner SET display_name = :display_name, entitlement = :entitlement, ext = :ext WHERE id = :id");
             $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
             $stmt->bindValue(":display_name", $resourceOwner->getDisplayName(), PDO::PARAM_STR);
-            $stmt->bindValue(":entitlements", Json::enc($resourceOwner->getEntitlements()), PDO::PARAM_STR);
-            $stmt->bindValue(":attributes", Json::enc($resourceOwner->getAttributes()), PDO::PARAM_STR);
+            $stmt->bindValue(":entitlement", Json::enc($resourceOwner->getEntitlement()), PDO::PARAM_STR);
+            $stmt->bindValue(":ext", Json::enc($resourceOwner->getExt()), PDO::PARAM_STR);
             $stmt->execute();
 
             return 1 === $stmt->rowCount();
@@ -291,7 +291,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function getResourceOwner($resourceOwnerId)
     {
-        $stmt = $this->_pdo->prepare("SELECT id, display_name, entitlements, attributes FROM resource_owner WHERE id = :id");
+        $stmt = $this->_pdo->prepare("SELECT id, display_name, entitlement, ext FROM resource_owner WHERE id = :id");
         $stmt->bindValue(":id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
 

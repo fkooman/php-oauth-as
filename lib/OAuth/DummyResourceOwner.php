@@ -38,12 +38,12 @@ class DummyResourceOwner implements IResourceOwner
         return $this->_c->getSectionValue('DummyResourceOwner', 'displayName');
     }
 
-    public function getEntitlements()
+    public function getEntitlement()
     {
-        return $this->_c->getSectionValue('DummyResourceOwner', 'entitlements');
+        return $this->_c->getSectionValue('DummyResourceOwner', 'entitlement');
     }
 
-    public function getAttributes()
+    public function getExt()
     {
         // unsupported
         return array();

@@ -72,7 +72,7 @@ class SspResourceOwner implements IResourceOwner
         return $this->getId();
     }
 
-    public function getEntitlements()
+    public function getEntitlement()
     {
         $attr = $this->getAttributes();
         if (isset($attr['eduPersonEntitlement']) && is_array($attr['eduPersonEntitlement'])) {
@@ -82,7 +82,7 @@ class SspResourceOwner implements IResourceOwner
         return array();
     }
 
-    public function getAttributes()
+    public function getExt()
     {
         $this->_authenticateUser();
 
