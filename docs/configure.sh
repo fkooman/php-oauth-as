@@ -15,19 +15,6 @@ chmod o+w data/oauth2.sqlite
 chmod -R o+w data/
 chcon -R -t httpd_sys_rw_content_t data/
 
-# generate config files
-(
-cd config/
-for DEFAULTS_FILE in `ls *.defaults`
-do
-    INI_FILE=`basename ${DEFAULTS_FILE} .defaults`
-    if [ ! -f ${INI_FILE} ]
-    then
-        cat ${DEFAULTS_FILE} | sed "s|/PATH/TO/APP|${INSTALL_DIR}|g" > ${INI_FILE}
-    fi
-done
-)
-
 # httpd configuration
 echo "***********************"
 echo "* HTTPD Configuration *"

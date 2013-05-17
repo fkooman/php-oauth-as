@@ -34,7 +34,7 @@ accessTokenExpiry = 3600
 logLevel = 300
 
 ; file to write log to
-logFile = "/PATH/TO/APP/data/logs/oauth2.txt"
+logFile = "{{rootdir}}/data/logs/oauth2.txt"
 
 ; Send mails to the following receipients of all log messages also written to
 ; to log file
@@ -46,7 +46,7 @@ logFile = "/PATH/TO/APP/data/logs/oauth2.txt"
 enableApi = FALSE
 
 [PdoOAuthStorage]
-dsn = "sqlite:/PATH/TO/APP/data/oauth2.sqlite"
+dsn = "sqlite:{{rootdir}}/data/oauth2.sqlite"
 ;dsn = "mysql:host=localhost;dbname=oauth"
 ;username = "oauth"
 ;password = "s3cr3t"
@@ -74,7 +74,7 @@ simpleAuthPath = "/var/www/html/php-simple-auth"
 ; file contains the statically configured attributes for SimpleAuth users
 ; see included config/simpleAuthAttributes.json.example for an example. Copy 
 ; this file to config/simpleAuthAttributes.json and modify it for your setup
-attributesFile = "/PATH/TO/APP/config/simpleAuthAttributes.json"
+attributesFile = "{{rootdir}}/config/simpleAuthAttributes.json"
 
 ; Mozilla Persona configuration
 [PersonaResourceOwner]
