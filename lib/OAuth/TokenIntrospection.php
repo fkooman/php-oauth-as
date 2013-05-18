@@ -104,9 +104,11 @@ class TokenIntrospection
             if (isset($resourceOwner['entitlement'])) {
                 $e = Json::dec($resourceOwner['entitlement']);
                 if (0 !== count($e)) {
-                    $r['x-entitlement'] = implode(" ", $e);
+                    $r['x-entitlement'] = $e;
                 }
             }
+
+            // add proprietary "x-ext"
             if (isset($resourceOwner['ext'])) {
                 $e = Json::dec($resourceOwner['ext']);
                 if (0 !== count($e)) {

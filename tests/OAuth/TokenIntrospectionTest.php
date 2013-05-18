@@ -57,7 +57,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->_config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin"}|', $response->getContent());
+        $this->assertRegexp('|{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":\["urn:x-foo:service:access","urn:x-bar:privilege:admin"\]}|', $response->getContent());
     }
 
     public function testPostTokenIntrospection()
@@ -67,7 +67,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->_config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin"}', $response->getContent());
+        $this->assertRegexp('{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":\["urn:x-foo:service:access","urn:x-bar:privilege:admin"\]}', $response->getContent());
     }
 
     public function testPostTokenIntrospectionNoEntitlement()
