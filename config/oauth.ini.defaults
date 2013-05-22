@@ -58,8 +58,8 @@ persistentConnection = FALSE
 
 ; Dummy Configuration
 [DummyResourceOwner]
-uid            = "fkooman"
-displayName    = "François Kooman"
+uid           = "fkooman"
+displayName   = "François Kooman"
 entitlement[] = "urn:x-oauth:entitlement:applications"
 entitlement[] = "urn:x-oauth:entitlement:administration"
 

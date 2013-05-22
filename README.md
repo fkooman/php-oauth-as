@@ -175,14 +175,11 @@ as shown in the snippet below:
 
     ; Dummy Configuration
     [DummyResourceOwner]
-    resourceOwnerId = "1234-5678-9999"
-
-    [DummyResourceOwnerAttributes]
-    uid[]         = "fkooman"
-    displayName[] = "François Kooman"
-    eduPersonEntitlement[] = "urn:x-oauth:entitlement:applications"
-    eduPersonEntitlement[] = "foo"
-    eduPersonEntitlement[] = "bar"
+    uid           = "fkooman"
+    displayName   = "François Kooman"
+    entitlement[] = "urn:x-oauth:entitlement:applications"
+    entitlement[] = "foo"
+    entitlement[] = "bar"
 
 Here you can see that the resource owner will be granted the 
 `urn:x-oauth:entitlement:applications`, `foo` and `bar` entitlements. As there is only 
@@ -190,11 +187,11 @@ one account in the `DummyResourceOwner` configuration it is quite boring.
 
 ## SimpleAuthResourceOwner 
 The entitlements for the `SimpleAuthResourceOwner` are configured in the 
-attributes file, located in `config/simpleAuthAttributes.json`. An example is 
-also available. The listed attributes there also contain an 
-`eduPersonEntitlement` attribute for the users `admin` and `teacher`. These 
-users match the default example set from `php-simple-auth`. You can copy
-the example file to `config/simpleAuthAttributes.json` and modify it for your
+entitlement file, located in `config/simpleAuthEntitlement.json`. An example is 
+also available. You can assign entitlements to resource owner identifiers.
+
+The users listed match the default set from `php-simple-auth`. You can copy
+the example file to `config/simpleAuthEntitlement.json` and modify it for your
 needs. This authentication backend is not meant for production use as it will
 require a lot of manual configuration per user. Better use the 
 `SspResourceOwner` authentication library for serious deployments.
@@ -217,6 +214,7 @@ are at least correct.
     [SspResourceOwner]
     sspPath = "/var/simplesamlphp"
     authSource = "default-sp"
+    ;resourceOwnerIdAttribute = "eduPersonPrincipalName"
 
 Now on to the simpleSAMLphp configuration. You configure simpleSAMLphp 
 according to the manual. The snippets below will help you with the 
@@ -229,29 +227,15 @@ by the simpleSAMLphp as SP:
         'SingleSignOnService' => 'http://localhost/simplesaml/saml2/idp/SSOService.php',
         'SingleLogoutService' => 'http://localhost/simplesaml/saml2/idp/SingleLogoutService.php',
         'certFingerprint' => '4bff319a0fa4903e4f6ed52956fb02e1ebec5166',
-
-        // clean up the attributes received from the IdP and modify them to use
-        // our naming convention
-        'authproc' => array(
-            50 => array(
-                'class' => 'core:AttributeMap',
-                'urn2name',
-            ),
-        ),
     );
 
 You need to modify this (the URLs and the certificate fingerprint) to work with 
 your IdP and possibly the attribute mapping rules. 
 
-Rule `50` changes the attributes to their base name. For example, if your 
-IdP provides the `urn:mace:dir:attribute-def:eduPersonEntitlement` attribute, 
-this is now reduced to just `eduPersonEntitlement`, the same for all the 
-other `urn:mace` prefixed attributes. 
-
 # Resource Servers
 If you are writing a resource server (RS) an API is available to verify the 
 `Bearer` token you receive from the client. Currently a draft specification
-(draft-richer-oauth-introspection-04) is implemented to support this.
+(draft-richer-oauth-introspection) is implemented to support this.
 
 An example, the RS gets the following `Authorization` header from the client:
 
@@ -265,13 +249,16 @@ If the token is valid, a response (formatted here for display purposes) will be
 given back to the RS:
 
     {
-        "active": true,
-        "client_id": "testclient",
-        "exp": 2366377846,
-        "iat": 1366376612,
-        "scope": "foo bar",
-        "sub": "fkooman",
-        "x-entitlement": "urn:x-foo:service:access urn:x-bar:privilege:admin"
+        "active": true, 
+        "client_id": "testclient", 
+        "exp": 2366377846, 
+        "iat": 1366376612, 
+        "scope": "foo bar", 
+        "sub": "fkooman", 
+        "x-entitlement": [
+            "urn:x-foo:service:access", 
+            "urn:x-bar:privilege:admin"
+        ]
     }
 
 The RS can now figure out more about the resource owner. If you provide an 
@@ -286,22 +273,16 @@ for that. The `scope` field can be used to determine the scope the client was
 granted by the resource owner.
 
 There are two proprietary extensions to this format: `x-entitlement` and 
-`x-attributes`. The former one shows the entitlement values space separated, 
-similar to the `scope` field. The `x-attributes` provides additional 
-"raw" information obtained through the authentication framework. For instance
-all SAML attributes released are placed in this `x-attributes` field. They 
-can contain for instance an email address or display name.
+`x-ext`. The former one gives the entitlement values as an array. The `x-ext` 
+provides additional "raw" information obtained through the authentication 
+framework. For instance all SAML attributes released are placed in this 
+`x-ext` field. They can contain for instance an email address or display name.
 
 A library written in PHP to access the introspection endpoint is available 
-[here](https://github.com/fkooman/php-oauth-libs-rs).
+[here](https://github.com/fkooman/php-oauth-lib-rs).
 
 # Resource Owner Data
 Whenever a resource owner successfully authenticates using some of the supported
-authentication mechanisms, the attributes belonging to that user are stored in 
-the database. This is done to give the information to registered clients and to 
-resource servers that have a valid access token.
-
-Care should be taken in making sure that only the attributes that are needed
-for a correct service operation are provided as attributes. Also, this data, 
-which may be privacy sensitive SHOULD be removed from the database after a 
-certain amount of time expired when the user did not login to the service.
+authentication mechanisms, some user information, like the entitlement a user
+has, is stored in the database. This is done to give this information to 
+registered clients and to resource servers that have a valid access token.
