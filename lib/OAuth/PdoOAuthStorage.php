@@ -269,18 +269,16 @@ class PdoOAuthStorage implements IOAuthStorage
     {
         $result = $this->getResourceOwner($resourceOwner->getId());
         if (FALSE === $result) {
-            $stmt = $this->_pdo->prepare("INSERT INTO resource_owner (id, display_name, entitlement, ext) VALUES(:id, :display_name, :entitlement, :ext)");
+            $stmt = $this->_pdo->prepare("INSERT INTO resource_owner (id, entitlement, ext) VALUES(:id, :entitlement, :ext)");
             $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
-            $stmt->bindValue(":display_name", $resourceOwner->getDisplayName(), PDO::PARAM_STR);
             $stmt->bindValue(":entitlement", Json::enc($resourceOwner->getEntitlement()), PDO::PARAM_STR);
             $stmt->bindValue(":ext", Json::enc($resourceOwner->getExt()), PDO::PARAM_STR);
             $stmt->execute();
 
            return 1 === $stmt->rowCount();
         } else {
-            $stmt = $this->_pdo->prepare("UPDATE resource_owner SET display_name = :display_name, entitlement = :entitlement, ext = :ext WHERE id = :id");
+            $stmt = $this->_pdo->prepare("UPDATE resource_owner SET entitlement = :entitlement, ext = :ext WHERE id = :id");
             $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
-            $stmt->bindValue(":display_name", $resourceOwner->getDisplayName(), PDO::PARAM_STR);
             $stmt->bindValue(":entitlement", Json::enc($resourceOwner->getEntitlement()), PDO::PARAM_STR);
             $stmt->bindValue(":ext", Json::enc($resourceOwner->getExt()), PDO::PARAM_STR);
             $stmt->execute();
@@ -291,7 +289,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function getResourceOwner($resourceOwnerId)
     {
-        $stmt = $this->_pdo->prepare("SELECT id, display_name, entitlement, ext FROM resource_owner WHERE id = :id");
+        $stmt = $this->_pdo->prepare("SELECT id, entitlement, ext FROM resource_owner WHERE id = :id");
         $stmt->bindValue(":id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
 

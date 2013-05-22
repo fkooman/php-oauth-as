@@ -55,7 +55,6 @@ class Authorize
                             $response->setHeader("X-Frame-Options", "deny");
                             $tplData = array(
                                 "resourceOwnerId" => $this->_resourceOwner->getId(),
-                                "resourceOwnerDisplayName" => $this->_resourceOwner->getDisplayName(),
                                 "config" => $this->_config,
                                 "client" => $result->getClient(),
                                 "scope" => $result->getScope(),

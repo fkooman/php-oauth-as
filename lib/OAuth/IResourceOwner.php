@@ -20,7 +20,6 @@ namespace OAuth;
 interface IResourceOwner
 {
     public function getId();
-    public function getDisplayName();
     public function getEntitlement();
     public function getExt();
 

@@ -39,7 +39,6 @@ class ApiTest extends OAuthHelper
 
         $resourceOwner = array(
             "id" => "fkooman",
-            "display_name" => "François Kooman",
             "entitlement" => array(),
             "ext" => array()
         );

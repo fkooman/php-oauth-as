@@ -45,12 +45,6 @@ class SimpleAuthResourceOwner implements IResourceOwner
         return $this->_simpleAuth->authenticate($this->_resourceOwnerIdHint);
     }
 
-    public function getDisplayName()
-    {
-        // we just return the user names
-        return $this->getId();
-    }
-
     public function getEntitlement()
     {
         $entitlementFile = $this->_c->getSectionValue('SimpleAuthResourceOwner', 'entitlementFile');

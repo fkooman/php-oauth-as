@@ -51,7 +51,7 @@ class SspResourceOwner implements IResourceOwner
             return $nameId['Value'];
         } else {
             // use the attribute from resourceOwnerIdAttribute
-            $attr = $this->getAttributes();
+            $attr = $this->getExt();
             if (isset($attr[$resourceOwnerIdAttribute]) && is_array($attr[$resourceOwnerIdAttribute])) {
                 return $attr[$resourceOwnerIdAttribute][0];
             }
@@ -59,22 +59,9 @@ class SspResourceOwner implements IResourceOwner
         }
     }
 
-    public function getDisplayName()
-    {
-        $attr = $this->getAttributes();
-        if (isset($attr['displayName']) && is_array($attr['displayName'])) {
-            return $attr['displayName'][0];
-        }
-        if (isset($attr['cn']) && is_array($attr['cn'])) {
-            return $attr['cn'][0];
-        }
-
-        return $this->getId();
-    }
-
     public function getEntitlement()
     {
-        $attr = $this->getAttributes();
+        $attr = $this->getExt();
         if (isset($attr['eduPersonEntitlement']) && is_array($attr['eduPersonEntitlement'])) {
             return $attr['eduPersonEntitlement'];
         }

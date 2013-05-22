@@ -44,12 +44,6 @@ class PersonaResourceOwner implements IResourceOwner
         return $this->_verifier->authenticate();
     }
 
-    public function getDisplayName()
-    {
-        // we just return the email address
-        return $this->getId();
-    }
-
     public function getEntitlement()
     {
         $entitlementFile = $this->_c->getSectionValue('PersonaResourceOwner', 'entitlementFile');

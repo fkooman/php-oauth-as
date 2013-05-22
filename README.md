@@ -176,7 +176,6 @@ as shown in the snippet below:
     ; Dummy Configuration
     [DummyResourceOwner]
     uid           = "fkooman"
-    displayName   = "François Kooman"
     entitlement[] = "urn:x-oauth:entitlement:applications"
     entitlement[] = "foo"
     entitlement[] = "bar"
