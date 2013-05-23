@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-is_defined('BASEPATH') || define('BASEPATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+defined('BASEPATH') || define('BASEPATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
 require_once BASEPATH . "lib" . DIRECTORY_SEPARATOR . "_autoload.php";
 
 use \RestService\Http\HttpResponse as HttpResponse;
