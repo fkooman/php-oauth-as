@@ -15,7 +15,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "_autoload.php";
+defined('BASEPATH') || define('BASEPATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+require_once BASEPATH . "lib" . DIRECTORY_SEPARATOR . "_autoload.php";
 
 use \RestService\Http\HttpResponse as HttpResponse;
 use \RestService\Utils\Config as Config;
@@ -30,8 +31,18 @@ $request = NULL;
 $response = NULL;
 
 try {
-    $config = new Config(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
-    $logger = new Logger($config->getSectionValue('Log', 'logLevel'), $config->getValue('serviceName'), $config->getSectionValue('Log', 'logFile'), $config->getSectionValue('Log', 'logMail', FALSE));
+    // ensure paths
+    $cfgVars = array(
+        'rootdir' => BASEPATH,
+        'libdir' => BASEPATH . DIRECTORY_SEPARATOR . 'lib',
+        'wwwdir' => __DIR__
+    );
+
+    $config = new Config(BASEPATH . "config" . DIRECTORY_SEPARATOR . "oauth.ini", $cfgVars);
+    $logger = new Logger($config->getSectionValue('Log', 'logLevel'),
+        $config->getValue('serviceName'),
+        $config->getSectionValue('Log', 'logFile'),
+        $config->getSectionValue('Log', 'logMail', FALSE));
 
     $t = new TokenIntrospection($config, $logger);
     $request = HttpRequest::fromIncomingHttpRequest(new IncomingHttpRequest());
