@@ -52,9 +52,9 @@ in `/var/www/html/php-oauth` and you use `sudo` instead of `su -c`.
     $ git clone git://github.com/fkooman/php-oauth.git
     $ cd php-oauth
 
-Install the external dependencies:
+Install the external dependencies in the `vendor` directory using [Composer](http://getcomposer.org/):
 
-    $ sh docs/install_dependencies.sh
+    $ php /path/to/composer.phar install
 
 Now you can create the default configuration files, the paths will be 
 automatically set, permissions set and a sample Apache configuration file will 

@@ -1,0 +1,21 @@
+{
+    "authors": [
+        {
+            "email": "fkooman@tuxed.net", 
+            "name": "Fran\u00e7ois Kooman", 
+            "role": "Developer"
+        }
+    ], 
+    "autoload": {
+        "psr-0": {
+            "OAuth\\": "lib/"
+        }
+    }, 
+    "description": "PHP OAuth 2.0 Authorization Server", 
+    "license": "AGPL-3.0+", 
+    "name": "fkooman/php-oauth2-as", 
+    "require": {
+        "fkooman/php-rest-service": "0.9.*", 
+        "php": ">=5.3.0"
+    }
+}

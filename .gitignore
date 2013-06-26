@@ -1,4 +1,4 @@
-data/
-config/*.ini
-config/*.json
-extlib/
+/data/
+/config/*.ini
+/config/*.json
+/vendor/

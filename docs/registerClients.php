@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "_autoload.php";
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
 use \RestService\Utils\Config as Config;
 use \OAuth\PdoOAuthStorage as PdoOAuthStorage;
