@@ -39,12 +39,15 @@ try {
 } catch (Exception $e) {
     // internal server error, inform resource owner through browser
     $response = new HttpResponse(500);
-    $_e = function($m) {
-        return htmlentities($m, ENT_QUOTES, "UTF-8");
-    };
-    ob_start();
-    require dirname(__DIR__) . DIRECTORY_SEPARATOR . "templates" . DIRECTORY_SEPARATOR . "errorPage.php";
-    $response->setContent(ob_get_clean());
+    $loader = new \Twig_Loader_Filesystem(dirname(__DIR__) . DIRECTORY_SEPARATOR . "views");
+    $twig = new \Twig_Environment($loader);
+    $output = $twig->render("error.twig", array (
+        "statusCode" => $response->getStatusCode(),
+        "statusReason" => $response->getStatusReason(),
+        "errorMessage" => $e->getMessage()
+    ));
+    $response->setContent($output);
+
     if (NULL !== $logger) {
         $logger->logFatal($e->getMessage() . PHP_EOL . $request . PHP_EOL . $response);
     }

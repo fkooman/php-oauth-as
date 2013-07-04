@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="HandheldFriendly" content="true" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Authorization</title>
+  <script src="js/askAuthorization.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+
+<body>
+  <div id="wrapper">
+      <div id="container">
+        <div id="userInfo">
+            You are <strong>{{ resourceOwnerId|e }}</strong>
+        </div>
+        <form method="post" action="">
+          <h2>Approval Required</h2>
+          <p>The application <strong>{{ clientName|e }}</strong> wants to access your <strong>{{ serviceResource|e }}</strong>.</p>
+
+          {% if not sslEnabled %}
+            <div class="warnBox">
+            <strong>INSECURE</strong> connection to this service, SSL or TLS <strong>MUST</strong> be used!
+            {% if contactEmail %}
+                Please <a href="mailto:{{ contactEmail|e }}">inform</a> the application provider.
+            {% endif %}
+            </div>
+          {% endif %}
+
+          <table id="detailsTable">
+            <tr><th>Application Identifier</th><td>{{ clientId|e }}</td></tr>
+            <tr><th>Description</th><td><span>{{ clientDescription|e }}</span></td></tr>
+            <tr><th>Redirect URI</th><td>{{ redirectUri|e }}</td></tr>
+            <tr><th>Requested Permission(s)</th>
+            <td>
+            {% if scopes|length == 0 %}
+              <em>None</em>
+            {% else %}
+              <ul>
+                  {% for scope in scopes %}
+                    <li>{{ scope|e }}</li>
+                    <input type="hidden" name="scope[]" value="{{ scope|e }}">
+                  {% endfor %}
+              </ul>
+            {% endif %}
+            </td>
+            </tr>
+          </table>
+          <button id="showDetails" type="button">Details</button>
+          <input type="submit" class= "formButton" name="approval" value="Approve">
+          <input type="submit" class="formButton" name="approval" value="Reject">
+        </form>
+      </div><!-- /container -->
+  </div><!-- /wrapper -->
+</body>
+</html>

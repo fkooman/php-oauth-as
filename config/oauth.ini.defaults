@@ -13,10 +13,6 @@ authenticationMechanism = "DummyResourceOwner"
 ;authenticationMechanism = "PersonaResourceOwner"
 ;authenticationMechanism = "SspResourceOwner"
 
-; makes it possible for resource owners to deselect some of the 
-; scope fields requested by the client
-allowResourceOwnerScopeFiltering = FALSE
-
 ; the access token expiry time (in seconds)
 accessTokenExpiry = 3600
 

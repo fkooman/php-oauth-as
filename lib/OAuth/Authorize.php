@@ -53,20 +53,20 @@ class Authorize
                         if (AuthorizeResult::ASK_APPROVAL === $result->getAction()) {
                             // FIXME: should this be true also for the POST?
                             $response->setHeader("X-Frame-Options", "deny");
-                            $tplData = array(
-                                "resourceOwnerId" => $this->_resourceOwner->getId(),
-                                "config" => $this->_config,
-                                "client" => $result->getClient(),
-                                "scope" => $result->getScope(),
-                                "sslEnabled" => "https" === $request->getRequestUri()->getScheme(),
-                            );
-                            extract($tplData);
-                            $_e = function($m) {
-                                return htmlentities($m, ENT_QUOTES, "UTF-8");
-                            };
-                            ob_start();
-                            require dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "templates" . DIRECTORY_SEPARATOR . "askAuthorization.php";
-                            $response->setContent(ob_get_clean());
+                            $loader = new \Twig_Loader_Filesystem(dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "views");
+                            $twig = new \Twig_Environment($loader);
+                            $output = $twig->render("askAuthorization.twig", array (
+                                'resourceOwnerId' => $this->_resourceOwner->getId(),
+                                'sslEnabled' => "https" === $request->getRequestUri()->getScheme(),
+                                'contactEmail' => $result->getClient()->getContactEmail(),
+                                'scopes' => $result->getScope()->getScopeAsArray(),
+                                'clientName' => $result->getClient()->getName(),
+                                'serviceResource' => $this->_config->getValue('serviceResources'),
+                                'clientId' => $result->getClient()->getId(),
+                                'clientDescription' => $result->getClient()->getDescription(),
+                                'redirectUri' => $result->getClient()->getRedirectUri()
+                            ));
+                            $response->setContent($output);
                         } elseif (AuthorizeResult::REDIRECT === $result->getAction()) {
                             $response->setStatusCode(302);
                             $response->setHeader("Location", $result->getRedirectUri()->getUri());
@@ -121,12 +121,15 @@ class Authorize
         } catch (ResourceOwnerException $e) {
             // tell resource owner about the error (through browser)
             $response->setStatusCode(400);
-            $_e = function($m) {
-                return htmlentities($m, ENT_QUOTES, "UTF-8");
-            };
-            ob_start();
-            require dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "templates" . DIRECTORY_SEPARATOR . "errorPage.php";
-            $response->setContent(ob_get_clean());
+            $loader = new \Twig_Loader_Filesystem(dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "views");
+            $twig = new \Twig_Environment($loader);
+            $output = $twig->render("error.twig", array (
+                "statusCode" => $response->getStatusCode(),
+                "statusReason" => $response->getStatusReason(),
+                "errorMessage" => $e->getMessage()
+            ));
+            $response->setContent($output);
+
             if (NULL !== $this->_logger) {
                 $this->_logger->logFatal($e->getMessage() . PHP_EOL . $request . PHP_EOL . $response);
             }
