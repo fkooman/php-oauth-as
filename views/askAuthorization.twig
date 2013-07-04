@@ -14,11 +14,20 @@
   <div id="wrapper">
       <div id="container">
         <div id="userInfo">
-            You are <strong>{{ resourceOwnerId|e }}</strong>
+            Logged in as <strong>{{ resourceOwnerId|e }}</strong>
         </div>
-        <form method="post" action="">
-          <h2>Approval Required</h2>
-          <p>The application <strong>{{ clientName|e }}</strong> wants to access your <strong>{{ serviceResource|e }}</strong>.</p>
+        <div class="authorizeMessage">
+            <h2>{{ clientName|e }}</h2>
+            <div class="clientDomain">on <strong>{{ clientDomain }}</strong></div>
+            <div class="clientPermissions">wants your permission to access
+                <ul>
+                  {% for scope in scopes %}
+                    <li>{{ scope|e }}</li>
+                    <input type="hidden" name="scope[]" value="{{ scope|e }}">
+                  {% endfor %}
+              </ul>
+            </div>
+        </div> <!-- /authorizeMessage -->
 
           {% if not sslEnabled %}
             <div class="warnBox">
@@ -29,11 +38,12 @@
             </div>
           {% endif %}
 
+        <form method="post" action="">
           <table id="detailsTable">
-            <tr><th>Application Identifier</th><td>{{ clientId|e }}</td></tr>
+            <tr><th>Client ID</th><td>{{ clientId|e }}</td></tr>
             <tr><th>Description</th><td><span>{{ clientDescription|e }}</span></td></tr>
-            <tr><th>Redirect URI</th><td>{{ redirectUri|e }}</td></tr>
-            <tr><th>Requested Permission(s)</th>
+            <tr><th>Redirect URI</th><td><tt>{{ redirectUri|e }}</tt></td></tr>
+            <tr><th>Scope</th>
             <td>
             {% if scopes|length == 0 %}
               <em>None</em>
@@ -49,7 +59,7 @@
             </tr>
           </table>
           <button id="showDetails" type="button">Details</button>
-          <input type="submit" class= "formButton" name="approval" value="Approve">
+          <input type="submit" class="formButton" name="approval" value="Approve">
           <input type="submit" class="formButton" name="approval" value="Reject">
         </form>
       </div><!-- /container -->

@@ -55,16 +55,19 @@ class Authorize
                             $response->setHeader("X-Frame-Options", "deny");
                             $loader = new \Twig_Loader_Filesystem(dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "views");
                             $twig = new \Twig_Environment($loader);
+
+                            $redirectUri = new Uri($result->getClient()->getRedirectUri());
+
                             $output = $twig->render("askAuthorization.twig", array (
                                 'resourceOwnerId' => $this->_resourceOwner->getId(),
                                 'sslEnabled' => "https" === $request->getRequestUri()->getScheme(),
                                 'contactEmail' => $result->getClient()->getContactEmail(),
                                 'scopes' => $result->getScope()->getScopeAsArray(),
+                                'clientDomain' => $redirectUri->getHost(),
                                 'clientName' => $result->getClient()->getName(),
-                                'serviceResource' => $this->_config->getValue('serviceResources'),
                                 'clientId' => $result->getClient()->getId(),
                                 'clientDescription' => $result->getClient()->getDescription(),
-                                'redirectUri' => $result->getClient()->getRedirectUri()
+                                'redirectUri' => $redirectUri->getUri()
                             ));
                             $response->setContent($output);
                         } elseif (AuthorizeResult::REDIRECT === $result->getAction()) {
