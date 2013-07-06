@@ -18,7 +18,7 @@
         </div>
         <div class="authorizeMessage">
             <h2>{{ clientName|e }}</h2>
-            <div class="clientDomain">on <strong>{{ clientDomain }}</strong></div>
+            <div class="clientDomain">on <strong>{{ clientDomain|e }}</strong></div>
             <div class="clientPermissions">wants your permission to access
                 <ul>
                   {% for scope in scopes %}
