@@ -3,6 +3,10 @@ This project aims at providing a stand-alone OAuth v2 Authorization Server that
 is easy to integrate with your existing REST services, written in any language, 
 without requiring extensive changes.
 
+[![Build Status](https://secure.travis-ci.org/fkooman/php-oauth.png)](http://travis-ci.org/fkooman/php-oauth)
+
+https://api.travis-ci.org/fkooman/php-oauth.png
+
 # License
 Licensed under the GNU Affero General Public License as published by the Free 
 Software Foundation, either version 3 of the License, or (at your option) any 
