@@ -1,7 +1,10 @@
 ; This is the OAuth Authorization Server configuration
 
 ; name of service
-serviceName = "Authorization"
+serviceName = "Authorization Server"
+;serviceLogoUri = "https://example.org/logo.png"
+;serviceLogoWidth = 64;
+;serviceLogoHeight = 64;
 
 ; the storage backend, currently only PDO is supported
 storageBackend = "PdoOAuthStorage"

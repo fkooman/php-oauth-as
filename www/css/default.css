@@ -1,80 +1,58 @@
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: #eee;
+    margin: 0;
 }
 
 div#wrapper {
     max-width: 480px;
-    margin: 2em auto;
+    margin: 1em auto;
 }
 
-div#container {
+div#header, div#container {
     max-width: 410px;
     background: #fff;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
     border-radius: 10px;
     margin: 0 10px;
-    padding: 10px 15px 15px 25px;
-    -moz-box-shadow:    0 0 3px 0 #8c8c8c;
-    -webkit-box-shadow: 0 0 3px 0 #8c8c8c;
-    box-shadow:         0 0 3px 0 #8c8c8c;
+    padding: 15px;
+    box-shadow: 0 0 3px 0 #8c8c8c;
 }
 
-div#userInfo {
-    float: right;
-    font-size: 75%;
-}
-
-table#detailsTable {
-    width: 100%;
-    font-size: 85%;
-    display: none;
-    border-collapse: collapse;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-}
-
-tbody tr:nth-child(2n+1) td, tbody tr:nth-child(2n+1) th {
-    background-color: rgb(235, 235, 235);
-}
-
-td, th {
-    padding: 5px;
-}
-
-ul.permissionList {
-    margin: 0 0 0 15px;
+div#header h1 {
+    margin: 0;
     padding: 0;
 }
 
-th {
-    vertical-align: top;
-    text-align: left;
+div#container h2 {
+    margin: 0;
+    padding: 0;
 }
 
-input.formButton {
-    float: right;
-}
-
-label {
+img#headerLogo {
     display: block;
+    margin: 10px auto;
 }
 
-div.errorBox, div.warnBox {
+div#header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+span#userInfo {
+    font-size: 75%;
+}
+
+div.errorBox, div.warnBox, div.infoBox {
     border: 1px solid #888;
-    background-color: #f3a4a4;
-    color: black;
     padding: 10px;
     margin: 10px 0;
     font-size: 85%;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
     border-radius: 5px;
 }
 
 div.errorBox {
     background-color: #f3a4a4;
+    color: #000;
 }
 
 div.warnBox {
@@ -82,8 +60,15 @@ div.warnBox {
     color: #c00;
 }
 
+div.infoBox {
+    background-color: #ddf;
+    color: #000;
+}
+
 div.httpCode {
-    float: right;
-    display: absolute;
     font-size: 85%;
+}
+
+form {
+    text-align: right;
 }

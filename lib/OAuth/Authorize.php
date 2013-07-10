@@ -59,6 +59,10 @@ class Authorize
                             $redirectUri = new Uri($result->getClient()->getRedirectUri());
 
                             $output = $twig->render("askAuthorization.twig", array (
+                                'serviceName' => $this->_config->getValue('serviceName'),
+                                'serviceLogoUri' => $this->_config->getValue('serviceLogoUri', FALSE),
+                                'serviceLogoWidth' => $this->_config->getValue('serviceLogoWidth', FALSE),
+                                'serviceLogoHeight' => $this->_config->getValue('serviceLogoHeight', FALSE),
                                 'resourceOwnerId' => $this->_resourceOwner->getId(),
                                 'sslEnabled' => "https" === $request->getRequestUri()->getScheme(),
                                 'contactEmail' => $result->getClient()->getContactEmail(),
