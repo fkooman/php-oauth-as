@@ -71,6 +71,7 @@ class Authorize
                                 'clientName' => $result->getClient()->getName(),
                                 'clientId' => $result->getClient()->getId(),
                                 'clientDescription' => $result->getClient()->getDescription(),
+                                'clientIcon' => $result->getClient()->getIcon(),
                                 'redirectUri' => $redirectUri->getUri()
                             ));
                             $response->setContent($output);

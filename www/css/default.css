@@ -23,14 +23,24 @@ div#header h1 {
     padding: 0;
 }
 
-div#container h2 {
-    margin: 0;
+div#container h3 {
+    margin: 0 0 5px 0;
     padding: 0;
 }
 
 img#headerLogo {
     display: block;
     margin: 10px auto;
+}
+
+div.clientInfo img {
+    float: left;
+    margin: 0 10px 10px 0;
+    border: 1px dotted #000;
+}
+
+div.clientInfo {
+    float: right;
 }
 
 div#header {

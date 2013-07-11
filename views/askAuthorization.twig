@@ -20,10 +20,18 @@
       </div>
       <div id="container">
         <div class="authorizeMessage">
-            <h2 title="{{ clientId|e }}">{{ clientName|e }}</h2>
-            <p><em>{{ clientDescription|e }}</em></p>
-            <div class="clientPermissions">wants your permission to access
-                <ul>
+            <div class="clientInfo">
+                {% if clientIcon %}
+                    <img src="{{ clientIcon|e }}" width="128" height="128" />
+                {% endif %}
+
+                <h3 title="{{ clientId|e }}">{{ clientName|e }}</h3>
+                <em>{{ clientDescription|e }}</em>
+            </div> <!-- /appInfo -->
+
+            <div class="clientPermissions">
+              <strong>This application wants access to:</strong>
+              <ul>
                   {% for scope in scopes %}
                     <li>{{ scope|e }}</li>
                   {% endfor %}
