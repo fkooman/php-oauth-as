@@ -33,14 +33,18 @@ img#headerLogo {
     margin: 10px auto;
 }
 
-div.clientInfo img {
+div#clientInfo img {
     float: left;
     margin: 0 10px 10px 0;
     border: 1px dotted #000;
 }
 
-div.clientInfo {
-    float: right;
+div#clientInfo div.clientScope {
+    float: left;
+}
+
+div#clientScope {
+    clear: both;
 }
 
 div#header {
