@@ -250,36 +250,22 @@ class Authorize
             if (AuthorizeResult::ASK_APPROVAL !== $result->getAction()) {
                 return $result;
             }
-
-            $postScope = new Scope(Utils::getParameter($post, 'scope'));
             $approval = Utils::getParameter($post, 'approval');
 
             // FIXME: are we sure this client is always valid?
             $client = $this->_storage->getClient($clientId);
 
-            if ("Approve" === $approval) {
-                if (!$postScope->isSubsetOf($scope)) {
-                    // FIXME: should this actually be an authorize exception? this is a user error!
-                    throw new ClientException("invalid_scope", "approved scope is not a subset of requested scope", $client, $state);
-                }
-
+            if ("approve" === $approval) {
                 $approvedScope = $this->_storage->getApprovalByResourceOwnerId($clientId, $resourceOwner->getId());
                 if (FALSE === $approvedScope) {
                     // no approved scope stored yet, new entry
                     $refreshToken = ("code" === $responseType) ? Utils::randomHex(16) : NULL;
-                    $this->_storage->addApproval($clientId, $resourceOwner->getId(), $postScope->getScope(), $refreshToken);
-                } elseif (!$postScope->isSubsetOf(new Scope($approvedScope['scope']))) {
-                    // not a subset, merge and store the new one
-                    $mergedScopes = clone $postScope;
-                    $mergedScopes->mergeWith(new Scope($approvedScope['scope']));
-                    $this->_storage->updateApproval($clientId, $resourceOwner->getId(), $mergedScopes->getScope());
+                    $this->_storage->addApproval($clientId, $resourceOwner->getId(), $scope->getScope(), $refreshToken);
                 } else {
-                    // subset, approval for superset of scope already exists, do nothing
+                    $this->_storage->updateApproval($clientId, $resourceOwner->getId(), $scope->getScope());
                 }
-                $get['scope'] = $postScope->getScope();
 
                 return $this->_handleAuthorize($resourceOwner, $get);
-
             } else {
                 throw new ClientException("access_denied", "not authorized by resource owner", $client, $state);
             }

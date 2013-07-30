@@ -50,11 +50,8 @@
         {% endif %}
 
         <form method="post" action="">
-            {% for scope in scopes %}
-                <input type="hidden" name="scope[]" value="{{ scope|e }}">
-            {% endfor %}
-            <input type="submit" class="formButton" name="approval" value="Reject">
-            <input type="submit" class="formButton" name="approval" value="Approve">
+            <button type="submit" name="approval" value="reject">Reject</button>
+            <button type="submit" name="approval" value="approve">Approve</button>
         </form>
       </div><!-- /container -->
   </div><!-- /wrapper -->

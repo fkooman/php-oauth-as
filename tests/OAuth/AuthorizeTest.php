@@ -35,7 +35,7 @@ class AuthorizeTest extends OAuthHelper
     {
         $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz", "POST");
         $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz");
-        $h->setPostParameters(array("approval" => "Approve", "scope" => array("read")));
+        $h->setPostParameters(array("approval" => "approve", "scope" => array("read")));
         $o = new Authorize($this->_config);
         $response = $o->handleRequest($h);
         $this->assertEquals(302, $response->getStatusCode());
@@ -79,7 +79,7 @@ class AuthorizeTest extends OAuthHelper
     {
         $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz", "POST");
         $h->setHeader("HTTP_REFERER", "https://evil.site.org/xyz");
-        $h->setPostParameters(array("approval" => "Approve", "scope" => array("read")));
+        $h->setPostParameters(array("approval" => "approve", "scope" => array("read")));
         $o = new Authorize($this->_config);
         $response = $o->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
