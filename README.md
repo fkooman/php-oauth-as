@@ -27,12 +27,9 @@ it). Refer to the license for the exact details.
 * Token introspection for resource servers
 
 # Screenshots
-Below are some screenshots of the OAuth consent dialog, the first one is the 
-default view, the second is the view when one clicks the "Details" button.
+This is a screenshot of the OAuth consent dialog.
 
-![oauth_consent_simple](https://github.com/fkooman/php-oauth/raw/master/docs/oauth_consent_simple.png)
-
-![oauth_consent_advanced](https://github.com/fkooman/php-oauth/raw/master/docs/oauth_consent_advanced.png)
+![oauth_consent](https://github.com/fkooman/php-oauth/raw/master/docs/oauth_consent.png)
 
 # Requirements
 The installation requirements on Fedora/CentOS can be installed like this:
