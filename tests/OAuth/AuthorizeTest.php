@@ -28,7 +28,6 @@ class AuthorizeTest extends OAuthHelper
         $o = new Authorize($this->_config);
         $response = $o->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals("deny", $response->getHeader("X-Frame-Options"));
     }
 
     public function testPostAuthorize()

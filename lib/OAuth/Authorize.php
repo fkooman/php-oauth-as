@@ -51,8 +51,6 @@ class Authorize
                 case "GET":
                         $result = $this->_handleAuthorize($this->_resourceOwner, $request->getQueryParameters());
                         if (AuthorizeResult::ASK_APPROVAL === $result->getAction()) {
-                            // FIXME: should this be true also for the POST?
-                            $response->setHeader("X-Frame-Options", "deny");
                             $loader = new \Twig_Loader_Filesystem(dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "views");
                             $twig = new \Twig_Environment($loader);
 

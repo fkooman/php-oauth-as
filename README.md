@@ -136,6 +136,16 @@ environment and do not forget to restart Apache.
 The `docs/configure.sh` script from the previous section outputs a config for 
 your system which replaces the `/PATH/TO/APP` with the actual install directory.
 
+## Security
+Please follow the recommended Apache configuration, and set the headers 
+mentioned there to increase security. Important headers are 
+[`Content-Security-Policy`](https://developer.mozilla.org/en-US/docs/Security/CSP), 
+[`X-Frame-Options`](https://developer.mozilla.org/en-US/docs/HTTP/X-Frame-Options) and 
+[`Strict-Transport-Security`](https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security). 
+
+You MUST also disable any connection to this service over HTTP, and only use
+HTTPS.
+
 # Authentication
 There are thee plugins provided to authenticate users:
 
