@@ -154,7 +154,7 @@ class Token
 
                 $token = array();
                 $token['access_token'] = Utils::randomHex(16);
-                $token['expires_in'] = $this->_config->getValue('accessTokenExpiry');
+                $token['expires_in'] = intval($this->_config->getValue('accessTokenExpiry'));
                 // we always grant the scope the user authorized, no further restrictions here...
                 // FIXME: the merging of authorized scopes in the authorize function is a bit of a mess!
                 // we should deal with that there and come up with a good solution...
@@ -175,7 +175,7 @@ class Token
 
                 $token = array();
                 $token['access_token'] = Utils::randomHex(16);
-                $token['expires_in'] = $this->_config->getValue('accessTokenExpiry');
+                $token['expires_in'] = intval($this->_config->getValue('accessTokenExpiry'));
                 if (NULL !== $scope) {
                     // the client wants to obtain a specific scope
                     $requestedScope = new Scope($scope);
