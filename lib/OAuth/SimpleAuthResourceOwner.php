@@ -31,13 +31,13 @@ class SimpleAuthResourceOwner implements IResourceOwner
     {
         $this->_c = $c;
 
-        $bPath = $this->_c->getSectionValue('SimpleAuthResourceOwner', 'simpleAuthPath') . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'SimpleAuth.php';
+        $bPath = $this->_c->getSectionValue('SimpleAuthResourceOwner', 'simpleAuthPath') . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
         if (!file_exists($bPath) || !is_file($bPath) || !is_readable($bPath)) {
             throw new SimpleAuthResourceOwnerException("invalid path to php-simple-auth");
         }
         require_once $bPath;
 
-        $this->_simpleAuth = new SimpleAuth();
+        $this->_simpleAuth = new \fkooman\SimpleAuth\SimpleAuth();
     }
 
     public function getId()
