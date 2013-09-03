@@ -37,6 +37,11 @@ class SspResourceOwner implements IResourceOwner
         $this->_ssp = new SimpleSAML_Auth_Simple($this->_c->getSectionValue('SspResourceOwner', 'authSource'));
     }
 
+    public function setResourceOwnerHint($resourceOwnerHint)
+    {
+        // nop
+    }
+
     public function getId()
     {
         $this->_authenticateUser();

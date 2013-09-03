@@ -28,6 +28,11 @@ class DummyResourceOwner implements IResourceOwner
         $this->_c = $c;
     }
 
+    public function setResourceOwnerHint($resourceOwnerHint)
+    {
+        // nop
+    }
+
     public function getId()
     {
         return $this->_c->getSectionValue('DummyResourceOwner', 'uid');

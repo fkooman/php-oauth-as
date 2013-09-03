@@ -47,6 +47,13 @@ class Authorize
     {
         $response = new HttpResponse(200);
         try {
+            // hint the authentication layer about the user that wants to authenticate
+            // if this information is available as a parameter to the authorize endpoint
+            $resourceOwnerHint = $request->getQueryParameter("x_resource_owner_hint");
+            if (null !== $resourceOwnerHint) {
+                $this->_resourceOwner->setResourceOwnerHint($resourceOwnerHint);
+            }
+
             switch ($request->getRequestMethod()) {
                 case "GET":
                         $result = $this->_handleAuthorize($this->_resourceOwner, $request->getQueryParameters());

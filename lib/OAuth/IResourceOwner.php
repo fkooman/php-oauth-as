@@ -19,6 +19,7 @@ namespace OAuth;
 
 interface IResourceOwner
 {
+    public function setResourceOwnerHint($resourceOwnerHint);
     public function getId();
     public function getEntitlement();
     public function getExt();

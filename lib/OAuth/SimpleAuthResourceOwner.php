@@ -17,37 +17,43 @@
 
 namespace OAuth;
 
-use \RestService\Utils\Config as Config;
-use \SimpleAuth as SimpleAuth;
-use \RestService\Utils\Json as Json;
+use RestService\Utils\Config;
+use RestService\Utils\Json;
+
+use fkooman\SimpleAuth\SimpleAuth;
 
 class SimpleAuthResourceOwner implements IResourceOwner
 {
-    private $_config;
-    private $_simpleAuth;
-    private $_resourceOwnerIdHint;
+    private $config;
+    private $simpleAuth;
+    private $resourceOwnerHint;
 
-    public function __construct(Config $c)
+    public function __construct(Config $config)
     {
-        $this->_c = $c;
+        $this->config = $config;
 
-        $bPath = $this->_c->getSectionValue('SimpleAuthResourceOwner', 'simpleAuthPath') . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+        $bPath = $this->config->getSectionValue('SimpleAuthResourceOwner', 'simpleAuthPath') . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
         if (!file_exists($bPath) || !is_file($bPath) || !is_readable($bPath)) {
             throw new SimpleAuthResourceOwnerException("invalid path to php-simple-auth");
         }
         require_once $bPath;
 
-        $this->_simpleAuth = new \fkooman\SimpleAuth\SimpleAuth();
+        $this->simpleAuth = new \fkooman\SimpleAuth\SimpleAuth();
+    }
+
+    public function setResourceOwnerHint($resourceOwnerHint)
+    {
+        $this->resourceOwnerHint = $resourceOwnerHint;
     }
 
     public function getId()
     {
-        return $this->_simpleAuth->authenticate($this->_resourceOwnerIdHint);
+        return $this->simpleAuth->authenticate($this->resourceOwnerHint);
     }
 
     public function getEntitlement()
     {
-        $entitlementFile = $this->_c->getSectionValue('SimpleAuthResourceOwner', 'entitlementFile');
+        $entitlementFile = $this->config->getSectionValue('SimpleAuthResourceOwner', 'entitlementFile');
         $fileContents = @file_get_contents($entitlementFile);
         if (FALSE === $fileContents) {
             // no entitlement file, so no entitlement

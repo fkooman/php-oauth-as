@@ -39,6 +39,11 @@ class PersonaResourceOwner implements IResourceOwner
         $this->_verifier = new PersonaVerifier($this->_c->getSectionValue('PersonaResourceOwner', 'verifierAddress'));
     }
 
+    public function setResourceOwnerHint($resourceOwnerHint)
+    {
+        // nop
+    }
+
     public function getId()
     {
         return $this->_verifier->authenticate();
