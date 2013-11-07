@@ -19,11 +19,11 @@ require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPAR
 
 use fkooman\Config\Config;
 use fkooman\Json\Json;
+use fkooman\OAuth\Server\Token;
 
 use RestService\Http\HttpResponse;
 use RestService\Http\IncomingHttpRequest;
 use RestService\Http\HttpRequest;
-use OAuth\Token;
 use RestService\Utils\Logger;
 
 $logger = NULL;

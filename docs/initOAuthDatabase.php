@@ -4,7 +4,7 @@ require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPAR
 
 use fkooman\Config\Config;
 
-use OAuth\PdoOAuthStorage;
+use fkooman\OAuth\Server\PdoOAuthStorage;
 
 $config = Config::fromIniFile(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
 

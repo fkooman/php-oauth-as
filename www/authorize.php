@@ -18,11 +18,11 @@
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
 use fkooman\Config\Config;
+use fkooman\OAuth\Server\Authorize;
 
 use RestService\Utils\Logger;
 use RestService\Http\HttpRequest;
 use RestService\Http\IncomingHttpRequest;
-use OAuth\Authorize;
 use RestService\Http\HttpResponse;
 
 $logger = NULL;
