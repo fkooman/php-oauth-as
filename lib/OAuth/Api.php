@@ -18,11 +18,11 @@
 namespace OAuth;
 
 use fkooman\Config\Config;
+use fkooman\Json\Json;
 
 use RestService\Http\HttpRequest;
 use RestService\Http\HttpResponse;
 use RestService\Utils\Logger;
-use RestService\Utils\Json;
 
 class Api
 {
@@ -61,7 +61,7 @@ class Api
 
             $request->matchRest("POST", "/authorizations/", function () use ($request, $response, $storage, $rs) {
                 $rs->requireScope("authorizations");
-                $data = Json::dec($request->getContent());
+                $data = Json::decode($request->getContent());
                 if (NULL === $data || !is_array($data) || !array_key_exists("client_id", $data) || !array_key_exists("scope", $data)) {
                     throw new ApiException("invalid_request", "missing required parameters");
                 }
@@ -90,7 +90,7 @@ class Api
                     throw new ApiException("invalid_request", "authorization already exists for this client and resource owner");
                 }
                 $response->setStatusCode(201);
-                $response->setContent(Json::enc(array("ok" => true)));
+                $response->setContent(Json::encode(array("ok" => true)));
             });
 
             $request->matchRest("GET", "/authorizations/:id", function ($id) use ($request, $response, $storage, $rs) {
@@ -99,7 +99,7 @@ class Api
                 if (FALSE === $data) {
                     throw new ApiException("not_found", "the resource you are trying to retrieve does not exist");
                 }
-                $response->setContent(Json::enc($data));
+                $response->setContent(Json::encode($data));
             });
 
             $request->matchRest("GET", "/authorizations/:id", function ($id) use ($request, $response, $storage, $rs) {
@@ -108,7 +108,7 @@ class Api
                 if (FALSE === $data) {
                     throw new ApiException("not_found", "the resource you are trying to retrieve does not exist");
                 }
-                $response->setContent(Json::enc($data));
+                $response->setContent(Json::encode($data));
             });
 
             $request->matchRest("DELETE", "/authorizations/:id", function ($id) use ($request, $response, $storage, $rs) {
@@ -116,20 +116,20 @@ class Api
                 if (FALSE === $storage->deleteApproval($id, $rs->getResourceOwnerId())) {
                     throw new ApiException("not_found", "the resource you are trying to delete does not exist");
                 }
-                $response->setContent(Json::enc(array("ok" => true)));
+                $response->setContent(Json::encode(array("ok" => true)));
             });
 
             $request->matchRest("GET", "/authorizations/", function () use ($request, $response, $storage, $rs) {
                 $rs->requireScope("authorizations");
                 $data = $storage->getApprovals($rs->getResourceOwnerId());
-                $response->setContent(Json::enc($data));
+                $response->setContent(Json::encode($data));
             });
 
             $request->matchRest("GET", "/applications/", function () use ($request, $response, $storage, $rs) {
                 $rs->requireScope("applications");
                 // $rs->requireEntitlement("urn:x-oauth:entitlement:applications");    // do not require entitlement to list clients...
                 $data = $storage->getClients();
-                $response->setContent(Json::enc($data));
+                $response->setContent(Json::encode($data));
             });
 
             $request->matchRest("DELETE", "/applications/:id", function ($id) use ($request, $response, $storage, $rs) {
@@ -138,7 +138,7 @@ class Api
                 if (FALSE === $storage->deleteClient($id)) {
                     throw new ApiException("not_found", "the resource you are trying to delete does not exist");
                 }
-                $response->setContent(Json::enc(array("ok" => true)));
+                $response->setContent(Json::encode(array("ok" => true)));
             });
 
             $request->matchRest("GET", "/applications/:id", function ($id) use ($request, $response, $storage, $rs) {
@@ -151,14 +151,14 @@ class Api
                 if (FALSE === $data) {
                     throw new ApiException("not_found", "the resource you are trying to retrieve does not exist");
                 }
-                $response->setContent(Json::enc($data));
+                $response->setContent(Json::encode($data));
             });
 
             $request->matchRest("POST", "/applications/", function () use ($request, $response, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 try {
-                    $client = ClientRegistration::fromArray(Json::dec($request->getContent()));
+                    $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
                     $data = $client->getClientAsArray();
                     // check to see if an application with this id already exists
                     if (FALSE === $storage->getClient($data['id'])) {
@@ -169,7 +169,7 @@ class Api
                         throw new ApiException("invalid_request", "application already exists");
                     }
                     $response->setStatusCode(201);
-                    $response->setContent(Json::enc(array("ok" => true)));
+                    $response->setContent(Json::encode(array("ok" => true)));
                 } catch (ClientRegistrationException $e) {
                     throw new ApiException("invalid_request", $e->getMessage());
                 }
@@ -179,14 +179,14 @@ class Api
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 $data = $storage->getStats();
-                $response->setContent(Json::enc($data));
+                $response->setContent(Json::encode($data));
             });
 
             $request->matchRest("PUT", "/applications/:id", function ($id) use ($request, $response, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 try {
-                    $client = ClientRegistration::fromArray(Json::dec($request->getContent()));
+                    $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
                     $data = $client->getClientAsArray();
                     if ($data['id'] !== $id) {
                         throw new ApiException("invalid_request", "resource does not match client id value");
@@ -197,7 +197,7 @@ class Api
                 } catch (ClientRegistrationException $e) {
                     throw new ApiException("invalid_request", $e->getMessage());
                 }
-                $response->setContent(Json::enc(array("ok" => true)));
+                $response->setContent(Json::encode(array("ok" => true)));
             });
 
             $request->matchRestDefault(function ($methodMatch, $patternMatch) use ($request, $response) {
@@ -221,13 +221,13 @@ class Api
             }
             $response->setHeader("WWW-Authenticate", $hdr);
 
-            $response->setContent(Json::enc(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
+            $response->setContent(Json::encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
             if (NULL !== $this->_logger) {
                 $this->_logger->logFatal($e->getLogMessage(TRUE) . PHP_EOL . $request . PHP_EOL . $response);
             }
         } catch (ApiException $e) {
             $response->setStatusCode($e->getResponseCode());
-            $response->setContent(Json::enc(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
+            $response->setContent(Json::encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
             if (NULL !== $this->_logger) {
                 $this->_logger->logFatal($e->getLogMessage(TRUE) . PHP_EOL . $request . PHP_EOL . $response);
             }

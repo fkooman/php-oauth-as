@@ -17,7 +17,7 @@
 
 namespace OAuth;
 
-use \RestService\Utils\Json as Json;
+use fkooman\Json\Json;
 
 class ResourceServer
 {
@@ -60,8 +60,8 @@ class ResourceServer
         $this->_resourceOwnerId = $token['resource_owner_id'];
         $this->_grantedScope = $token['scope'];
         $resourceOwner = $this->_storage->getResourceOwner($token['resource_owner_id']);
-        $this->_resourceOwnerEntitlement = Json::dec($resourceOwner['entitlement']);
-        $this->_resourceOwnerExt = Json::dec($resourceOwner['ext']);
+        $this->_resourceOwnerEntitlement = Json::decode($resourceOwner['entitlement']);
+        $this->_resourceOwnerExt = Json::decode($resourceOwner['ext']);
     }
 
     public function setEntitlementEnforcement($enforce = TRUE)

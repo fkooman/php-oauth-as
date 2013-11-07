@@ -18,8 +18,7 @@
 namespace OAuth;
 
 use fkooman\Config\Config;
-
-use RestService\Utils\Json;
+use fkooman\Json\Json;
 
 use fkooman\SimpleAuth\SimpleAuth;
 
@@ -62,7 +61,7 @@ class SimpleAuthResourceOwner implements IResourceOwner
             // no entitlement file, so no entitlement
             return array();
         }
-        $entitlement = Json::dec($fileContents);
+        $entitlement = Json::decode($fileContents);
         if (is_array($entitlement) && isset($entitlement[$this->getId()]) && is_array($entitlement[$this->getId()])) {
             return $entitlement[$this->getId()];
         }

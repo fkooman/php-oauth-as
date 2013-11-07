@@ -18,8 +18,7 @@
 namespace OAuth;
 
 use fkooman\Config\Config;
-
-use RestService\Utils\Json;
+use fkooman\Json\Json;
 
 use PDO;
 
@@ -274,16 +273,16 @@ class PdoOAuthStorage implements IOAuthStorage
         if (FALSE === $result) {
             $stmt = $this->_pdo->prepare("INSERT INTO resource_owner (id, entitlement, ext) VALUES(:id, :entitlement, :ext)");
             $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
-            $stmt->bindValue(":entitlement", Json::enc($resourceOwner->getEntitlement()), PDO::PARAM_STR);
-            $stmt->bindValue(":ext", Json::enc($resourceOwner->getExt()), PDO::PARAM_STR);
+            $stmt->bindValue(":entitlement", Json::encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
+            $stmt->bindValue(":ext", Json::encode($resourceOwner->getExt()), PDO::PARAM_STR);
             $stmt->execute();
 
            return 1 === $stmt->rowCount();
         } else {
             $stmt = $this->_pdo->prepare("UPDATE resource_owner SET entitlement = :entitlement, ext = :ext WHERE id = :id");
             $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
-            $stmt->bindValue(":entitlement", Json::enc($resourceOwner->getEntitlement()), PDO::PARAM_STR);
-            $stmt->bindValue(":ext", Json::enc($resourceOwner->getExt()), PDO::PARAM_STR);
+            $stmt->bindValue(":entitlement", Json::encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
+            $stmt->bindValue(":ext", Json::encode($resourceOwner->getExt()), PDO::PARAM_STR);
             $stmt->execute();
 
             return 1 === $stmt->rowCount();

@@ -18,9 +18,9 @@
 namespace OAuth;
 
 use fkooman\Config\Config;
+use fkooman\Json\Json;
 
 use PersonaVerifier;
-use RestService\Utils\Json;
 
 class PersonaResourceOwner implements IResourceOwner
 {
@@ -60,7 +60,7 @@ class PersonaResourceOwner implements IResourceOwner
             // no entitlement file, so no entitlement
             return array();
         }
-        $entitlement = Json::dec($fileContents);
+        $entitlement = Json::decode($fileContents);
         if (is_array($entitlement) && isset($entitlement[$this->getId()]) && is_array($entitlement[$this->getId()])) {
             return $entitlement[$this->getId()];
         }

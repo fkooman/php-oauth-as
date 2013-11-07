@@ -18,11 +18,11 @@
 namespace OAuth;
 
 use fkooman\Config\Config;
+use fkooman\Json\Json;
 
 use RestService\Http\HttpRequest;
 use RestService\Http\HttpResponse;
 use RestService\Utils\Logger;
-use RestService\Utils\Json;
 
 class TokenIntrospection
 {
@@ -56,10 +56,10 @@ class TokenIntrospection
             $response = new HttpResponse(200, "application/json");
             $response->setHeader('Cache-Control', 'no-store');
             $response->setHeader('Pragma', 'no-cache');
-            $response->setContent(Json::enc($this->_introspectToken($parameters)));
+            $response->setContent(Json::encode($this->_introspectToken($parameters)));
         } catch (TokenIntrospectionException $e) {
             $response = new HttpResponse($e->getResponseCode(), "application/json");
-            $response->setContent(Json::enc(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
+            $response->setContent(Json::encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
             if ("method_not_allowed" === $e->getMessage()) {
                 $response->setHeader("Allow", "GET,POST");
             }
@@ -105,7 +105,7 @@ class TokenIntrospection
             // add proprietary "x-entitlement"
             $resourceOwner = $this->_storage->getResourceOwner($accessToken['resource_owner_id']);
             if (isset($resourceOwner['entitlement'])) {
-                $e = Json::dec($resourceOwner['entitlement']);
+                $e = Json::decode($resourceOwner['entitlement']);
                 if (0 !== count($e)) {
                     $r['x-entitlement'] = $e;
                 }
@@ -113,7 +113,7 @@ class TokenIntrospection
 
             // add proprietary "x-ext"
             if (isset($resourceOwner['ext'])) {
-                $e = Json::dec($resourceOwner['ext']);
+                $e = Json::decode($resourceOwner['ext']);
                 if (0 !== count($e)) {
                     $r['x-ext'] = $e;
                 }

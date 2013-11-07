@@ -3,24 +3,24 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "b3ef8e7c5869601050db8dff60a643ca",
+    "hash": "cbb350705900cc89683d7759044408cd",
     "packages": [
         {
             "name": "fkooman/php-lib-config",
-            "version": "0.2.1",
+            "version": "0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-config.git",
-                "reference": "72365577c9a35388434afe522ac8dc225a86525b"
+                "reference": "c00a9ea639647bac3ebef1cf1a430220a4c89d21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-config/zipball/72365577c9a35388434afe522ac8dc225a86525b",
-                "reference": "72365577c9a35388434afe522ac8dc225a86525b",
+                "url": "https://api.github.com/repos/fkooman/php-lib-config/zipball/c00a9ea639647bac3ebef1cf1a430220a4c89d21",
+                "reference": "c00a9ea639647bac3ebef1cf1a430220a4c89d21",
                 "shasum": ""
             },
             "require": {
-                "fkooman/php-lib-json": "0.2.*",
+                "fkooman/php-lib-json": "0.3.*",
                 "php": ">=5.3.3",
                 "symfony/yaml": "2.3.*"
             },
@@ -42,20 +42,20 @@
                 }
             ],
             "description": "PHP library to handle YAML, INI and JSON configuration files",
-            "time": "2013-11-07 13:27:31"
+            "time": "2013-11-07 15:51:11"
         },
         {
             "name": "fkooman/php-lib-json",
-            "version": "0.2.0",
+            "version": "0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-json.git",
-                "reference": "70126256eca54522c10436805a859d2d97815dbf"
+                "reference": "eb64350e01d8a3c11d70d82374ac1bb35a44b7c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-json/zipball/70126256eca54522c10436805a859d2d97815dbf",
-                "reference": "70126256eca54522c10436805a859d2d97815dbf",
+                "url": "https://api.github.com/repos/fkooman/php-lib-json/zipball/eb64350e01d8a3c11d70d82374ac1bb35a44b7c9",
+                "reference": "eb64350e01d8a3c11d70d82374ac1bb35a44b7c9",
                 "shasum": ""
             },
             "require": {
@@ -79,7 +79,7 @@
                 }
             ],
             "description": "PHP library to encode and decode JSON",
-            "time": "2013-11-06 11:26:34"
+            "time": "2013-11-07 15:48:53"
         },
         {
             "name": "fkooman/php-rest-service",
@@ -87,12 +87,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-rest-service.git",
-                "reference": "0.9.3"
+                "reference": "74e1b201000664877347f3eedec7bd1c4749511f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-rest-service/zipball/0.9.3",
-                "reference": "0.9.3",
+                "url": "https://api.github.com/repos/fkooman/php-rest-service/zipball/74e1b201000664877347f3eedec7bd1c4749511f",
+                "reference": "74e1b201000664877347f3eedec7bd1c4749511f",
                 "shasum": ""
             },
             "require": {

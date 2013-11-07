@@ -18,13 +18,13 @@
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
 use fkooman\Config\Config;
+use fkooman\Json\Json;
 
 use RestService\Http\HttpResponse;
 use RestService\Http\IncomingHttpRequest;
 use RestService\Http\HttpRequest;
 use RestService\Utils\Logger;
 use OAuth\Api;
-use RestService\Utils\Json;
 
 $logger = NULL;
 $request = NULL;
@@ -40,7 +40,7 @@ try {
 
 } catch (Exception $e) {
     $response = new HttpResponse(500, "application/json");
-    $response->setContent(Json::enc(array("error" => "internal_server_error", "error_description" => $e->getMessage())));
+    $response->setContent(Json::encode(array("error" => "internal_server_error", "error_description" => $e->getMessage())));
     if (NULL !== $logger) {
         $logger->logFatal($e->getMessage() . PHP_EOL . $request . PHP_EOL . $response);
     }

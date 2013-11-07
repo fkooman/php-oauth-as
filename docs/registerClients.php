@@ -2,12 +2,13 @@
 
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
-use \RestService\Utils\Config as Config;
-use \OAuth\PdoOAuthStorage as PdoOAuthStorage;
-use \OAuth\ClientRegistration as ClientRegistration;
-use \RestService\Utils\Json as Json;
+use fkooman\Config\Config;
+use fkooman\Json\Json;
 
-$config = new Config(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
+use OAuth\PdoOAuthStorage;
+use OAuth\ClientRegistration;
+
+$config = Config::fromIniFile(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
 $storage = new PdoOAuthStorage($config);
 
 if ($argc !== 2) {
@@ -21,7 +22,7 @@ if (!file_exists($registrationFile) || !is_file($registrationFile) || !is_readab
         die();
 }
 
-$registration = Json::dec(file_get_contents($registrationFile));
+$registration = Json::decode(file_get_contents($registrationFile));
 
 foreach ($registration as $r) {
     // first load it in ClientRegistration object to check it...

@@ -2,12 +2,13 @@
 
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
-use \RestService\Utils\Config as Config;
-use \OAuth\PdoOAuthStorage as PdoOAuthStorage;
-use \OAuth\ClientRegistration as ClientRegistration;
-use \RestService\Utils\Json as Json;
+use fkooman\Config\Config;
+use fkooman\Json\Json;
 
-$config = new Config(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
+use OAuth\PdoOAuthStorage;
+use OAuth\ClientRegistration;
+
+$config = Config::fromIniFile(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
 
 $storage = new PdoOAuthStorage($config);
 $storage->initDatabase();
@@ -19,7 +20,7 @@ if ($argc !== 2) {
 
 $manifestFile = $argv[1];
 $fileContents = file_get_contents($manifestFile);
-$data = Json::dec($fileContents);
+$data = Json::decode($fileContents);
 if (NULL === $data || !is_array($data)) {
         echo "ERROR: manifest seems to be in wrong format" . PHP_EOL;
         die();

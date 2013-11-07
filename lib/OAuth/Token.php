@@ -18,11 +18,11 @@
 namespace OAuth;
 
 use fkooman\Config\Config;
+use fkooman\Json\Json;
 
 use RestService\Http\HttpRequest;
 use RestService\Http\HttpResponse;
 use RestService\Utils\Logger;
-use RestService\Utils\Json;
 
 class Token
 {
@@ -59,7 +59,7 @@ class Token
                 $response->setHeader('Content-Type', 'application/json');
                 $response->setHeader('Cache-Control', 'no-store');
                 $response->setHeader('Pragma', 'no-cache');
-                $response->setContent(Json::enc($this->_handleToken($request->getPostParameters(), $request->getBasicAuthUser(), $request->getBasicAuthPass())));
+                $response->setContent(Json::encode($this->_handleToken($request->getPostParameters(), $request->getBasicAuthUser(), $request->getBasicAuthPass())));
             }
         } catch (TokenException $e) {
             if ($e->getResponseCode() === 401) {
@@ -68,7 +68,7 @@ class Token
             $response->setStatusCode($e->getResponseCode());
             $response->setHeader('Cache-Control', 'no-store');
             $response->setHeader('Pragma', 'no-cache');
-            $response->setContent(Json::enc(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
+            $response->setContent(Json::encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
             if (NULL !== $this->_logger) {
                 $this->_logger->logFatal($e->getLogMessage(TRUE) . PHP_EOL . $request . PHP_EOL . $response);
             }

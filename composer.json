@@ -17,6 +17,7 @@
     "require": {
         "ext-openssl": "*",
         "fkooman/php-lib-config": "0.2.*",
+        "fkooman/php-lib-json": "0.3.*",
         "fkooman/php-rest-service": "0.9.3",
         "php": ">=5.3.3",
         "twig/twig": "1.14.*"
