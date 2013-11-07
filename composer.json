@@ -1,24 +1,24 @@
 {
     "authors": [
         {
-            "email": "fkooman@tuxed.net", 
-            "name": "Fran\u00e7ois Kooman", 
+            "email": "fkooman@tuxed.net",
+            "name": "Fran\u00e7ois Kooman",
             "role": "Developer"
         }
-    ], 
+    ],
     "autoload": {
         "psr-0": {
             "OAuth\\": "lib/"
         }
-    }, 
-    "description": "PHP OAuth 2.0 Authorization Server", 
-    "license": "AGPL-3.0", 
-    "name": "fkooman/php-oauth-as", 
+    },
+    "description": "PHP OAuth 2.0 Authorization Server",
+    "license": "AGPL-3.0",
+    "name": "fkooman/php-oauth-as",
     "require": {
-        "ext-openssl": "*", 
+        "ext-openssl": "*",
+        "fkooman/php-lib-config": "0.2.*",
         "fkooman/php-rest-service": "0.9.3",
-	"fkooman/php-lib-config": "0.2.*",
-        "php": ">=5.3.3", 
+        "php": ">=5.3.3",
         "twig/twig": "1.14.*"
     }
 }
