@@ -17,15 +17,16 @@
 
 namespace OAuth;
 
-use \RestService\Utils\Config as Config;
+use fkooman\Config\Config;
 
 class DummyResourceOwner implements IResourceOwner
 {
-    private $_c;
+    /** @var fkooman\Config\Config */
+    private $config;
 
     public function __construct(Config $c)
     {
-        $this->_c = $c;
+        $this->config = $c;
     }
 
     public function setResourceOwnerHint($resourceOwnerHint)
@@ -35,12 +36,12 @@ class DummyResourceOwner implements IResourceOwner
 
     public function getId()
     {
-        return $this->_c->getSectionValue('DummyResourceOwner', 'uid');
+        return $this->config->s('DummyResourceOwner')->l('uid');
     }
 
     public function getEntitlement()
     {
-        return $this->_c->getSectionValue('DummyResourceOwner', 'entitlement');
+        return $this->config->s('DummyResourceOwner')->s('entitlement')->toArray();
     }
 
     public function getExt()

@@ -17,25 +17,28 @@
 
 namespace OAuth;
 
-use \RestService\Utils\Config as Config;
-use \RestService\Http\HttpRequest as HttpRequest;
-use \RestService\Http\HttpResponse as HttpResponse;
-use \RestService\Utils\Logger as Logger;
-use \RestService\Utils\Json as Json;
+use fkooman\Config\Config;
+
+use RestService\Http\HttpRequest;
+use RestService\Http\HttpResponse;
+use RestService\Utils\Logger;
+use RestService\Utils\Json;
 
 class TokenIntrospection
 {
-    private $_config;
+    /** @var fkooman\Config\Config */
+    private $config;
+
     private $_logger;
     private $_storage;
 
     public function __construct(Config $c, Logger $l = NULL)
     {
-        $this->_config = $c;
+        $this->config = $c;
         $this->_logger = $l;
 
-        $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
-        $this->_storage = new $oauthStorageBackend($this->_config);
+        $oauthStorageBackend = 'OAuth\\' . $this->config->getValue('storageBackend');
+        $this->_storage = new $oauthStorageBackend($this->config);
     }
 
     public function handleRequest(HttpRequest $request)

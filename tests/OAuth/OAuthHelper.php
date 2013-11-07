@@ -15,15 +15,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+namespace OAuth;
 
-use \RestService\Utils\Config as Config;
-use \OAuth\PdoOAuthStorage as PdoOAuthStorage;
+use fkooman\Config\Config;
 
-class OAuthHelper extends PHPUnit_Framework_TestCase
+class OAuthHelper extends \PHPUnit_Framework_TestCase
 {
     protected $_tmpDb;
-    protected $_config;
+
+    /** @var fkooman\Config\Config */
+    protected $config;
 
     public function setUp()
     {
@@ -34,18 +35,26 @@ class OAuthHelper extends PHPUnit_Framework_TestCase
         $dsn = "sqlite:" . $this->_tmpDb;
 
         // load default config
-        $this->_config = new Config(dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini.defaults");
+        //$this->config = Config::fromIniFile(dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini.defaults");
+        $config = Config::fromIniFile(dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini.defaults");
+        $configArray = $config->toArray();
+        $configArray['accessTokenExpiry'] = 5;
+        $configArray['storageBackend'] = 'PdoOAuthStorage';
+        $configArray['PdoOAuthStorage']['dsn'] = $dsn;
+        $configArray['Api']['enableApi'] = true;
 
-        $this->_config->setValue("accessTokenExpiry", 5);
+        $this->config = new Config($configArray);
+
+//        $this->config->setValue("accessTokenExpiry", 5);
 
         // override DB config in memory only
-        $this->_config->setValue("storageBackend", "PdoOAuthStorage");
-        $this->_config->setSectionValue("PdoOAuthStorage", "dsn", $dsn);
+        //$this->config->setValue("storageBackend", "PdoOAuthStorage");
+        //$this->config->setSectionValue("PdoOAuthStorage", "dsn", $dsn);
 
-#        $this->_config->setSectionValue("DummyResourceOwner", "resourceOwnerEntitlement") = array ("foo" => array("fkooman"));
+#        $this->config->setSectionValue("DummyResourceOwner", "resourceOwnerEntitlement") = array ("foo" => array("fkooman"));
 
         // intialize storage
-        $storage = new PdoOAuthStorage($this->_config);
+        $storage = new PdoOAuthStorage($this->config);
         $sql = file_get_contents('schema/db.sql');
         $storage->dbQuery($sql);
         // FIXME: apply updates

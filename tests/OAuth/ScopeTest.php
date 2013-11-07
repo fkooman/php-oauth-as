@@ -15,12 +15,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+namespace OAuth;
 
-use \OAuth\Scope as Scope;
-use \OAuth\ScopeException as ScopeException;
-
-class ScopeTest extends PHPUnit_Framework_TestCase
+class ScopeTest extends \PHPUnit_Framework_TestCase
 {
     public function testBasicScope()
     {

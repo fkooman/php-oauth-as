@@ -17,31 +17,34 @@
 
 namespace OAuth;
 
-use \RestService\Utils\Config as Config;
-use \RestService\Utils\Json as Json;
+use fkooman\Config\Config;
 
-use \PDO as PDO;
+use RestService\Utils\Json;
+
+use PDO;
 
 /**
  * Class to implement storage for the OAuth Authorization Server using PDO.
  */
 class PdoOAuthStorage implements IOAuthStorage
 {
-    private $_c;
+    /** @var fkooman\Config\Config */
+    private $config;
+
     private $_pdo;
 
     public function __construct(Config $c)
     {
-        $this->_c = $c;
+        $this->config = $c;
 
         $driverOptions = array();
-        if ($this->_c->getSectionValue('PdoOAuthStorage', 'persistentConnection')) {
+        if ($this->config->s('PdoOAuthStorage')->l('persistentConnection')) {
             $driverOptions[PDO::ATTR_PERSISTENT] = TRUE;
         }
 
-        $this->_pdo = new PDO($this->_c->getSectionValue('PdoOAuthStorage', 'dsn'), $this->_c->getSectionValue('PdoOAuthStorage', 'username', FALSE), $this->_c->getSectionValue('PdoOAuthStorage', 'password', FALSE), $driverOptions);
+        $this->_pdo = new PDO($this->config->s('PdoOAuthStorage')->l('dsn'), $this->config->s('PdoOAuthStorage')->l('username', false), $this->config->s('PdoOAuthStorage')->l('password', false), $driverOptions);
         $this->_pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        if (0 === strpos($this->_c->getSectionValue('PdoOAuthStorage', 'dsn'), "sqlite:")) {
+        if (0 === strpos($this->config->s('PdoOAuthStorage')->l('dsn'), "sqlite:")) {
             // only for SQlite
             $this->_pdo->exec("PRAGMA foreign_keys = ON");
         }

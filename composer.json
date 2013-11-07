@@ -16,8 +16,9 @@
     "name": "fkooman/php-oauth-as", 
     "require": {
         "ext-openssl": "*", 
-        "fkooman/php-rest-service": "0.9.3", 
+        "fkooman/php-rest-service": "0.9.3",
+	"fkooman/php-lib-config": "0.2.*",
         "php": ">=5.3.3", 
-        "twig/twig": "1.13.*"
+        "twig/twig": "1.14.*"
     }
 }

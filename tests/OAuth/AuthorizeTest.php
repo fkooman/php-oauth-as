@@ -15,17 +15,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+namespace OAuth;
+
 require_once 'OAuthHelper.php';
 
-use \RestService\Http\HttpRequest as HttpRequest;
-use \OAuth\Authorize as Authorize;
+use RestService\Http\HttpRequest;
 
 class AuthorizeTest extends OAuthHelper
 {
     public function testGetAuthorize()
     {
         $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz", "GET");
-        $o = new Authorize($this->_config);
+        $o = new Authorize($this->config);
         $response = $o->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -35,14 +36,14 @@ class AuthorizeTest extends OAuthHelper
         $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz", "POST");
         $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz");
         $h->setPostParameters(array("approval" => "approve", "scope" => array("read")));
-        $o = new Authorize($this->_config);
+        $o = new Authorize($this->config);
         $response = $o->handleRequest($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertRegexp("|^http://localhost/php-oauth/unit/test.html#access_token=[a-zA-Z0-9]+&expires_in=5&token_type=bearer&scope=read&state=xyz$|", $response->getHeader("Location"));
 
         // now a get should immediately return the access token redirect...
         $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=abc", "GET");
-        $o = new Authorize($this->_config);
+        $o = new Authorize($this->config);
         $response = $o->handleRequest($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertRegexp("|^http://localhost/php-oauth/unit/test.html#access_token=[a-zA-Z0-9]+&expires_in=5&token_type=bearer&scope=read&state=abc$|", $response->getHeader("Location"));
@@ -51,7 +52,7 @@ class AuthorizeTest extends OAuthHelper
     public function testUnsupportedScope()
     {
         $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=foo&state=xyz", "GET");
-        $o = new Authorize($this->_config);
+        $o = new Authorize($this->config);
         $response = $o->handleRequest($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals("http://localhost/php-oauth/unit/test.html#error=invalid_scope&error_description=not+authorized+to+request+this+scope&state=xyz", $response->getHeader("Location"));
@@ -60,7 +61,7 @@ class AuthorizeTest extends OAuthHelper
     public function testUnregisteredClient()
     {
         $h = new HttpRequest("https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz", "GET");
-        $o = new Authorize($this->_config);
+        $o = new Authorize($this->config);
         $response = $o->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertRegexp("|.*client not registered.*|", $response->getContent());
@@ -69,7 +70,7 @@ class AuthorizeTest extends OAuthHelper
     public function testInvalidRequestMethod()
     {
         $h = new HttpRequest("https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz", "DELETE");
-        $o = new Authorize($this->_config);
+        $o = new Authorize($this->config);
         $response = $o->handleRequest($h);
         $this->assertEquals(405, $response->getStatusCode());
     }
@@ -79,7 +80,7 @@ class AuthorizeTest extends OAuthHelper
         $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz", "POST");
         $h->setHeader("HTTP_REFERER", "https://evil.site.org/xyz");
         $h->setPostParameters(array("approval" => "approve", "scope" => array("read")));
-        $o = new Authorize($this->_config);
+        $o = new Authorize($this->config);
         $response = $o->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertRegexp("|.*csrf protection triggered, referrer does not match request uri.*|", $response->getContent());
@@ -88,7 +89,7 @@ class AuthorizeTest extends OAuthHelper
     public function testMissingClientId()
     {
         $h = new HttpRequest("https://auth.example.org", "GET");
-        $o = new Authorize($this->_config);
+        $o = new Authorize($this->config);
         $response = $o->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertRegexp("|.*client_id missing.*|", $response->getContent());
@@ -97,7 +98,7 @@ class AuthorizeTest extends OAuthHelper
     public function testMissingResponseType()
     {
         $h = new HttpRequest("https://auth.example.org?client_id=testclient", "GET");
-        $o = new Authorize($this->_config);
+        $o = new Authorize($this->config);
         $response = $o->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertRegexp("|.*response_type missing.*|", $response->getContent());
@@ -107,7 +108,7 @@ class AuthorizeTest extends OAuthHelper
     {
         $u = urlencode("http://wrong.example.org/foo");
         $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=read&redirect_uri=$u", "GET");
-        $o = new Authorize($this->_config);
+        $o = new Authorize($this->config);
         $response = $o->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertRegexp("|.*specified redirect_uri not the same as registered redirect_uri.*|", $response->getContent());
@@ -116,7 +117,7 @@ class AuthorizeTest extends OAuthHelper
     public function testWrongClientType()
     {
         $h = new HttpRequest("https://auth.example.org?client_id=testclient&scope=read&response_type=code", "GET");
-        $o = new Authorize($this->_config);
+        $o = new Authorize($this->config);
         $response = $o->handleRequest($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals("http://localhost/php-oauth/unit/test.html#error=unsupported_response_type&error_description=response_type+not+supported+by+client+profile", $response->getHeader("Location"));

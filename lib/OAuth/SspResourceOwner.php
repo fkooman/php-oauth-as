@@ -17,24 +17,27 @@
 
 namespace OAuth;
 
-use \RestService\Utils\Config as Config;
-use \SimpleSAML_Auth_Simple as SimpleSAML_Auth_Simple;
+use fkooman\Config\Config;
+
+use SimpleSAML_Auth_Simple;
 
 class SspResourceOwner implements IResourceOwner
 {
-    private $_c;
+    /** @var fkooman\Config\Config */
+    private $config;
+
     private $_ssp;
 
     public function __construct(Config $c)
     {
-        $this->_c = $c;
-        $sspPath = $this->_c->getSectionValue('SspResourceOwner', 'sspPath') . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
+        $this->config = $c;
+        $sspPath = $this->config->s('SspResourceOwner')->l('sspPath') . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
         if (!file_exists($sspPath) || !is_file($sspPath) || !is_readable($sspPath)) {
             throw new SspResourceOwnerException("invalid path to simpleSAMLphp");
         }
         require_once $sspPath;
 
-        $this->_ssp = new SimpleSAML_Auth_Simple($this->_c->getSectionValue('SspResourceOwner', 'authSource'));
+        $this->_ssp = new SimpleSAML_Auth_Simple($this->config->s('SspResourceOwner')->l('authSource'));
     }
 
     public function setResourceOwnerHint($resourceOwnerHint)
@@ -46,7 +49,7 @@ class SspResourceOwner implements IResourceOwner
     {
         $this->_authenticateUser();
 
-        $resourceOwnerIdAttribute = $this->_c->getSectionValue('SspResourceOwner', 'resourceOwnerIdAttribute', FALSE);
+        $resourceOwnerIdAttribute = $this->config->s('SspResourceOwner')->l('resourceOwnerIdAttribute', false);
         if (NULL === $resourceOwnerIdAttribute) {
             $nameId = $this->_ssp->getAuthData("saml:sp:NameID");
             if ("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" !== $nameId['Format']) {
@@ -83,7 +86,7 @@ class SspResourceOwner implements IResourceOwner
 
     private function _authenticateUser()
     {
-        $resourceOwnerIdAttribute = $this->_c->getSectionValue('SspResourceOwner', 'resourceOwnerIdAttribute', FALSE);
+        $resourceOwnerIdAttribute = $this->config->s('SspResourceOwner')->l('resourceOwnerIdAttribute', false);
         if (NULL === $resourceOwnerIdAttribute) {
             $this->_ssp->requireAuth(array("saml:NameIDPolicy" => "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"));
         } else {

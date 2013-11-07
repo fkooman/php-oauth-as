@@ -17,15 +17,18 @@
 
 namespace OAuth;
 
-use \RestService\Http\HttpRequest as HttpRequest;
-use \RestService\Http\HttpResponse as HttpResponse;
-use \RestService\Utils\Logger as Logger;
-use \RestService\Utils\Config as Config;
-use \RestService\Utils\Json as Json;
+use fkooman\Config\Config;
+
+use RestService\Http\HttpRequest;
+use RestService\Http\HttpResponse;
+use RestService\Utils\Logger;
+use RestService\Utils\Json;
 
 class Api
 {
-    private $_config;
+    /** @var fkooman\Config\Config */
+    private $config;
+
     private $_logger;
 
     private $_storage;
@@ -33,11 +36,11 @@ class Api
 
     public function __construct(Config $c, Logger $l = NULL)
     {
-        $this->_config = $c;
+        $this->config = $c;
         $this->_logger = $l;
 
-        $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
-        $this->_storage = new $oauthStorageBackend($this->_config);
+        $oauthStorageBackend = 'OAuth\\' . $this->config->getValue('storageBackend');
+        $this->_storage = new $oauthStorageBackend($this->config);
 
         $this->_rs = new ResourceServer($this->_storage);
     }
@@ -47,7 +50,7 @@ class Api
         $response = new HttpResponse(200, "application/json");
 
         try {
-            if (!$this->_config->getSectionValue("Api", "enableApi")) {
+            if (!$this->config->s('Api')->l('enableApi')) {
                 throw new ApiException("forbidden","api disabled");
             }
 
@@ -56,7 +59,7 @@ class Api
             $storage = $this->_storage; // FIXME: can this be avoided??
             $rs = $this->_rs; // FIXME: can this be avoided??
 
-            $request->matchRest("POST", "/authorizations/", function() use ($request, $response, $storage, $rs) {
+            $request->matchRest("POST", "/authorizations/", function () use ($request, $response, $storage, $rs) {
                 $rs->requireScope("authorizations");
                 $data = Json::dec($request->getContent());
                 if (NULL === $data || !is_array($data) || !array_key_exists("client_id", $data) || !array_key_exists("scope", $data)) {
@@ -90,7 +93,7 @@ class Api
                 $response->setContent(Json::enc(array("ok" => true)));
             });
 
-            $request->matchRest("GET", "/authorizations/:id", function($id) use ($request, $response, $storage, $rs) {
+            $request->matchRest("GET", "/authorizations/:id", function ($id) use ($request, $response, $storage, $rs) {
                 $rs->requireScope("authorizations");
                 $data = $storage->getApprovalByResourceOwnerId($id, $rs->getResourceOwnerId());
                 if (FALSE === $data) {
@@ -99,7 +102,7 @@ class Api
                 $response->setContent(Json::enc($data));
             });
 
-            $request->matchRest("GET", "/authorizations/:id", function($id) use ($request, $response, $storage, $rs) {
+            $request->matchRest("GET", "/authorizations/:id", function ($id) use ($request, $response, $storage, $rs) {
                 $rs->requireScope("authorizations");
                 $data = $storage->getApprovalByResourceOwnerId($id, $rs->getResourceOwnerId());
                 if (FALSE === $data) {
@@ -108,7 +111,7 @@ class Api
                 $response->setContent(Json::enc($data));
             });
 
-            $request->matchRest("DELETE", "/authorizations/:id", function($id) use ($request, $response, $storage, $rs) {
+            $request->matchRest("DELETE", "/authorizations/:id", function ($id) use ($request, $response, $storage, $rs) {
                 $rs->requireScope("authorizations");
                 if (FALSE === $storage->deleteApproval($id, $rs->getResourceOwnerId())) {
                     throw new ApiException("not_found", "the resource you are trying to delete does not exist");
@@ -116,20 +119,20 @@ class Api
                 $response->setContent(Json::enc(array("ok" => true)));
             });
 
-            $request->matchRest("GET", "/authorizations/", function() use ($request, $response, $storage, $rs) {
+            $request->matchRest("GET", "/authorizations/", function () use ($request, $response, $storage, $rs) {
                 $rs->requireScope("authorizations");
                 $data = $storage->getApprovals($rs->getResourceOwnerId());
                 $response->setContent(Json::enc($data));
             });
 
-            $request->matchRest("GET", "/applications/", function() use ($request, $response, $storage, $rs) {
+            $request->matchRest("GET", "/applications/", function () use ($request, $response, $storage, $rs) {
                 $rs->requireScope("applications");
                 // $rs->requireEntitlement("urn:x-oauth:entitlement:applications");    // do not require entitlement to list clients...
                 $data = $storage->getClients();
                 $response->setContent(Json::enc($data));
             });
 
-            $request->matchRest("DELETE", "/applications/:id", function($id) use ($request, $response, $storage, $rs) {
+            $request->matchRest("DELETE", "/applications/:id", function ($id) use ($request, $response, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 if (FALSE === $storage->deleteClient($id)) {
@@ -138,7 +141,7 @@ class Api
                 $response->setContent(Json::enc(array("ok" => true)));
             });
 
-            $request->matchRest("GET", "/applications/:id", function($id) use ($request, $response, $storage, $rs) {
+            $request->matchRest("GET", "/applications/:id", function ($id) use ($request, $response, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 // FIXME: for now require entitlement as long as password hashing is not
@@ -151,7 +154,7 @@ class Api
                 $response->setContent(Json::enc($data));
             });
 
-            $request->matchRest("POST", "/applications/", function() use ($request, $response, $storage, $rs) {
+            $request->matchRest("POST", "/applications/", function () use ($request, $response, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 try {
@@ -172,14 +175,14 @@ class Api
                 }
             });
 
-            $request->matchRest("GET", "/stats/", function() use ($request, $response, $storage, $rs) {
+            $request->matchRest("GET", "/stats/", function () use ($request, $response, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 $data = $storage->getStats();
                 $response->setContent(Json::enc($data));
             });
 
-            $request->matchRest("PUT", "/applications/:id", function($id) use ($request, $response, $storage, $rs) {
+            $request->matchRest("PUT", "/applications/:id", function ($id) use ($request, $response, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 try {
@@ -197,7 +200,7 @@ class Api
                 $response->setContent(Json::enc(array("ok" => true)));
             });
 
-            $request->matchRestDefault(function($methodMatch, $patternMatch) use ($request, $response) {
+            $request->matchRestDefault(function ($methodMatch, $patternMatch) use ($request, $response) {
                 if (in_array($request->getRequestMethod(), $methodMatch)) {
                     if (!$patternMatch) {
                         throw new ApiException("not_found", "resource not found");

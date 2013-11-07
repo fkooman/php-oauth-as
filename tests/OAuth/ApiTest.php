@@ -15,13 +15,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+namespace OAuth;
+
 require_once 'OAuthHelper.php';
 
-use \OAuth\Api as Api;
-use \OAuth\MockResourceOwner as MockResourceOwner;
-
-use \RestService\Http\HttpRequest as HttpRequest;
-use \RestService\Utils\Json as Json;
+use RestService\Http\HttpRequest;
+use RestService\Utils\Json;
 
 class ApiTest extends OAuthHelper
 {
@@ -30,12 +29,10 @@ class ApiTest extends OAuthHelper
     public function setUp()
     {
         parent::setUp();
-        // enable Api
-        $this->_config->setSectionValue("Api", "enableApi", TRUE);
-        $this->_api = new Api($this->_config, NULL);
+        $this->_api = new Api($this->config, NULL);
 
-        $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
-        $storage = new $oauthStorageBackend($this->_config);
+        $oauthStorageBackend = 'OAuth\\' . $this->config->getValue('storageBackend');
+        $storage = new $oauthStorageBackend($this->config);
 
         $resourceOwner = array(
             "id" => "fkooman",

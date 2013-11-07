@@ -17,15 +17,18 @@
 
 namespace OAuth;
 
-use \RestService\Utils\Config as Config;
-use \RestService\Http\HttpRequest as HttpRequest;
-use \RestService\Http\HttpResponse as HttpResponse;
-use \RestService\Utils\Logger as Logger;
-use \RestService\Http\Uri as Uri;
+use fkooman\Config\Config;
+
+use RestService\Http\HttpRequest;
+use RestService\Http\HttpResponse;
+use RestService\Utils\Logger;
+use RestService\Http\Uri;
 
 class Authorize
 {
-    private $_config;
+    /** @var fkooman\Config\Config */
+    private $config;
+
     private $_logger;
     private $_storage;
 
@@ -33,14 +36,14 @@ class Authorize
 
     public function __construct(Config $c, Logger $l = NULL)
     {
-        $this->_config = $c;
+        $this->config = $c;
         $this->_logger = $l;
 
-        $authMech = 'OAuth\\' . $this->_config->getValue('authenticationMechanism');
-        $this->_resourceOwner = new $authMech($this->_config);
+        $authMech = 'OAuth\\' . $this->config->getValue('authenticationMechanism');
+        $this->_resourceOwner = new $authMech($this->config);
 
-        $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
-        $this->_storage = new $oauthStorageBackend($this->_config);
+        $oauthStorageBackend = 'OAuth\\' . $this->config->getValue('storageBackend');
+        $this->_storage = new $oauthStorageBackend($this->config);
     }
 
     public function handleRequest(HttpRequest $request)
@@ -64,10 +67,10 @@ class Authorize
                             $redirectUri = new Uri($result->getClient()->getRedirectUri());
 
                             $output = $twig->render("askAuthorization.twig", array (
-                                'serviceName' => $this->_config->getValue('serviceName'),
-                                'serviceLogoUri' => $this->_config->getValue('serviceLogoUri', FALSE),
-                                'serviceLogoWidth' => $this->_config->getValue('serviceLogoWidth', FALSE),
-                                'serviceLogoHeight' => $this->_config->getValue('serviceLogoHeight', FALSE),
+                                'serviceName' => $this->config->getValue('serviceName'),
+                                'serviceLogoUri' => $this->config->getValue('serviceLogoUri', false),
+                                'serviceLogoWidth' => $this->config->getValue('serviceLogoWidth', false),
+                                'serviceLogoHeight' => $this->config->getValue('serviceLogoHeight', false),
                                 'resourceOwnerId' => $this->_resourceOwner->getId(),
                                 'sslEnabled' => "https" === $request->getRequestUri()->getScheme(),
                                 'contactEmail' => $result->getClient()->getContactEmail(),
@@ -207,9 +210,9 @@ class Authorize
                     // implicit grant
                     // FIXME: return existing access token if it exists for this exact client, resource owner and scope?
                     $accessToken = Utils::randomHex(16);
-                    $this->_storage->storeAccessToken($accessToken, time(), $clientId, $resourceOwner->getId(), $scope->getScope(), $this->_config->getValue('accessTokenExpiry'));
+                    $this->_storage->storeAccessToken($accessToken, time(), $clientId, $resourceOwner->getId(), $scope->getScope(), $this->config->getValue('accessTokenExpiry'));
                     $token = array("access_token" => $accessToken,
-                                   "expires_in" => $this->_config->getValue('accessTokenExpiry'),
+                                   "expires_in" => $this->config->getValue('accessTokenExpiry'),
                                    "token_type" => "bearer");
                     $s = $scope->getScope();
                     if (!empty($s)) {

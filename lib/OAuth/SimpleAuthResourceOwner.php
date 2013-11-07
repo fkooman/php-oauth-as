@@ -17,14 +17,17 @@
 
 namespace OAuth;
 
-use RestService\Utils\Config;
+use fkooman\Config\Config;
+
 use RestService\Utils\Json;
 
 use fkooman\SimpleAuth\SimpleAuth;
 
 class SimpleAuthResourceOwner implements IResourceOwner
 {
+    /** @var fkooman\Config\Config */
     private $config;
+
     private $simpleAuth;
     private $resourceOwnerHint;
 
@@ -32,7 +35,7 @@ class SimpleAuthResourceOwner implements IResourceOwner
     {
         $this->config = $config;
 
-        $bPath = $this->config->getSectionValue('SimpleAuthResourceOwner', 'simpleAuthPath') . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+        $bPath = $this->config->s('SimpleAuthResourceOwner')->l('simpleAuthPath') . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
         if (!file_exists($bPath) || !is_file($bPath) || !is_readable($bPath)) {
             throw new SimpleAuthResourceOwnerException("invalid path to php-simple-auth");
         }
@@ -53,7 +56,7 @@ class SimpleAuthResourceOwner implements IResourceOwner
 
     public function getEntitlement()
     {
-        $entitlementFile = $this->config->getSectionValue('SimpleAuthResourceOwner', 'entitlementFile');
+        $entitlementFile = $this->config->s('SimpleAuthResourceOwner')->l('entitlementFile');
         $fileContents = @file_get_contents($entitlementFile);
         if (FALSE === $fileContents) {
             // no entitlement file, so no entitlement

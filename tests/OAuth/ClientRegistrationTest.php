@@ -15,12 +15,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+namespace OAuth;
 
-use \OAuth\ClientRegistration as ClientRegistration;
-use \OAuth\ClientRegistrationException as ClientRegistrationException;
-
-class ClientRegistrationTest extends PHPUnit_Framework_TestCase
+class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
 {
     public static function validProvider()
     {

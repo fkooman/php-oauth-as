@@ -17,25 +17,28 @@
 
 namespace OAuth;
 
-use \RestService\Utils\Config as Config;
-use \RestService\Http\HttpRequest as HttpRequest;
-use \RestService\Http\HttpResponse as HttpResponse;
-use \RestService\Utils\Logger as Logger;
-use \RestService\Utils\Json as Json;
+use fkooman\Config\Config;
+
+use RestService\Http\HttpRequest;
+use RestService\Http\HttpResponse;
+use RestService\Utils\Logger;
+use RestService\Utils\Json;
 
 class Token
 {
-    private $_config;
+    /** @var fkooman\Config\Config */
+    private $config;
+
     private $_logger;
     private $_storage;
 
     public function __construct(Config $c, Logger $l = NULL)
     {
-        $this->_config = $c;
+        $this->config = $c;
         $this->_logger = $l;
 
-        $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
-        $this->_storage = new $oauthStorageBackend($this->_config);
+        $oauthStorageBackend = 'OAuth\\' . $this->config->getValue('storageBackend');
+        $this->_storage = new $oauthStorageBackend($this->config);
 
         // occasionally delete expired access tokens and authorization codes
         if (3 === rand(0,5)) {
@@ -154,7 +157,7 @@ class Token
 
                 $token = array();
                 $token['access_token'] = Utils::randomHex(16);
-                $token['expires_in'] = intval($this->_config->getValue('accessTokenExpiry'));
+                $token['expires_in'] = intval($this->config->getValue('accessTokenExpiry'));
                 // we always grant the scope the user authorized, no further restrictions here...
                 // FIXME: the merging of authorized scopes in the authorize function is a bit of a mess!
                 // we should deal with that there and come up with a good solution...
@@ -175,7 +178,7 @@ class Token
 
                 $token = array();
                 $token['access_token'] = Utils::randomHex(16);
-                $token['expires_in'] = intval($this->_config->getValue('accessTokenExpiry'));
+                $token['expires_in'] = intval($this->config->getValue('accessTokenExpiry'));
                 if (NULL !== $scope) {
                     // the client wants to obtain a specific scope
                     $requestedScope = new Scope($scope);

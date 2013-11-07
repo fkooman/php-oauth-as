@@ -15,11 +15,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+namespace OAuth;
+
 require_once 'OAuthHelper.php';
 
-use \RestService\Http\HttpRequest as HttpRequest;
-use \OAuth\Token as Token;
-use \OAuth\MockResourceOwner as MockResourceOwner;
+use RestService\Http\HttpRequest;
 
 class TokenTest extends OAuthHelper
 {
@@ -27,8 +27,8 @@ class TokenTest extends OAuthHelper
     {
         parent::setUp();
 
-        $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
-        $storage = new $oauthStorageBackend($this->_config);
+        $oauthStorageBackend = 'OAuth\\' . $this->config->getValue('storageBackend');
+        $storage = new $oauthStorageBackend($this->config);
 
         $resourceOwner = array(
             "id" => "fkooman",
@@ -51,7 +51,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}$|', $response->getContent());
@@ -65,7 +65,7 @@ class TokenTest extends OAuthHelper
         // fail because redrect_uri was part of the authorize request, so must also be
         // there at token request
         $h->setPostParameters(array("code" => "authorizeRequestWithRedirectUri", "grant_type" => "authorization_code"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code was not found"}', $response->getContent());
@@ -77,7 +77,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("redirect_uri" => "http://example.org/invalid", "code" => "authorizeRequestWithRedirectUri", "grant_type" => "authorization_code"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code was not found"}', $response->getContent());
@@ -89,7 +89,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("redirect_uri" => "http://localhost/php-oauth/unit/test.html", "code" => "authorizeRequestWithRedirectUri", "grant_type" => "authorization_code"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}$|', $response->getContent());
@@ -101,7 +101,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("refresh_token" => "r3fr3sh", "grant_type" => "refresh_token"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read write foo","token_type":"bearer"}$|', $response->getContent());
@@ -110,7 +110,7 @@ class TokenTest extends OAuthHelper
     public function testInvalidRequestMethod()
     {
         $h = new HttpRequest("https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz", "GET");
-        $o = new Token($this->_config);
+        $o = new Token($this->config);
         $response = $o->handleRequest($h);
         $this->assertEquals(405, $response->getStatusCode());
     }
@@ -121,7 +121,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('{"error":"invalid_request","error_description":"the grant_type parameter is missing"}', $response->getContent());
@@ -131,7 +131,7 @@ class TokenTest extends OAuthHelper
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
         $h->setPostParameters(array("client_id" => "testcodeclient", "code" => "4uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertEquals('Basic realm="OAuth Server"', $response->getHeader("WWW-Authenticate"));
@@ -144,7 +144,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("NONEXISTINGCLIENT");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertEquals('Basic realm="OAuth Server"', $response->getHeader("WWW-Authenticate"));
@@ -157,7 +157,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("WRONGPASSWORD");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertEquals('Basic realm="OAuth Server"', $response->getHeader("WWW-Authenticate"));
@@ -170,7 +170,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n", "grant_type" => "authorization_code", "client_id" => "MISMATCH_CLIENT_ID"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('{"error":"invalid_grant","error_description":"client_id inconsistency: authenticating user must match POST body client_id"}', $response->getContent());
@@ -182,7 +182,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "3xp1r3d4uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code expired"}', $response->getContent());
@@ -192,7 +192,7 @@ class TokenTest extends OAuthHelper
     {
         $h = new HttpRequest("https://auth.example.org/token", "POST");
         $h->setPostParameters(array("client_id" => "testnativeclient", "code" => "n4t1v34uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read","refresh_token":"n4t1v3r3fr3sh","token_type":"bearer"}$|', $response->getContent());
@@ -204,7 +204,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "1nv4l1d4uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code was not found"}', $response->getContent());
@@ -216,7 +216,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "n4t1v34uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code was not found"}', $response->getContent());
@@ -228,7 +228,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}$|', $response->getContent());
@@ -243,7 +243,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("refresh_token" => "r3fr3sh", "scope" => "foo", "grant_type" => "refresh_token"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"foo","token_type":"bearer"}$|', $response->getContent());
@@ -255,7 +255,7 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("refresh_token" => "r3fr3sh", "scope" => "we want no sub scope", "grant_type" => "refresh_token"));
-        $t = new Token($this->_config, NULL);
+        $t = new Token($this->config, NULL);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read write foo","token_type":"bearer"}$|', $response->getContent());
