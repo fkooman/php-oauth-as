@@ -17,20 +17,21 @@
 
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
-use \RestService\Utils\Config as Config;
-use \RestService\Utils\Logger as Logger;
-use \RestService\Http\HttpRequest as HttpRequest;
-use \RestService\Http\IncomingHttpRequest as IncomingHttpRequest;
-use \OAuth\Authorize as Authorize;
-use \RestService\Http\HttpResponse as HttpResponse;
+use fkooman\Config\Config;
+
+use RestService\Utils\Logger;
+use RestService\Http\HttpRequest;
+use RestService\Http\IncomingHttpRequest;
+use OAuth\Authorize;
+use RestService\Http\HttpResponse;
 
 $logger = NULL;
 $request = NULL;
 $response = NULL;
 
 try {
-    $config = new Config(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
-    $logger = new Logger($config->getSectionValue('Log', 'logLevel'), $config->getValue('serviceName'), $config->getSectionValue('Log', 'logFile'), $config->getSectionValue('Log', 'logMail', FALSE));
+    $config = Config::fromIniFile(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
+    $logger = new Logger($config->s('Log')->l('logLevel'), $config->getValue('serviceName'), $config->s('Log')->l('logFile'), $config->s('Log')->l('logMail', false));
 
     $a = new Authorize($config, $logger);
     $request = HttpRequest::fromIncomingHttpRequest(new IncomingHttpRequest());
