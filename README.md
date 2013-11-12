@@ -60,14 +60,14 @@ automatically set, permissions set and a sample Apache configuration file will
 be generated and shown on the screen (see below for more information on
 Apache configuration).
 
-    $ docs/configure.sh
+    $ bin/configure.sh
 
 Next make sure to configure the database settings in `config/oauth.ini`, and 
 possibly other settings. If you want to keep using SQlite you are good to go 
 without fiddling with the database settings. Now to initialize the database,
 i.e. to install the tables, run:
 
-    $ php docs/initOAuthDatabase.php
+    $ php bin/initOAuthDatabase.php
 
 It is also possible to already preregister some clients which makes sense if 
 you want to use the management clients mentioned below. The sample registrations
@@ -79,12 +79,12 @@ full path where the management clients will be installed.
 To modify the domain of where the clients will be located in one go, you can
 run the following command:
 
-    $ sed 's|http://localhost|https://www.example.org|g' docs/registration.json > docs/myregistration.json
+    $ sed 's|http://localhost|https://www.example.org|g' docs/registration.json > config/myregistration.json
 
-You can still modify the `docs/myregistration.json` by hand if you desire, and 
+You can still modify the `config/myregistration.json` by hand if you desire, and 
 then load them in the database:
 
-    $ php docs/registerClients.php docs/myregistration.json
+    $ php bin/registerClients.php config/myregistration.json
 
 This should take care of the initial setup and you can now move to installing 
 the management clients, see below.
@@ -130,7 +130,7 @@ On Red Hat based distributions the file can be placed in
 be placed in `/etc/apache2/conf.d/php-oauth`. Be sure to modify it to suit your 
 environment and do not forget to restart Apache. 
 
-The `docs/configure.sh` script from the previous section outputs a config for 
+The `bin/configure.sh` script from the previous section outputs a config for 
 your system which replaces the `/PATH/TO/APP` with the actual install directory.
 
 ## Security
