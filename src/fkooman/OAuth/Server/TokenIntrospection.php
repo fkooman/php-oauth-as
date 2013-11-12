@@ -19,28 +19,28 @@ namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
 use fkooman\Json\Json;
-
-use fkooman\Http\Request as HttpRequest;
-use fkooman\Http\Response as HttpResponse;
+use fkooman\Http\Request;
+use fkooman\Http\JsonResponse;
 
 class TokenIntrospection
 {
     /** @var fkooman\Config\Config */
     private $config;
 
-    private $_storage;
+    /** @var fkooman\OAuth\Server\IOAuthStorage */
+    private $storage;
 
     public function __construct(Config $c)
     {
         $this->config = $c;
 
         $oauthStorageBackend = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('storageBackend');
-        $this->_storage = new $oauthStorageBackend($this->config);
+        $this->storage = new $oauthStorageBackend($this->config);
     }
 
-    public function handleRequest(HttpRequest $request)
+    public function handleRequest(Request $request)
     {
-        $response = NULL;
+        $response = new JsonResponse();
 
         try {
             $requestMethod = $request->getRequestMethod();
@@ -49,14 +49,17 @@ class TokenIntrospection
                 throw new TokenIntrospectionException("method_not_allowed", "invalid request method");
             }
             $parameters = "GET" === $requestMethod ? $request->getQueryParameters() : $request->getPostParameters();
-
-            $response = new HttpResponse(200, "application/json");
             $response->setHeader('Cache-Control', 'no-store');
             $response->setHeader('Pragma', 'no-cache');
-            $response->setContent(Json::encode($this->_introspectToken($parameters)));
+            $response->setContent($this->introspectToken($parameters));
         } catch (TokenIntrospectionException $e) {
-            $response = new HttpResponse($e->getResponseCode(), "application/json");
-            $response->setContent(Json::encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
+            $response->setStatusCode($e->getResponseCode());
+            $response->setContent(
+                array(
+                    "error" => $e->getMessage(),
+                    "error_description" => $e->getDescription()
+                )
+            );
             if ("method_not_allowed" === $e->getMessage()) {
                 $response->setHeader("Allow", "GET,POST");
             }
@@ -68,24 +71,24 @@ class TokenIntrospection
     /**
      * Implementation of https://tools.ietf.org/html/draft-richer-oauth-introspection
      */
-    private function _introspectToken(array $param)
+    private function introspectToken(array $param)
     {
         $r = array();
 
         $token = Utils::getParameter($param, 'token');
-        if (NULL === $token) {
+        if (null === $token) {
             throw new TokenIntrospectionException("invalid_token", "the token parameter is missing");
         }
-        $accessToken = $this->_storage->getAccessToken($token);
-        if (FALSE === $accessToken) {
+        $accessToken = $this->storage->getAccessToken($token);
+        if (false === $accessToken) {
             // token does not exist
-            $r['active'] = FALSE;
+            $r['active'] = false;
         } elseif (time() > $accessToken['issue_time'] + $accessToken['expires_in']) {
             // token expired
-            $r['active'] = FALSE;
+            $r['active'] = false;
         } else {
             // token exists and did not expire
-            $r['active'] = TRUE;
+            $r['active'] = true;
             $r['exp'] = intval($accessToken['issue_time'] + $accessToken['expires_in']);
             $r['iat'] = intval($accessToken['issue_time']);
             $r['scope'] = $accessToken['scope'];
@@ -97,7 +100,7 @@ class TokenIntrospection
             // $response['aud'] = 'foo';
 
             // add proprietary "x-entitlement"
-            $resourceOwner = $this->_storage->getResourceOwner($accessToken['resource_owner_id']);
+            $resourceOwner = $this->storage->getResourceOwner($accessToken['resource_owner_id']);
             if (isset($resourceOwner['entitlement'])) {
                 $e = Json::decode($resourceOwner['entitlement']);
                 if (0 !== count($e)) {

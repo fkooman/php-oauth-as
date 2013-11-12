@@ -19,7 +19,6 @@ namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
 use fkooman\Json\Json;
-
 use fkooman\SimpleAuth\SimpleAuth;
 
 class SimpleAuthResourceOwner implements IResourceOwner
@@ -34,13 +33,13 @@ class SimpleAuthResourceOwner implements IResourceOwner
     {
         $this->config = $config;
 
-        $bPath = $this->config->s('SimpleAuthResourceOwner')->l('simpleAuthPath') . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+        $bPath = $this->config->s('SimpleAuthResourceOwner')->l('simpleAuthPath') . '/vendor/autoload.php';
         if (!file_exists($bPath) || !is_file($bPath) || !is_readable($bPath)) {
             throw new SimpleAuthResourceOwnerException("invalid path to php-simple-auth");
         }
         require_once $bPath;
 
-        $this->simpleAuth = new \fkooman\SimpleAuth\SimpleAuth();
+        $this->simpleAuth = new SimpleAuth();
     }
 
     public function setResourceOwnerHint($resourceOwnerHint)
@@ -57,7 +56,7 @@ class SimpleAuthResourceOwner implements IResourceOwner
     {
         $entitlementFile = $this->config->s('SimpleAuthResourceOwner')->l('entitlementFile');
         $fileContents = @file_get_contents($entitlementFile);
-        if (FALSE === $fileContents) {
+        if (false === $fileContents) {
             // no entitlement file, so no entitlement
             return array();
         }
@@ -74,5 +73,4 @@ class SimpleAuthResourceOwner implements IResourceOwner
         // unsupported
         return array();
     }
-
 }

@@ -23,7 +23,7 @@ class Utils
     {
         $randomString = bin2hex(openssl_random_pseudo_bytes($len, $strong));
         // @codeCoverageIgnoreStart
-        if (FALSE === $strong) {
+        if (false === $strong) {
             throw new Exception("unable to securely generate random string");
         }
         // @codeCoverageIgnoreEnd
@@ -32,7 +32,6 @@ class Utils
 
     public static function getParameter(array $parameters, $key)
     {
-        return (array_key_exists($key, $parameters) && !empty($parameters[$key])) ? $parameters[$key] : NULL;
+        return (array_key_exists($key, $parameters) && !empty($parameters[$key])) ? $parameters[$key] : null;
     }
-
 }

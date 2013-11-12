@@ -22,68 +22,68 @@ use fkooman\OAuth\Common\Scope;
 
 class ResourceServer
 {
-    private $_storage;
-    private $_entitlementEnforcement;
-    private $_resourceOwnerId;
-    private $_grantedScope;
-    private $_resourceOwnerEntitlement;
-    private $_resourceOwnerExt;
+    private $storage;
+    private $entitlementEnforcement;
+    private $resourceOwnerId;
+    private $grantedScope;
+    private $resourceOwnerEntitlement;
+    private $resourceOwnerExt;
 
     public function __construct(IOAuthStorage $s)
     {
-        $this->_storage = $s;
-        $this->_entitlementEnforcement = TRUE;
-        $this->_resourceOwnerId = NULL;
-        $this->_grantedScope = NULL;
-        $this->_resourceOwnerEntitlement = array();
-        $this->_resourceOwnerExt = array();
+        $this->storage = $s;
+        $this->entitlementEnforcement = true;
+        $this->resourceOwnerId = null;
+        $this->grantedScope = null;
+        $this->resourceOwnerEntitlement = array();
+        $this->resourceOwnerExt = array();
     }
 
     public function verifyAuthorizationHeader($authorizationHeader)
     {
-        if (NULL === $authorizationHeader) {
+        if (null === $authorizationHeader) {
             throw new ResourceServerException("no_token", "no authorization header in the request");
         }
         // b64token = 1*( ALPHA / DIGIT / "-" / "." / "_" / "~" / "+" / "/" ) *"="
         $b64TokenRegExp = '(?:[[:alpha:][:digit:]-._~+/]+=*)';
         $result = preg_match('|^Bearer (?P<value>' . $b64TokenRegExp . ')$|', $authorizationHeader, $matches);
-        if ($result === FALSE || $result === 0) {
+        if ($result === false || $result === 0) {
             throw new ResourceServerException("invalid_token", "the access token is malformed");
         }
         $accessToken = $matches['value'];
-        $token = $this->_storage->getAccessToken($accessToken);
-        if (FALSE === $token) {
+        $token = $this->storage->getAccessToken($accessToken);
+        if (false === $token) {
             throw new ResourceServerException("invalid_token", "the access token is invalid");
         }
         if (time() > $token['issue_time'] + $token['expires_in']) {
             throw new ResourceServerException("invalid_token", "the access token expired");
         }
-        $this->_resourceOwnerId = $token['resource_owner_id'];
-        $this->_grantedScope = $token['scope'];
-        $resourceOwner = $this->_storage->getResourceOwner($token['resource_owner_id']);
-        $this->_resourceOwnerEntitlement = Json::decode($resourceOwner['entitlement']);
-        $this->_resourceOwnerExt = Json::decode($resourceOwner['ext']);
+        $this->resourceOwnerId = $token['resource_owner_id'];
+        $this->grantedScope = $token['scope'];
+        $resourceOwner = $this->storage->getResourceOwner($token['resource_owner_id']);
+        $this->resourceOwnerEntitlement = Json::decode($resourceOwner['entitlement']);
+        $this->resourceOwnerExt = Json::decode($resourceOwner['ext']);
     }
 
-    public function setEntitlementEnforcement($enforce = TRUE)
+    public function setEntitlementEnforcement($enforce = true)
     {
-        $this->_entitlementEnforcement = $enforce;
+        $this->entitlementEnforcement = $enforce;
     }
 
     public function getResourceOwnerId()
     {
         // FIXME: should we die when the resourceOwnerId is NULL?
-        return $this->_resourceOwnerId;
+        return $this->resourceOwnerId;
     }
 
     public function getEntitlement()
     {
-        return $this->_resourceOwnerEntitlement;
+        return $this->resourceOwnerEntitlement;
     }
 
     public function hasScope($scope)
     {
-        $grantedScope = Scope::fromString($this->_grantedScope);
+        $grantedScope = Scope::fromString($this->grantedScope);
         $requiredScope = Scope::fromString($scope);
 
         return $grantedScope->hasScope($requiredScope);
@@ -91,35 +91,37 @@ class ResourceServer
 
     public function requireScope($scope)
     {
-        if (FALSE === $this->hasScope($scope)) {
+        if (false === $this->hasScope($scope)) {
             throw new ResourceServerException("insufficient_scope", "no permission for this call with granted scope");
         }
     }
 
     public function hasEntitlement($entitlement)
     {
-        return in_array($entitlement, $this->_resourceOwnerEntitlement);
+        return in_array($entitlement, $this->resourceOwnerEntitlement);
     }
 
     public function requireEntitlement($entitlement)
     {
-        if ($this->_entitlementEnforcement) {
-            if (FALSE === $this->hasEntitlement($entitlement)) {
-                throw new ResourceServerException("insufficient_entitlement", "no permission for this call with granted entitlement");
+        if ($this->entitlementEnforcement) {
+            if (false === $this->hasEntitlement($entitlement)) {
+                throw new ResourceServerException(
+                    "insufficient_entitlement",
+                    "no permission for this call with granted entitlement"
+                );
             }
         }
     }
 
     public function getExt()
     {
-        return $this->_resourceOwnerExt;
+        return $this->resourceOwnerExt;
     }
 
     public function getExtKey($key)
     {
         $ext = $this->getExt();
 
-        return array_key_exists($key, $ext) ? $ext[$key] : NULL;
+        return array_key_exists($key, $ext) ? $ext[$key] : null;
     }
-
 }

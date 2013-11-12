@@ -22,36 +22,36 @@ namespace fkooman\OAuth\Server;
  */
 class ClientException extends \Exception
 {
-    private $_description;
-    private $_client;
-    private $_state;
+    private $description;
+    private $client;
+    private $state;
 
     public function __construct($message, $description, $client, $state, $code = 0, Exception $previous = null)
     {
-        $this->_description = $description;
-        $this->_client = $client;
-        $this->_state = $state;
+        $this->description = $description;
+        $this->client = $client;
+        $this->state = $state;
         parent::__construct($message, $code, $previous);
     }
 
     public function getDescription()
     {
-        return $this->_description;
+        return $this->description;
     }
 
     public function getClient()
     {
-        return $this->_client;
+        return $this->client;
     }
 
     public function getState()
     {
-        return $this->_state;
+        return $this->state;
     }
 
-    public function getLogMessage($includeTrace = FALSE)
+    public function getLogMessage($includeTrace = false)
     {
-    $client = $this->getClient();
+        $client = $this->getClient();
         $msg = 'Message    : ' . $this->getMessage() . PHP_EOL .
                'Description: ' . $this->getDescription() . PHP_EOL .
                'Client     : ' . $client['id'] . PHP_EOL .
@@ -62,5 +62,4 @@ class ClientException extends \Exception
 
         return $msg;
     }
-
 }

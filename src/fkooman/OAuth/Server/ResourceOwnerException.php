@@ -22,7 +22,7 @@ namespace fkooman\OAuth\Server;
  */
 class ResourceOwnerException extends \Exception
 {
-    public function getLogMessage($includeTrace = FALSE)
+    public function getLogMessage($includeTrace = false)
     {
         $msg = 'Message    : ' . $this->getMessage() . PHP_EOL;
         if ($includeTrace) {
@@ -31,5 +31,4 @@ class ResourceOwnerException extends \Exception
 
         return $msg;
     }
-
 }

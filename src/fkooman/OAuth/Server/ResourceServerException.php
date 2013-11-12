@@ -19,17 +19,17 @@ namespace fkooman\OAuth\Server;
 
 class ResourceServerException extends \Exception
 {
-    private $_description;
+    private $description;
 
     public function __construct($message, $description, $code = 0, Exception $previous = null)
     {
-        $this->_description = $description;
+        $this->description = $description;
         parent::__construct($message, $code, $previous);
     }
 
     public function getDescription()
     {
-        return $this->_description;
+        return $this->description;
     }
 
     public function getResponseCode()
@@ -48,7 +48,7 @@ class ResourceServerException extends \Exception
         }
     }
 
-    public function getLogMessage($includeTrace = FALSE)
+    public function getLogMessage($includeTrace = false)
     {
         $msg = 'Message    : ' . $this->getMessage() . PHP_EOL .
                'Description: ' . $this->getDescription() . PHP_EOL;
@@ -58,5 +58,4 @@ class ResourceServerException extends \Exception
 
         return $msg;
     }
-
 }

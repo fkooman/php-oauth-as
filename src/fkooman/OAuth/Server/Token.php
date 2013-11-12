@@ -20,34 +20,32 @@ namespace fkooman\OAuth\Server;
 use fkooman\Config\Config;
 use fkooman\Json\Json;
 use fkooman\OAuth\Common\Scope;
-
-use fkooman\Http\Request as HttpRequest;
-use fkooman\Http\Response as HttpResponse;
+use fkooman\Http\Request;
+use fkooman\Http\JsonResponse;
 
 class Token
 {
     /** @var fkooman\Config\Config */
     private $config;
 
-    private $_storage;
+    /** @var fkooman\OAuth\Server\IOAuthStorage */
+    private $storage;
 
     public function __construct(Config $c)
     {
         $this->config = $c;
-
         $oauthStorageBackend = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('storageBackend');
-        $this->_storage = new $oauthStorageBackend($this->config);
-
+        $this->storage = new $oauthStorageBackend($this->config);
         // occasionally delete expired access tokens and authorization codes
-        if (3 === rand(0,5)) {
-            $this->_storage->deleteExpiredAccessTokens();
-            $this->_storage->deleteExpiredAuthorizationCodes();
+        if (3 === rand(0, 5)) {
+            $this->storage->deleteExpiredAccessTokens();
+            $this->storage->deleteExpiredAuthorizationCodes();
         }
     }
 
-    public function handleRequest(HttpRequest $request)
+    public function handleRequest(Request $request)
     {
-        $response = new HttpResponse(200, "application/json");
+        $response = new JsonResponse();
         try {
             if ("POST" !== $request->getRequestMethod()) {
                 // method not allowed
@@ -57,7 +55,13 @@ class Token
                 $response->setHeader('Content-Type', 'application/json');
                 $response->setHeader('Cache-Control', 'no-store');
                 $response->setHeader('Pragma', 'no-cache');
-                $response->setContent(Json::encode($this->_handleToken($request->getPostParameters(), $request->getBasicAuthUser(), $request->getBasicAuthPass())));
+                $response->setContent(
+                    $this->handleToken(
+                        $request->getPostParameters(),
+                        $request->getBasicAuthUser(),
+                        $request->getBasicAuthPass()
+                    )
+                );
             }
         } catch (TokenException $e) {
             if ($e->getResponseCode() === 401) {
@@ -66,13 +70,18 @@ class Token
             $response->setStatusCode($e->getResponseCode());
             $response->setHeader('Cache-Control', 'no-store');
             $response->setHeader('Pragma', 'no-cache');
-            $response->setContent(Json::encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
+            $response->setContent(
+                array(
+                    "error" => $e->getMessage(),
+                    "error_description" => $e->getDescription()
+                )
+            );
         }
 
         return $response;
     }
 
-    private function _handleToken(array $post, $user = NULL, $pass = NULL)
+    private function handleToken(array $post, $user = null, $pass = null)
     {
         // exchange authorization code for access token
         $grantType    = Utils::getParameter($post, 'grant_type');
@@ -83,10 +92,10 @@ class Token
         $clientId     = Utils::getParameter($post, 'client_id');
         $scope        = Utils::getParameter($post, 'scope');
 
-        if (NULL !== $user && !empty($user) && NULL !== $pass && !empty($pass)) {
+        if (null !== $user && !empty($user) && null !== $pass && !empty($pass)) {
             // client provided authentication, it MUST be valid now...
-            $client = $this->_storage->getClient($user);
-            if (FALSE === $client) {
+            $client = $this->storage->getClient($user);
+            if (false === $client) {
                 throw new TokenException("invalid_client", "client authentication failed");
             }
 
@@ -96,25 +105,34 @@ class Token
             }
 
             // if client_id in POST is set, it must match the user
-            if (NULL !== $clientId && $clientId !== $user) {
-                throw new TokenException("invalid_grant", "client_id inconsistency: authenticating user must match POST body client_id");
+            if (null !== $clientId && $clientId !== $user) {
+                throw new TokenException(
+                    "invalid_grant",
+                    "client_id inconsistency: authenticating user must match POST body client_id"
+                );
             }
-            $hasAuthenticated = TRUE;
+            $hasAuthenticated = true;
         } else {
             // client provided no authentication, client_id must be in POST body
-            if (NULL === $clientId || empty($clientId)) {
-                throw new TokenException("invalid_request", "no client authentication used nor client_id POST parameter");
+            if (null === $clientId || empty($clientId)) {
+                throw new TokenException(
+                    "invalid_request",
+                    "no client authentication used nor client_id POST parameter"
+                );
             }
-            $client = $this->_storage->getClient($clientId);
-            if (FALSE === $client) {
+            $client = $this->storage->getClient($clientId);
+            if (false === $client) {
                 throw new TokenException("invalid_client", "client identity could not be established");
             }
 
-            $hasAuthenticated = FALSE;
+            $hasAuthenticated = false;
         }
 
         if ("user_agent_based_application" === $client['type']) {
-            throw new TokenException("unauthorized_client", "this client type is not allowed to use the token endpoint");
+            throw new TokenException(
+                "unauthorized_client",
+                "this client type is not allowed to use the token endpoint"
+            );
         }
 
         if ("web_application" === $client['type'] && !$hasAuthenticated) {
@@ -122,20 +140,20 @@ class Token
             throw new TokenException("invalid_client", "client authentication failed");
         }
 
-        if (NULL === $grantType) {
+        if (null === $grantType) {
             throw new TokenException("invalid_request", "the grant_type parameter is missing");
         }
 
         switch ($grantType) {
             case "authorization_code":
-                if (NULL === $code) {
+                if (null === $code) {
                     throw new TokenException("invalid_request", "the code parameter is missing");
                 }
                 // If the redirect_uri was present in the authorize request, it MUST also be there
                 // in the token request. If it was not there in authorize request, it MUST NOT be
                 // there in the token request (this is not explicit in the spec!)
-                $result = $this->_storage->getAuthorizationCode($client['id'], $code, $redirectUri);
-                if (FALSE === $result) {
+                $result = $this->storage->getAuthorizationCode($client['id'], $code, $redirectUri);
+                if (false === $result) {
                     throw new TokenException("invalid_grant", "the authorization code was not found");
                 }
                 if (time() > $result['issue_time'] + 600) {
@@ -143,12 +161,12 @@ class Token
                 }
 
                 // we MUST be able to delete the authorization code, otherwise it was used before
-                if (FALSE === $this->_storage->deleteAuthorizationCode($client['id'], $code, $redirectUri)) {
+                if (false === $this->storage->deleteAuthorizationCode($client['id'], $code, $redirectUri)) {
                     // check to prevent deletion race condition
                     throw new TokenException("invalid_grant", "this authorization code grant was already used");
                 }
 
-                $approval = $this->_storage->getApprovalByResourceOwnerId($client['id'], $result['resource_owner_id']);
+                $approval = $this->storage->getApprovalByResourceOwnerId($client['id'], $result['resource_owner_id']);
 
                 $token = array();
                 $token['access_token'] = Utils::randomHex(16);
@@ -159,22 +177,28 @@ class Token
                 $token['scope'] = $result['scope'];
                 $token['refresh_token'] = $approval['refresh_token'];
                 $token['token_type'] = "bearer";
-                $this->_storage->storeAccessToken($token['access_token'], time(), $client['id'], $result['resource_owner_id'], $token['scope'], $token['expires_in']);
+                $this->storage->storeAccessToken(
+                    $token['access_token'],
+                    time(),
+                    $client['id'],
+                    $result['resource_owner_id'],
+                    $token['scope'],
+                    $token['expires_in']
+                );
                 break;
-
             case "refresh_token":
-                if (NULL === $refreshToken) {
+                if (null === $refreshToken) {
                     throw new TokenException("invalid_request", "the refresh_token parameter is missing");
                 }
-                $result = $this->_storage->getApprovalByRefreshToken($client['id'], $refreshToken);
-                if (FALSE === $result) {
+                $result = $this->storage->getApprovalByRefreshToken($client['id'], $refreshToken);
+                if (false === $result) {
                     throw new TokenException("invalid_grant", "the refresh_token was not found");
                 }
 
                 $token = array();
                 $token['access_token'] = Utils::randomHex(16);
                 $token['expires_in'] = intval($this->config->getValue('accessTokenExpiry'));
-                if (NULL !== $scope) {
+                if (null !== $scope) {
                     // the client wants to obtain a specific scope
                     $requestedScope = Scope::fromString($scope);
                     $authorizedScope = Scope::fromString($result['scope']);
@@ -190,14 +214,19 @@ class Token
                 }
 
                 $token['token_type'] = "bearer";
-                $this->_storage->storeAccessToken($token['access_token'], time(), $client['id'], $result['resource_owner_id'], $token['scope'], $token['expires_in']);
+                $this->storage->storeAccessToken(
+                    $token['access_token'],
+                    time(),
+                    $client['id'],
+                    $result['resource_owner_id'],
+                    $token['scope'],
+                    $token['expires_in']
+                );
                 break;
-
             default:
                 throw new TokenException("unsupported_grant_type", "the requested grant type is not supported");
         }
 
         return $token;
     }
-
 }

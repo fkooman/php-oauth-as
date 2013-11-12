@@ -26,20 +26,20 @@ class ClientRegistration
     // VSCHAR     = %x20-7E
     public $regExpVSCHAR = '/^(?:[\x20-\x7E])*$/';
 
-    private $_client;
+    private $client;
 
     public function __construct($id, $secret, $type, $redirect_uri, $name)
     {
-        $this->_client = array();
+        $this->client = array();
         $this->setId($id);
         $this->setSecret($secret);
         $this->setType($type);
         $this->setRedirectUri($redirect_uri);
         $this->setName($name);
-        $this->setAllowedScope(NULL);
-        $this->setIcon(NULL);
-        $this->setDescription(NULL);
-        $this->setContactEmail(NULL);
+        $this->setAllowedScope(null);
+        $this->setIcon(null);
+        $this->setDescription(null);
+        $this->setContactEmail(null);
     }
 
     public static function fromArray(array $a)
@@ -77,12 +77,12 @@ class ClientRegistration
         if (1 !== $result) {
             throw new ClientRegistrationException("id contains invalid character");
         }
-        $this->_client['id'] = $i;
+        $this->client['id'] = $i;
     }
 
     public function getId()
     {
-        return $this->_client['id'];
+        return $this->client['id'];
     }
 
     public function setName($n)
@@ -90,12 +90,12 @@ class ClientRegistration
         if (empty($n)) {
             throw new ClientRegistrationException("name cannot be empty");
         }
-        $this->_client['name'] = $n;
+        $this->client['name'] = $n;
     }
 
     public function getName()
     {
-        return $this->_client['name'];
+        return $this->client['name'];
     }
 
     public function setSecret($s)
@@ -104,29 +104,29 @@ class ClientRegistration
         if (1 !== $result) {
             throw new ClientRegistrationException("secret contains invalid character");
         }
-        $this->_client['secret'] = empty($s) ? NULL : $s;
+        $this->client['secret'] = empty($s) ? null : $s;
     }
 
     public function getSecret()
     {
-        return $this->_client['secret'];
+        return $this->client['secret'];
     }
 
     public function setRedirectUri($r)
     {
-        if (FALSE === filter_var($r, FILTER_VALIDATE_URL)) {
+        if (false === filter_var($r, FILTER_VALIDATE_URL)) {
             throw new ClientRegistrationException("redirect_uri should be valid URL");
         }
         // not allowed to have a fragment (#) in it
-        if (NULL !== parse_url($r, PHP_URL_FRAGMENT)) {
+        if (null !== parse_url($r, PHP_URL_FRAGMENT)) {
             throw new ClientRegistrationException("redirect_uri cannot contain a fragment");
         }
-        $this->_client['redirect_uri'] = $r;
+        $this->client['redirect_uri'] = $r;
     }
 
     public function getRedirectUri()
     {
-        return $this->_client['redirect_uri'];
+        return $this->client['redirect_uri'];
     }
 
     public function setType($t)
@@ -136,22 +136,22 @@ class ClientRegistration
         }
         if ("web_application" === $t) {
             // secret cannot be empty when type is "web_application"
-            if (NULL === $this->_client['secret']) {
+            if (null === $this->client['secret']) {
                 throw new ClientRegistrationException("secret should be set for web application type");
             }
         }
-        if (NULL !== $this->_client['secret']) {
+        if (null !== $this->client['secret']) {
             // if a secret is set id cannot contain a ":" as it would break Basic authentication
-            if (FALSE !== strpos($this->_client['id'], ":")) {
+            if (false !== strpos($this->client['id'], ":")) {
                 throw new ClientRegistrationException("client_id cannot contain a colon when using a secret");
             }
         }
-        $this->_client['type'] = $t;
+        $this->client['type'] = $t;
     }
 
     public function getType()
     {
-        return $this->_client['type'];
+        return $this->client['type'];
     }
 
     public function setAllowedScope($a)
@@ -161,58 +161,57 @@ class ClientRegistration
         } catch (ScopeException $e) {
             throw new ClientRegistrationException("scope is invalid");
         }
-        $this->_client['allowed_scope'] = empty($a) ? NULL : $a;
+        $this->client['allowed_scope'] = empty($a) ? null : $a;
     }
 
     public function getAllowedScope()
     {
-        return $this->_client['allowed_scope'];
+        return $this->client['allowed_scope'];
     }
 
     public function setIcon($i)
     {
         // icon should be empty, or URL with path
         if (!empty($i)) {
-            if (FALSE === filter_var($i, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
+            if (false === filter_var($i, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
                 throw new ClientRegistrationException("icon should be either empty or valid URL with path");
             }
         }
-        $this->_client['icon'] = empty($i) ? NULL : $i;
+        $this->client['icon'] = empty($i) ? null : $i;
     }
 
     public function getIcon()
     {
-        return $this->_client['icon'];
+        return $this->client['icon'];
     }
 
     public function setDescription($d)
     {
-        $this->_client['description'] = empty($d) ? NULL : $d;
+        $this->client['description'] = empty($d) ? null : $d;
     }
 
     public function getDescription()
     {
-        return $this->_client['description'];
+        return $this->client['description'];
     }
 
     public function setContactEmail($c)
     {
         if (!empty($c)) {
-            if (FALSE === filter_var($c, FILTER_VALIDATE_EMAIL)) {
+            if (false === filter_var($c, FILTER_VALIDATE_EMAIL)) {
                 throw new ClientRegistrationException("contact email should be either empty or valid email address");
             }
         }
-        $this->_client['contact_email'] = empty($c) ? NULL : $c;
+        $this->client['contact_email'] = empty($c) ? null : $c;
     }
 
     public function getContactEmail()
     {
-        return $this->_client['contact_email'];
+        return $this->client['contact_email'];
     }
 
     public function getClientAsArray()
     {
-        return $this->_client;
+        return $this->client;
     }
-
 }

@@ -19,7 +19,6 @@ namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
 use fkooman\Json\Json;
-
 use PersonaVerifier;
 
 class PersonaResourceOwner implements IResourceOwner
@@ -27,19 +26,19 @@ class PersonaResourceOwner implements IResourceOwner
     /** @var fkooman\Config\Config */
     private $config;
 
-    private $_verifier;
+    private $verifier;
 
     public function __construct(Config $c)
     {
         $this->config = $c;
 
-        $bPath = $this->config->s('PersonaResourceOwner')->l('personaPath') . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'PersonaVerifier.php';
+        $bPath = $this->config->s('PersonaResourceOwner')->l('personaPath') . '/lib/PersonaVerifier.php';
         if (!file_exists($bPath) || !is_file($bPath) || !is_readable($bPath)) {
             throw new PersonaResourceOwnerException("invalid path to php-browserid");
         }
         require_once $bPath;
 
-        $this->_verifier = new PersonaVerifier($this->config->s('PersonaResourceOwner')->l('verifierAddress'));
+        $this->verifier = new PersonaVerifier($this->config->s('PersonaResourceOwner')->l('verifierAddress'));
     }
 
     public function setResourceOwnerHint($resourceOwnerHint)
@@ -49,14 +48,14 @@ class PersonaResourceOwner implements IResourceOwner
 
     public function getId()
     {
-        return $this->_verifier->authenticate();
+        return $this->verifier->authenticate();
     }
 
     public function getEntitlement()
     {
         $entitlementFile = $this->config->s('PersonaResourceOwner')->l('entitlementFile');
         $fileContents = @file_get_contents($entitlementFile);
-        if (FALSE === $fileContents) {
+        if (false === $fileContents) {
             // no entitlement file, so no entitlement
             return array();
         }
@@ -73,5 +72,4 @@ class PersonaResourceOwner implements IResourceOwner
         // unsupported
         return array();
     }
-
 }

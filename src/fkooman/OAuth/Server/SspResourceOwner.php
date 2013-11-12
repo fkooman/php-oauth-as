@@ -18,7 +18,6 @@
 namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
-
 use SimpleSAML_Auth_Simple;
 
 class SspResourceOwner implements IResourceOwner
@@ -26,18 +25,19 @@ class SspResourceOwner implements IResourceOwner
     /** @var fkooman\Config\Config */
     private $config;
 
-    private $_ssp;
+    /** @var SimpleSAML_Auth_Simple */
+    private $ssp;
 
     public function __construct(Config $c)
     {
         $this->config = $c;
-        $sspPath = $this->config->s('SspResourceOwner')->l('sspPath') . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
+        $sspPath = $this->config->s('SspResourceOwner')->l('sspPath') . '/lib/_autoload.php';
         if (!file_exists($sspPath) || !is_file($sspPath) || !is_readable($sspPath)) {
             throw new SspResourceOwnerException("invalid path to simpleSAMLphp");
         }
         require_once $sspPath;
 
-        $this->_ssp = new SimpleSAML_Auth_Simple($this->config->s('SspResourceOwner')->l('authSource'));
+        $this->ssp = new SimpleSAML_Auth_Simple($this->config->s('SspResourceOwner')->l('authSource'));
     }
 
     public function setResourceOwnerHint($resourceOwnerHint)
@@ -47,13 +47,18 @@ class SspResourceOwner implements IResourceOwner
 
     public function getId()
     {
-        $this->_authenticateUser();
+        $this->authenticateUser();
 
         $resourceOwnerIdAttribute = $this->config->s('SspResourceOwner')->l('resourceOwnerIdAttribute', false);
-        if (NULL === $resourceOwnerIdAttribute) {
-            $nameId = $this->_ssp->getAuthData("saml:sp:NameID");
+        if (null === $resourceOwnerIdAttribute) {
+            $nameId = $this->ssp->getAuthData("saml:sp:NameID");
             if ("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" !== $nameId['Format']) {
-                throw new SspResourceOwnerException("NameID format MUST be 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent', but is '" . $nameId['Format'] . "'");
+                throw new SspResourceOwnerException(
+                    sprintf(
+                        "NameID format MUST be 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent', but is '%s'",
+                        $nameId['Format']
+                    )
+                );
             }
 
             return $nameId['Value'];
@@ -63,7 +68,12 @@ class SspResourceOwner implements IResourceOwner
             if (isset($attr[$resourceOwnerIdAttribute]) && is_array($attr[$resourceOwnerIdAttribute])) {
                 return $attr[$resourceOwnerIdAttribute][0];
             }
-            throw new SspResourceOwnerException(sprintf("attribute '%s' for resource owner identifier is not available", $resourceOwnerIdAttribute));
+            throw new SspResourceOwnerException(
+                sprintf(
+                    "attribute '%s' for resource owner identifier is not available",
+                    $resourceOwnerIdAttribute
+                )
+            );
         }
     }
 
@@ -79,19 +89,22 @@ class SspResourceOwner implements IResourceOwner
 
     public function getExt()
     {
-        $this->_authenticateUser();
+        $this->authenticateUser();
 
-        return $this->_ssp->getAttributes();
+        return $this->ssp->getAttributes();
     }
 
-    private function _authenticateUser()
+    private function authenticateUser()
     {
         $resourceOwnerIdAttribute = $this->config->s('SspResourceOwner')->l('resourceOwnerIdAttribute', false);
-        if (NULL === $resourceOwnerIdAttribute) {
-            $this->_ssp->requireAuth(array("saml:NameIDPolicy" => "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"));
+        if (null === $resourceOwnerIdAttribute) {
+            $this->ssp->requireAuth(
+                array(
+                    "saml:NameIDPolicy" => "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
+                )
+            );
         } else {
-            $this->_ssp->requireAuth();
+            $this->ssp->requireAuth();
         }
     }
-
 }

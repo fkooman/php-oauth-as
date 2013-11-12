@@ -49,5 +49,4 @@ class DummyResourceOwner implements IResourceOwner
         // unsupported
         return array();
     }
-
 }

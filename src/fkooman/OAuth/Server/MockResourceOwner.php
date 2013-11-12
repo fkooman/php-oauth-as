@@ -4,14 +4,14 @@ namespace fkooman\OAuth\Server;
 
 class MockResourceOwner implements IResourceOwner
 {
-    private $_data;
+    private $data;
 
     public function __construct(array $resourceOwner)
     {
-        $this->_data = array();
-        $this->_data['id'] = $resourceOwner['id'];
-        $this->_data['entitlement'] = $resourceOwner['entitlement'];
-        $this->_data['ext'] = $resourceOwner['ext'];
+        $this->data = array();
+        $this->data['id'] = $resourceOwner['id'];
+        $this->data['entitlement'] = $resourceOwner['entitlement'];
+        $this->data['ext'] = $resourceOwner['ext'];
     }
 
     public function setResourceOwnerHint($resourceOwnerHint)
@@ -21,19 +21,18 @@ class MockResourceOwner implements IResourceOwner
 
     public function getId()
     {
-        return $this->_data['id'];
+        return $this->data['id'];
     }
 
     public function getEntitlement()
     {
-        return $this->_data['entitlement'];
+        return $this->data['entitlement'];
 
     }
 
     public function getExt()
     {
-        return $this->_data['ext'];
+        return $this->data['ext'];
 
     }
-
 }
