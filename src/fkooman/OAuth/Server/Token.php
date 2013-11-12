@@ -21,8 +21,8 @@ use fkooman\Config\Config;
 use fkooman\Json\Json;
 use fkooman\OAuth\Common\Scope;
 
-use RestService\Http\HttpRequest;
-use RestService\Http\HttpResponse;
+use fkooman\Http\Request as HttpRequest;
+use fkooman\Http\Response as HttpResponse;
 
 class Token
 {

@@ -21,7 +21,7 @@ require_once 'OAuthHelper.php';
 
 use fkooman\Json\Json;
 
-use RestService\Http\HttpRequest;
+use fkooman\Http\Request as HttpRequest;
 
 class ApiTest extends OAuthHelper
 {
@@ -52,7 +52,7 @@ class ApiTest extends OAuthHelper
         $h->setPathInfo("/authorizations/");
         $h->setHeader("Authorization", "Bearer 12345abc");
         $response = $this->_api->handleRequest($h);
-        $this->assertEquals('[{"scope":"read","id":"testclient","name":"Simple Test Client","description":"Client for unit testing","redirect_uri":"http:\/\/localhost\/php-oauth\/unit\/test.html","type":"user_agent_based_application","icon":null,"allowed_scope":"read"}]', $response->getContent());
+        $this->assertEquals(json_decode('[{"scope":"read","id":"testclient","name":"Simple Test Client","description":"Client for unit testing","redirect_uri":"http:\/\/localhost\/php-oauth\/unit\/test.html","type":"user_agent_based_application","icon":null,"allowed_scope":"read"}]', true), $response->getContent());
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals("application/json", $response->getHeader("Content-Type"));
     }
@@ -78,7 +78,7 @@ class ApiTest extends OAuthHelper
         $response = $this->_api->handleRequest($h);
 
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals('{"error":"invalid_request","error_description":"client is not registered"}', $response->getContent());
+        $this->assertEquals(json_decode('{"error":"invalid_request","error_description":"client is not registered"}', true), $response->getContent());
     }
 
     public function testAddAuthorizationsUnsupportedScope()
@@ -90,7 +90,7 @@ class ApiTest extends OAuthHelper
         $h->setContent(Json::encode(array("client_id" => "testcodeclient", "scope" => "UNSUPPORTED SCOPE")));
         $response = $this->_api->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals('{"error":"invalid_request","error_description":"invalid scope for this client"}', $response->getContent());
+        $this->assertEquals(json_decode('{"error":"invalid_request","error_description":"invalid scope for this client"}', true), $response->getContent());
     }
 
     public function testGetAuthorization()
@@ -101,7 +101,7 @@ class ApiTest extends OAuthHelper
         // FIXME: test with non existing client_id!
         $response = $this->_api->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('{"client_id":"testclient","resource_owner_id":"fkooman","scope":"read","refresh_token":null}', $response->getContent());
+        $this->assertEquals(json_decode('{"client_id":"testclient","resource_owner_id":"fkooman","scope":"read","refresh_token":null}', true), $response->getContent());
     }
 
     public function testDeleteAuthorization()
@@ -113,7 +113,7 @@ class ApiTest extends OAuthHelper
         // FIXME: test with non existing client_id!
         $response = $this->_api->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('{"ok":true}', $response->getContent());
+        $this->assertEquals(json_decode('{"ok":true}', true), $response->getContent());
     }
 
 }

@@ -21,8 +21,9 @@ use fkooman\Config\Config;
 use fkooman\Json\Json;
 use fkooman\OAuth\Common\Scope;
 
-use RestService\Http\HttpRequest;
-use RestService\Http\HttpResponse;
+use fkooman\Http\Request;
+use fkooman\Rest\Service;
+use fkooman\Http\JsonResponse;
 
 class Api
 {
@@ -42,10 +43,8 @@ class Api
         $this->_rs = new ResourceServer($this->_storage);
     }
 
-    public function handleRequest(HttpRequest $request)
+    public function handleRequest(Request $request)
     {
-        $response = new HttpResponse(200, "application/json");
-
         try {
             if (!$this->config->s('Api')->l('enableApi')) {
                 throw new ApiException("forbidden","api disabled");
@@ -56,7 +55,9 @@ class Api
             $storage = $this->_storage; // FIXME: can this be avoided??
             $rs = $this->_rs; // FIXME: can this be avoided??
 
-            $request->matchRest("POST", "/authorizations/", function () use ($request, $response, $storage, $rs) {
+            $service = new Service($request);
+
+            $service->match("POST", "/authorizations/", function () use ($request, $storage, $rs) {
                 $rs->requireScope("authorizations");
                 $data = Json::decode($request->getContent());
                 if (NULL === $data || !is_array($data) || !array_key_exists("client_id", $data) || !array_key_exists("scope", $data)) {
@@ -86,59 +87,81 @@ class Api
                 } else {
                     throw new ApiException("invalid_request", "authorization already exists for this client and resource owner");
                 }
-                $response->setStatusCode(201);
-                $response->setContent(Json::encode(array("ok" => true)));
+
+                $response = new JsonResponse(201);
+                $response->setContent(array("ok" => true));
+
+                return $response;
             });
 
-            $request->matchRest("GET", "/authorizations/:id", function ($id) use ($request, $response, $storage, $rs) {
+            $service->match("GET", "/authorizations/:id", function ($id) use ($request, $storage, $rs) {
                 $rs->requireScope("authorizations");
                 $data = $storage->getApprovalByResourceOwnerId($id, $rs->getResourceOwnerId());
                 if (FALSE === $data) {
                     throw new ApiException("not_found", "the resource you are trying to retrieve does not exist");
                 }
-                $response->setContent(Json::encode($data));
+                $response = new JsonResponse(200);
+                $response->setContent($data);
+
+                return $response;
             });
 
-            $request->matchRest("GET", "/authorizations/:id", function ($id) use ($request, $response, $storage, $rs) {
+            $service->match("GET", "/authorizations/:id", function ($id) use ($request, $storage, $rs) {
                 $rs->requireScope("authorizations");
                 $data = $storage->getApprovalByResourceOwnerId($id, $rs->getResourceOwnerId());
                 if (FALSE === $data) {
                     throw new ApiException("not_found", "the resource you are trying to retrieve does not exist");
                 }
-                $response->setContent(Json::encode($data));
+                $response = new JsonResponse(200);
+                $response->setContent($data);
+
+                return $response;
             });
 
-            $request->matchRest("DELETE", "/authorizations/:id", function ($id) use ($request, $response, $storage, $rs) {
+            $service->match("DELETE", "/authorizations/:id", function ($id) use ($request, $storage, $rs) {
                 $rs->requireScope("authorizations");
                 if (FALSE === $storage->deleteApproval($id, $rs->getResourceOwnerId())) {
                     throw new ApiException("not_found", "the resource you are trying to delete does not exist");
                 }
-                $response->setContent(Json::encode(array("ok" => true)));
+                $response = new JsonResponse(200);
+                $response->setContent(array("ok" => true));
+
+                return $response;
             });
 
-            $request->matchRest("GET", "/authorizations/", function () use ($request, $response, $storage, $rs) {
+            $service->match("GET", "/authorizations/", function () use ($request, $storage, $rs) {
                 $rs->requireScope("authorizations");
                 $data = $storage->getApprovals($rs->getResourceOwnerId());
-                $response->setContent(Json::encode($data));
+
+                $response = new JsonResponse(200);
+                $response->setContent($data);
+
+                return $response;
             });
 
-            $request->matchRest("GET", "/applications/", function () use ($request, $response, $storage, $rs) {
+            $service->match("GET", "/applications/", function () use ($request, $storage, $rs) {
                 $rs->requireScope("applications");
                 // $rs->requireEntitlement("urn:x-oauth:entitlement:applications");    // do not require entitlement to list clients...
                 $data = $storage->getClients();
-                $response->setContent(Json::encode($data));
+                $response = new JsonResponse(200);
+                $response->setContent($data);
+
+                return $response;
             });
 
-            $request->matchRest("DELETE", "/applications/:id", function ($id) use ($request, $response, $storage, $rs) {
+            $service->match("DELETE", "/applications/:id", function ($id) use ($request, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 if (FALSE === $storage->deleteClient($id)) {
                     throw new ApiException("not_found", "the resource you are trying to delete does not exist");
                 }
-                $response->setContent(Json::encode(array("ok" => true)));
+                $response = new JsonResponse(200);
+                $response->setContent(array("ok" => true));
+
+                return $response;
             });
 
-            $request->matchRest("GET", "/applications/:id", function ($id) use ($request, $response, $storage, $rs) {
+            $service->match("GET", "/applications/:id", function ($id) use ($request, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 // FIXME: for now require entitlement as long as password hashing is not
@@ -148,10 +171,13 @@ class Api
                 if (FALSE === $data) {
                     throw new ApiException("not_found", "the resource you are trying to retrieve does not exist");
                 }
-                $response->setContent(Json::encode($data));
+                $response = new JsonResponse(200);
+                $response->setContent($data);
+
+                return $response;
             });
 
-            $request->matchRest("POST", "/applications/", function () use ($request, $response, $storage, $rs) {
+            $service->match("POST", "/applications/", function () use ($request, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 try {
@@ -165,21 +191,27 @@ class Api
                     } else {
                         throw new ApiException("invalid_request", "application already exists");
                     }
-                    $response->setStatusCode(201);
-                    $response->setContent(Json::encode(array("ok" => true)));
+                    $response = new JsonResponse(201);
+                    $response->setContent(array("ok" => true));
+
+                    return $response;
                 } catch (ClientRegistrationException $e) {
                     throw new ApiException("invalid_request", $e->getMessage());
                 }
             });
 
-            $request->matchRest("GET", "/stats/", function () use ($request, $response, $storage, $rs) {
+            $service->match("GET", "/stats/", function () use ($request, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 $data = $storage->getStats();
-                $response->setContent(Json::encode($data));
+
+                $response = new JsonResponse(200);
+                $response->setContent($data);
+
+                return $response;
             });
 
-            $request->matchRest("PUT", "/applications/:id", function ($id) use ($request, $response, $storage, $rs) {
+            $service->match("PUT", "/applications/:id", function ($id) use ($request, $storage, $rs) {
                 $rs->requireScope("applications");
                 $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
                 try {
@@ -194,21 +226,15 @@ class Api
                 } catch (ClientRegistrationException $e) {
                     throw new ApiException("invalid_request", $e->getMessage());
                 }
-                $response->setContent(Json::encode(array("ok" => true)));
+                $response = new JsonResponse(200);
+                $response->setContent(array("ok" => true));
+
+                return $response;
             });
 
-            $request->matchRestDefault(function ($methodMatch, $patternMatch) use ($request, $response) {
-                if (in_array($request->getRequestMethod(), $methodMatch)) {
-                    if (!$patternMatch) {
-                        throw new ApiException("not_found", "resource not found");
-                    }
-                } else {
-                    $response->setStatusCode(405);
-                    $response->setHeader("Allow", implode(",", $methodMatch));
-                }
-            });
+            return $service->run();
         } catch (ResourceServerException $e) {
-            $response->setStatusCode($e->getResponseCode());
+            $response = new JsonResponse($e->getResponseCode());
             if ("no_token" === $e->getMessage()) {
                 // no authorization header is a special case, the client did not know
                 // authentication was required, so tell it now without giving error message
@@ -217,13 +243,14 @@ class Api
                 $hdr = sprintf('Bearer realm="Resource Server",error="%s",error_description="%s"', $e->getMessage(), $e->getDescription());
             }
             $response->setHeader("WWW-Authenticate", $hdr);
+            $response->setContent(array("error" => $e->getMessage(), "error_description" => $e->getDescription()));
 
-            $response->setContent(Json::encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
+            return $response;
         } catch (ApiException $e) {
-            $response->setStatusCode($e->getResponseCode());
-            $response->setContent(Json::encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
-        }
+            $response = new JsonResponse($e->getResponseCode());
+            $response->setContent(array("error" => $e->getMessage(), "error_description" => $e->getDescription()));
 
-        return $response;
+            return $response;
+        }
     }
 }

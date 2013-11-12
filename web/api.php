@@ -18,12 +18,11 @@
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
 use fkooman\Config\Config;
-use fkooman\Json\Json;
 use fkooman\OAuth\Server\Api;
 
-use RestService\Http\HttpResponse;
-use RestService\Http\IncomingHttpRequest;
-use RestService\Http\HttpRequest;
+use fkooman\Http\Request;
+use fkooman\Http\JsonResponse;
+use fkooman\Http\IncomingRequest;
 
 $request = NULL;
 $response = NULL;
@@ -31,12 +30,12 @@ $response = NULL;
 try {
     $config = Config::fromIniFile(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
     $a = new Api($config);
-    $request = HttpRequest::fromIncomingHttpRequest(new IncomingHttpRequest());
+    $request = Request::fromIncomingRequest(new IncomingRequest());
     $response = $a->handleRequest($request);
 
 } catch (Exception $e) {
-    $response = new HttpResponse(500, "application/json");
-    $response->setContent(Json::encode(array("error" => "internal_server_error", "error_description" => $e->getMessage())));
+    $response = new JsonResponse(500);
+    $response->setContent(array("error" => "internal_server_error", "error_description" => $e->getMessage()));
 }
 
 if (NULL !== $response) {

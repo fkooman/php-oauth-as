@@ -20,8 +20,8 @@ namespace fkooman\OAuth\Server;
 use fkooman\Config\Config;
 use fkooman\Json\Json;
 
-use RestService\Http\HttpRequest;
-use RestService\Http\HttpResponse;
+use fkooman\Http\Request as HttpRequest;
+use fkooman\Http\Response as HttpResponse;
 
 class TokenIntrospection
 {

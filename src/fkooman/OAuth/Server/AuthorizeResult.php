@@ -19,7 +19,7 @@ namespace fkooman\OAuth\Server;
 
 use fkooman\OAuth\Common\Scope;
 
-use RestService\Http\Uri;
+use fkooman\Http\Uri;
 
 class AuthorizeResult
 {

@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "12a5844e020c71e78cc65dacacaf61d4",
+    "hash": "594fdf49fec2723569857d6a2e06d09f",
     "packages": [
         {
             "name": "fkooman/php-lib-config",
@@ -82,6 +82,48 @@
             "time": "2013-11-07 15:48:53"
         },
         {
+            "name": "fkooman/php-lib-rest",
+            "version": "0.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fkooman/php-lib-rest.git",
+                "reference": "c3cf128e4878173b392ca577a65a2c36476f6565"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/c3cf128e4878173b392ca577a65a2c36476f6565",
+                "reference": "c3cf128e4878173b392ca577a65a2c36476f6565",
+                "shasum": ""
+            },
+            "require": {
+                "fkooman/php-lib-json": "0.3.*",
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "sami/sami": "v1.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "fkooman\\Http\\": "src/",
+                    "fkooman\\Rest\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "François Kooman",
+                    "email": "fkooman@tuxed.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Simple PHP library for writing REST services.",
+            "time": "2013-11-12 13:32:42"
+        },
+        {
             "name": "fkooman/php-oauth-lib-common",
             "version": "0.4.1",
             "source": {
@@ -117,43 +159,6 @@
             ],
             "description": "PHP library for common OAuth classes.",
             "time": "2013-11-12 10:49:28"
-        },
-        {
-            "name": "fkooman/php-rest-service",
-            "version": "0.9.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fkooman/php-rest-service.git",
-                "reference": "74e1b201000664877347f3eedec7bd1c4749511f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-rest-service/zipball/74e1b201000664877347f3eedec7bd1c4749511f",
-                "reference": "74e1b201000664877347f3eedec7bd1c4749511f",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "RestService\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "François Kooman",
-                    "email": "fkooman@tuxed.net",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PHP library to develop REST applications",
-            "time": "2013-06-12 13:51:56"
         },
         {
             "name": "symfony/yaml",

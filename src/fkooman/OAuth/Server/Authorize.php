@@ -21,9 +21,9 @@ use fkooman\Config\Config;
 use fkooman\OAuth\Common\Scope;
 use fkooman\OAuth\Common\Exception\ScopeException;
 
-use RestService\Http\HttpRequest;
-use RestService\Http\HttpResponse;
-use RestService\Http\Uri;
+use fkooman\Http\Request as HttpRequest;
+use fkooman\Http\Response as HttpResponse;
+use fkooman\Http\Uri;
 
 class Authorize
 {

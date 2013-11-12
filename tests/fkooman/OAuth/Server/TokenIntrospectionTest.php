@@ -19,7 +19,7 @@ namespace fkooman\OAuth\Server;
 
 require_once 'OAuthHelper.php';
 
-use RestService\Http\HttpRequest;
+use fkooman\Http\Request as HttpRequest;
 
 class TokenIntrospectionTest extends OAuthHelper
 {
