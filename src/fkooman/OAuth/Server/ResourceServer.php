@@ -18,6 +18,7 @@
 namespace fkooman\OAuth\Server;
 
 use fkooman\Json\Json;
+use fkooman\OAuth\Common\Scope;
 
 class ResourceServer
 {
@@ -82,8 +83,8 @@ class ResourceServer
 
     public function hasScope($scope)
     {
-        $grantedScope = new Scope($this->_grantedScope);
-        $requiredScope = new Scope($scope);
+        $grantedScope = Scope::fromString($this->_grantedScope);
+        $requiredScope = Scope::fromString($scope);
 
         return $grantedScope->hasScope($requiredScope);
     }

@@ -19,6 +19,7 @@ namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
 use fkooman\Json\Json;
+use fkooman\OAuth\Common\Scope;
 
 use RestService\Http\HttpRequest;
 use RestService\Http\HttpResponse;
@@ -74,8 +75,8 @@ class Api
                 }
 
                 // scope should be part of "allowed_scope" of client registration
-                $clientAllowedScope = new Scope($client['allowed_scope']);
-                $requestedScope = new Scope($data['scope']);
+                $clientAllowedScope = Scope::fromString($client['allowed_scope']);
+                $requestedScope = Scope::fromString($data['scope']);
                 if (!$requestedScope->isSubSetOf($clientAllowedScope)) {
                     throw new ApiException("invalid_request", "invalid scope for this client");
                 }

@@ -18,6 +18,8 @@
 namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
+use fkooman\OAuth\Common\Scope;
+use fkooman\OAuth\Common\Exception\ScopeException;
 
 use RestService\Http\HttpRequest;
 use RestService\Http\HttpResponse;
@@ -161,7 +163,7 @@ class Authorize
             $responseType = Utils::getParameter($get, 'response_type');
             $redirectUri  = Utils::getParameter($get, 'redirect_uri');
             // FIXME: scope can never be empty, if the client requests no scope we should have a default scope!
-            $scope        = new Scope(Utils::getParameter($get, 'scope'));
+            $scope        = Scope::fromString(Utils::getParameter($get, 'scope'));
             $state        = Utils::getParameter($get, 'state');
 
             if (NULL === $clientId) {
@@ -192,14 +194,14 @@ class Authorize
                 throw new ClientException("unsupported_response_type", "response_type not supported by client profile", $client, $state);
             }
 
-            if (!$scope->isSubsetOf(new Scope($client['allowed_scope']))) {
+            if (!$scope->isSubsetOf(Scope::fromString($client['allowed_scope']))) {
                 throw new ClientException("invalid_scope", "not authorized to request this scope", $client, $state);
             }
 
             $this->_storage->updateResourceOwner($resourceOwner);
 
             $approvedScope = $this->_storage->getApprovalByResourceOwnerId($clientId, $resourceOwner->getId());
-            if (FALSE === $approvedScope || FALSE === $scope->isSubsetOf(new Scope($approvedScope['scope']))) {
+            if (FALSE === $approvedScope || FALSE === $scope->isSubsetOf(Scope::fromString($approvedScope['scope']))) {
                 $ar = new AuthorizeResult(AuthorizeResult::ASK_APPROVAL);
                 $ar->setClient(ClientRegistration::fromArray($client));
                 $ar->setScope($scope);
@@ -251,7 +253,7 @@ class Authorize
             $clientId     = Utils::getParameter($get, 'client_id');
             $responseType = Utils::getParameter($get, 'response_type');
             $redirectUri  = Utils::getParameter($get, 'redirect_uri');
-            $scope        = new Scope(Utils::getParameter($get, 'scope'));
+            $scope        = Scope::fromString(Utils::getParameter($get, 'scope'));
             $state        = Utils::getParameter($get, 'state');
 
             $result = $this->_handleAuthorize($resourceOwner, $get);

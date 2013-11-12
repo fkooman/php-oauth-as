@@ -19,6 +19,7 @@ namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
 use fkooman\Json\Json;
+use fkooman\OAuth\Common\Scope;
 
 use RestService\Http\HttpRequest;
 use RestService\Http\HttpResponse;
@@ -181,8 +182,8 @@ class Token
                 $token['expires_in'] = intval($this->config->getValue('accessTokenExpiry'));
                 if (NULL !== $scope) {
                     // the client wants to obtain a specific scope
-                    $requestedScope = new Scope($scope);
-                    $authorizedScope = new Scope($result['scope']);
+                    $requestedScope = Scope::fromString($scope);
+                    $authorizedScope = Scope::fromString($result['scope']);
                     if ($requestedScope->isSubsetOf($authorizedScope)) {
                         // if it is a subset of the authorized scope we honor that
                         $token['scope'] = $requestedScope->getScope();

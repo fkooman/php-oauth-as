@@ -17,7 +17,9 @@
 
 namespace fkooman\OAuth\Server;
 
-use \RestService\Http\Uri as Uri;
+use fkooman\OAuth\Common\Scope;
+
+use RestService\Http\Uri;
 
 class AuthorizeResult
 {
@@ -95,5 +97,4 @@ class AuthorizeResult
 
         return $this->_scope;
     }
-
 }
