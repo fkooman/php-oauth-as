@@ -22,20 +22,17 @@ use fkooman\Json\Json;
 
 use RestService\Http\HttpRequest;
 use RestService\Http\HttpResponse;
-use RestService\Utils\Logger;
 
 class TokenIntrospection
 {
     /** @var fkooman\Config\Config */
     private $config;
 
-    private $_logger;
     private $_storage;
 
-    public function __construct(Config $c, Logger $l = NULL)
+    public function __construct(Config $c)
     {
         $this->config = $c;
-        $this->_logger = $l;
 
         $oauthStorageBackend = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('storageBackend');
         $this->_storage = new $oauthStorageBackend($this->config);
@@ -62,9 +59,6 @@ class TokenIntrospection
             $response->setContent(Json::encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
             if ("method_not_allowed" === $e->getMessage()) {
                 $response->setHeader("Allow", "GET,POST");
-            }
-            if (NULL !== $this->_logger) {
-                $this->_logger->logFatal($e->getLogMessage(TRUE) . PHP_EOL . $request . PHP_EOL . $response);
             }
         }
 

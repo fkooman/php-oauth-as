@@ -23,7 +23,6 @@ use fkooman\OAuth\Common\Exception\ScopeException;
 
 use RestService\Http\HttpRequest;
 use RestService\Http\HttpResponse;
-use RestService\Utils\Logger;
 use RestService\Http\Uri;
 
 class Authorize
@@ -31,15 +30,13 @@ class Authorize
     /** @var fkooman\Config\Config */
     private $config;
 
-    private $_logger;
     private $_storage;
 
     private $_resourceOwner;
 
-    public function __construct(Config $c, Logger $l = NULL)
+    public function __construct(Config $c)
     {
         $this->config = $c;
-        $this->_logger = $l;
 
         $authMech = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('authenticationMechanism');
         $this->_resourceOwner = new $authMech($this->config);
@@ -133,9 +130,6 @@ class Authorize
             }
             $response->setStatusCode(302);
             $response->setHeader("Location", $client['redirect_uri'] . $separator . http_build_query($parameters));
-            if (NULL !== $this->_logger) {
-                $this->_logger->logFatal($e->getLogMessage(TRUE) . PHP_EOL . $request . PHP_EOL . $response);
-            }
         } catch (ResourceOwnerException $e) {
             // tell resource owner about the error (through browser)
             $response->setStatusCode(400);
@@ -147,10 +141,6 @@ class Authorize
                 "errorMessage" => $e->getMessage()
             ));
             $response->setContent($output);
-
-            if (NULL !== $this->_logger) {
-                $this->_logger->logFatal($e->getMessage() . PHP_EOL . $request . PHP_EOL . $response);
-            }
         }
 
         return $response;

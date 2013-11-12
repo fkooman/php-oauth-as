@@ -23,22 +23,18 @@ use fkooman\OAuth\Common\Scope;
 
 use RestService\Http\HttpRequest;
 use RestService\Http\HttpResponse;
-use RestService\Utils\Logger;
 
 class Api
 {
     /** @var fkooman\Config\Config */
     private $config;
 
-    private $_logger;
-
     private $_storage;
     private $_rs;
 
-    public function __construct(Config $c, Logger $l = NULL)
+    public function __construct(Config $c)
     {
         $this->config = $c;
-        $this->_logger = $l;
 
         $oauthStorageBackend = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('storageBackend');
         $this->_storage = new $oauthStorageBackend($this->config);
@@ -223,15 +219,9 @@ class Api
             $response->setHeader("WWW-Authenticate", $hdr);
 
             $response->setContent(Json::encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
-            if (NULL !== $this->_logger) {
-                $this->_logger->logFatal($e->getLogMessage(TRUE) . PHP_EOL . $request . PHP_EOL . $response);
-            }
         } catch (ApiException $e) {
             $response->setStatusCode($e->getResponseCode());
             $response->setContent(Json::encode(array("error" => $e->getMessage(), "error_description" => $e->getDescription())));
-            if (NULL !== $this->_logger) {
-                $this->_logger->logFatal($e->getLogMessage(TRUE) . PHP_EOL . $request . PHP_EOL . $response);
-            }
         }
 
         return $response;
