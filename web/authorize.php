@@ -22,6 +22,7 @@ use fkooman\OAuth\Server\Authorize;
 
 use fkooman\Http\Request;
 use fkooman\Http\Response;
+use fkooman\Http\IncomingRequest;
 
 $request = NULL;
 $response = NULL;
