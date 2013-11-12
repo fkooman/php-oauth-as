@@ -23,6 +23,8 @@ use fkooman\OAuth\Common\Exception\ScopeException;
 use fkooman\Http\Request;
 use fkooman\Http\Response;
 use fkooman\Http\Uri;
+use Twig_Loader_Filesystem;
+use Twig_Environment;
 
 class Authorize
 {
@@ -59,29 +61,34 @@ class Authorize
 
             switch ($request->getRequestMethod()) {
                 case "GET":
-                    $result = $this->_handleAuthorize($this->resourceOwner, $request->getQueryParameters());
+                    $result = $this->handleAuthorize($this->resourceOwner, $request->getQueryParameters());
                     if (AuthorizeResult::ASK_APPROVAL === $result->getAction()) {
-                        $loader = new \Twig_Loader_Filesystem(dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . "views");
-                        $twig = new \Twig_Environment($loader);
+                        $loader = new Twig_Loader_Filesystem(
+                            dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . "views"
+                        );
+                        $twig = new Twig_Environment($loader);
 
                         $redirectUri = new Uri($result->getClient()->getRedirectUri());
 
-                        $output = $twig->render("askAuthorization.twig", array (
-                            'serviceName' => $this->config->getValue('serviceName'),
-                            'serviceLogoUri' => $this->config->getValue('serviceLogoUri', false),
-                            'serviceLogoWidth' => $this->config->getValue('serviceLogoWidth', false),
-                            'serviceLogoHeight' => $this->config->getValue('serviceLogoHeight', false),
-                            'resourceOwnerId' => $this->resourceOwner->getId(),
-                            'sslEnabled' => "https" === $request->getRequestUri()->getScheme(),
-                            'contactEmail' => $result->getClient()->getContactEmail(),
-                            'scopes' => $result->getScope()->getScopeAsArray(),
-                            'clientDomain' => $redirectUri->getHost(),
-                            'clientName' => $result->getClient()->getName(),
-                            'clientId' => $result->getClient()->getId(),
-                            'clientDescription' => $result->getClient()->getDescription(),
-                            'clientIcon' => $result->getClient()->getIcon(),
-                            'redirectUri' => $redirectUri->getUri()
-                        ));
+                        $output = $twig->render(
+                            "askAuthorization.twig",
+                            array(
+                                'serviceName' => $this->config->getValue('serviceName'),
+                                'serviceLogoUri' => $this->config->getValue('serviceLogoUri', false),
+                                'serviceLogoWidth' => $this->config->getValue('serviceLogoWidth', false),
+                                'serviceLogoHeight' => $this->config->getValue('serviceLogoHeight', false),
+                                'resourceOwnerId' => $this->resourceOwner->getId(),
+                                'sslEnabled' => "https" === $request->getRequestUri()->getScheme(),
+                                'contactEmail' => $result->getClient()->getContactEmail(),
+                                'scopes' => $result->getScope()->getScopeAsArray(),
+                                'clientDomain' => $redirectUri->getHost(),
+                                'clientName' => $result->getClient()->getName(),
+                                'clientId' => $result->getClient()->getId(),
+                                'clientDescription' => $result->getClient()->getDescription(),
+                                'clientIcon' => $result->getClient()->getIcon(),
+                                'redirectUri' => $redirectUri->getUri()
+                            )
+                        );
                         $response->setContent($output);
                     } elseif (AuthorizeResult::REDIRECT === $result->getAction()) {
                         $response->setStatusCode(302);
@@ -91,17 +98,22 @@ class Authorize
                         throw new \Exception("invalid authorize result");
                     }
                     break;
-
-                case "POST";
+                case "POST":
                     // CSRF protection, check the referrer, it should be equal to the
                     // request URI
                     $fullRequestUri = $request->getRequestUri()->getUri();
                     $referrerUri = $request->getHeader("HTTP_REFERER");
 
                     if ($fullRequestUri !== $referrerUri) {
-                        throw new ResourceOwnerException("csrf protection triggered, referrer does not match request uri");
+                        throw new ResourceOwnerException(
+                            "csrf protection triggered, referrer does not match request uri"
+                        );
                     }
-                    $result = $this->_handleApprove($this->resourceOwner, $request->getQueryParameters(), $request->getPostParameters());
+                    $result = $this->handleApprove(
+                        $this->resourceOwner,
+                        $request->getQueryParameters(),
+                        $request->getPostParameters()
+                    );
                     if (AuthorizeResult::REDIRECT !== $result->getAction()) {
                         // FIXME: this is dead code?
                         throw new ResourceOwnerException("approval not found");
@@ -109,7 +121,6 @@ class Authorize
                     $response->setStatusCode(302);
                     $response->setHeader("Location", $result->getRedirectUri()->getUri());
                     break;
-
                 default:
                     // method not allowed
                     $response->setStatusCode(405);
@@ -134,20 +145,25 @@ class Authorize
         } catch (ResourceOwnerException $e) {
             // tell resource owner about the error (through browser)
             $response->setStatusCode(400);
-            $loader = new \Twig_Loader_Filesystem(dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . "views");
-            $twig = new \Twig_Environment($loader);
-            $output = $twig->render("error.twig", array (
-                "statusCode" => $response->getStatusCode(),
-                "statusReason" => $response->getStatusReason(),
-                "errorMessage" => $e->getMessage()
-            ));
+            $loader = new Twig_Loader_Filesystem(
+                dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . "views"
+            );
+            $twig = new Twig_Environment($loader);
+            $output = $twig->render(
+                "error.twig",
+                array(
+                    "statusCode" => $response->getStatusCode(),
+                    "statusReason" => $response->getStatusReason(),
+                    "errorMessage" => $e->getMessage()
+                )
+            );
             $response->setContent($output);
         }
 
         return $response;
     }
 
-    private function _handleAuthorize(IResourceOwner $resourceOwner, array $get)
+    private function handleAuthorize(IResourceOwner $resourceOwner, array $get)
     {
         try {
             $clientId     = Utils::getParameter($get, 'client_id');
@@ -172,7 +188,9 @@ class Authorize
 
             if (null !== $redirectUri) {
                 if ($client['redirect_uri'] !== $redirectUri) {
-                    throw new ResourceOwnerException('specified redirect_uri not the same as registered redirect_uri');
+                    throw new ResourceOwnerException(
+                        'specified redirect_uri not the same as registered redirect_uri'
+                    );
                 }
             }
 
@@ -182,11 +200,21 @@ class Authorize
                                              "user_agent_based_application" => array ("token"));
 
             if (!in_array($responseType, $allowedClientProfiles[$client['type']])) {
-                throw new ClientException("unsupported_response_type", "response_type not supported by client profile", $client, $state);
+                throw new ClientException(
+                    "unsupported_response_type",
+                    "response_type not supported by client profile",
+                    $client,
+                    $state
+                );
             }
 
             if (!$scope->isSubsetOf(Scope::fromString($client['allowed_scope']))) {
-                throw new ClientException("invalid_scope", "not authorized to request this scope", $client, $state);
+                throw new ClientException(
+                    "invalid_scope",
+                    "not authorized to request this scope",
+                    $client,
+                    $state
+                );
             }
 
             $this->storage->updateResourceOwner($resourceOwner);
@@ -203,10 +231,19 @@ class Authorize
                     // implicit grant
                     // FIXME: return existing access token if it exists for this exact client, resource owner and scope?
                     $accessToken = Utils::randomHex(16);
-                    $this->storage->storeAccessToken($accessToken, time(), $clientId, $resourceOwner->getId(), $scope->getScope(), $this->config->getValue('accessTokenExpiry'));
-                    $token = array("access_token" => $accessToken,
-                                   "expires_in" => $this->config->getValue('accessTokenExpiry'),
-                                   "token_type" => "bearer");
+                    $this->storage->storeAccessToken(
+                        $accessToken,
+                        time(),
+                        $clientId,
+                        $resourceOwner->getId(),
+                        $scope->getScope(),
+                        $this->config->getValue('accessTokenExpiry')
+                    );
+                    $token = array(
+                        "access_token" => $accessToken,
+                        "expires_in" => $this->config->getValue('accessTokenExpiry'),
+                        "token_type" => "bearer"
+                    );
                     $s = $scope->getScope();
                     if (!empty($s)) {
                         $token += array ("scope" => $s);
@@ -221,7 +258,14 @@ class Authorize
                 } else {
                     // authorization code grant
                     $authorizationCode = Utils::randomHex(16);
-                    $this->storage->storeAuthorizationCode($authorizationCode, $resourceOwner->getId(), time(), $clientId, $redirectUri, $scope->getScope());
+                    $this->storage->storeAuthorizationCode(
+                        $authorizationCode,
+                        $resourceOwner->getId(),
+                        time(),
+                        $clientId,
+                        $redirectUri,
+                        $scope->getScope()
+                    );
                     $token = array("code" => $authorizationCode);
                     if (null !== $state) {
                         $token += array ("state" => $state);
@@ -238,7 +282,7 @@ class Authorize
         }
     }
 
-    private function _handleApprove(IResourceOwner $resourceOwner, array $get, array $post)
+    private function handleApprove(IResourceOwner $resourceOwner, array $get, array $post)
     {
         try {
             $clientId     = Utils::getParameter($get, 'client_id');
@@ -247,7 +291,7 @@ class Authorize
             $scope        = Scope::fromString(Utils::getParameter($get, 'scope'));
             $state        = Utils::getParameter($get, 'state');
 
-            $result = $this->_handleAuthorize($resourceOwner, $get);
+            $result = $this->handleAuthorize($resourceOwner, $get);
             if (AuthorizeResult::ASK_APPROVAL !== $result->getAction()) {
                 return $result;
             }
@@ -266,7 +310,7 @@ class Authorize
                     $this->storage->updateApproval($clientId, $resourceOwner->getId(), $scope->getScope());
                 }
 
-                return $this->_handleAuthorize($resourceOwner, $get);
+                return $this->handleAuthorize($resourceOwner, $get);
             } else {
                 throw new ClientException("access_denied", "not authorized by resource owner", $client, $state);
             }
