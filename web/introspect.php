@@ -19,25 +19,24 @@ require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPAR
 
 use fkooman\Config\Config;
 use fkooman\OAuth\Server\TokenIntrospection;
-
 use fkooman\Http\Request;
 use fkooman\Http\JsonResponse;
 use fkooman\Http\IncomingRequest;
 
-$request = NULL;
-$response = NULL;
-
 try {
-    $config = Config::fromIniFile(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
-
-    $t = new TokenIntrospection($config);
+    $config = Config::fromIniFile(
+        dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini"
+    );
+    $tokenIntrospection = new TokenIntrospection($config);
     $request = Request::fromIncomingRequest(new IncomingRequest());
-    $response = $t->handleRequest($request);
+    $response = $tokenIntrospection->handleRequest($request);
+    $response->sendResponse();
 } catch (Exception $e) {
     $response = new JsonResponse(500);
-    $response->setContent(array("error" => $e->getMessage()));
-}
-
-if (NULL !== $response) {
+    $response->setContent(
+        array(
+            "error" => $e->getMessage()
+        )
+    );
     $response->sendResponse();
 }

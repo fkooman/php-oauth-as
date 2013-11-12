@@ -19,25 +19,25 @@ require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPAR
 
 use fkooman\Config\Config;
 use fkooman\OAuth\Server\Api;
-
 use fkooman\Http\Request;
 use fkooman\Http\JsonResponse;
 use fkooman\Http\IncomingRequest;
 
-$request = NULL;
-$response = NULL;
-
 try {
-    $config = Config::fromIniFile(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
-    $a = new Api($config);
+    $config = Config::fromIniFile(
+        dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini"
+    );
+    $api = new Api($config);
     $request = Request::fromIncomingRequest(new IncomingRequest());
-    $response = $a->handleRequest($request);
-
+    $response = $api->handleRequest($request);
+    $response->sendResponse();
 } catch (Exception $e) {
     $response = new JsonResponse(500);
-    $response->setContent(array("error" => "internal_server_error", "error_description" => $e->getMessage()));
-}
-
-if (NULL !== $response) {
+    $response->setContent(
+        array(
+            "error" => "internal_server_error",
+            "error_description" => $e->getMessage()
+        )
+    );
     $response->sendResponse();
 }

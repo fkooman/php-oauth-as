@@ -19,34 +19,33 @@ require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPAR
 
 use fkooman\Config\Config;
 use fkooman\OAuth\Server\Authorize;
-
 use fkooman\Http\Request;
 use fkooman\Http\Response;
 use fkooman\Http\IncomingRequest;
 
-$request = NULL;
-$response = NULL;
-
 try {
-    $config = Config::fromIniFile(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
-
-    $a = new Authorize($config);
+    $config = Config::fromIniFile(
+        dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini"
+    );
+    $authorize = new Authorize($config);
     $request = Request::fromIncomingRequest(new IncomingRequest());
-    $response = $a->handleRequest($request);
-
+    $response = $authorize->handleRequest($request);
+    $response->sendResponse();
 } catch (Exception $e) {
     // internal server error, inform resource owner through browser
     $response = new Response(500);
-    $loader = new \Twig_Loader_Filesystem(dirname(__DIR__) . DIRECTORY_SEPARATOR . "views");
-    $twig = new \Twig_Environment($loader);
-    $output = $twig->render("error.twig", array (
-        "statusCode" => $response->getStatusCode(),
-        "statusReason" => $response->getStatusReason(),
-        "errorMessage" => $e->getMessage()
-    ));
+    $loader = new Twig_Loader_Filesystem(
+        dirname(__DIR__) . DIRECTORY_SEPARATOR . "views"
+    );
+    $twig = new Twig_Environment($loader);
+    $output = $twig->render(
+        "error.twig",
+        array(
+            "statusCode" => $response->getStatusCode(),
+            "statusReason" => $response->getStatusReason(),
+            "errorMessage" => $e->getMessage()
+        )
+    );
     $response->setContent($output);
-}
-
-if (NULL !== $response) {
     $response->sendResponse();
 }
