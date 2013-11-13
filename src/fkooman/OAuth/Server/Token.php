@@ -22,6 +22,7 @@ use fkooman\Json\Json;
 use fkooman\OAuth\Common\Scope;
 use fkooman\Http\Request;
 use fkooman\Http\JsonResponse;
+use fkooman\OAuth\Server\Exception\TokenException;
 
 class Token
 {

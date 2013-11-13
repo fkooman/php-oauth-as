@@ -15,9 +15,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace fkooman\OAuth\Server;
+namespace fkooman\OAuth\Server\Exception;
 
-class ApiException extends \Exception
+class TokenIntrospectionException extends \Exception
 {
     private $description;
 
@@ -27,23 +27,21 @@ class ApiException extends \Exception
         parent::__construct($message, $code, $previous);
     }
 
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
     public function getResponseCode()
     {
         switch ($this->message) {
-            case "not_found":
-                return 404;
             case "invalid_request":
                 return 400;
-            case "forbidden":
-                return 403;
+            case "method_not_allowed":
+                return 405;
             default:
                 return 400;
         }
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     public function getLogMessage($includeTrace = false)

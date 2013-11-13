@@ -19,6 +19,7 @@ namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
 use fkooman\Json\Json;
+use fkooman\OAuth\Server\Exception\PersonaResourceOwnerException;
 use PersonaVerifier;
 
 class PersonaResourceOwner implements IResourceOwner

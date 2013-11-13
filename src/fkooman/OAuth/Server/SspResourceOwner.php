@@ -18,6 +18,7 @@
 namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
+use fkooman\OAuth\Server\Exception\SspResourceOwnerException;
 use SimpleSAML_Auth_Simple;
 
 class SspResourceOwner implements IResourceOwner

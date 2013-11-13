@@ -23,6 +23,9 @@ use fkooman\OAuth\Common\Exception\ScopeException;
 use fkooman\Http\Request;
 use fkooman\Http\Response;
 use fkooman\Http\Uri;
+use fkooman\OAuth\Server\Exception\ClientException;
+use fkooman\OAuth\Server\Exception\ResourceOwnerException;
+use Exception;
 use Twig_Loader_Filesystem;
 use Twig_Environment;
 
@@ -95,7 +98,7 @@ class Authorize
                         $response->setHeader("Location", $result->getRedirectUri()->getUri());
                     } else {
                         // should never happen...
-                        throw new \Exception("invalid authorize result");
+                        throw new Exception("invalid authorize result");
                     }
                     break;
                 case "POST":

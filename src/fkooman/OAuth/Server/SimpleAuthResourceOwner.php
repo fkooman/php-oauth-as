@@ -20,6 +20,7 @@ namespace fkooman\OAuth\Server;
 use fkooman\Config\Config;
 use fkooman\Json\Json;
 use fkooman\SimpleAuth\SimpleAuth;
+use fkooman\OAuth\Server\Exception\SimpleAuthResourceOwnerException;
 
 class SimpleAuthResourceOwner implements IResourceOwner
 {

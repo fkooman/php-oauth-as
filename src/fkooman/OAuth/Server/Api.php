@@ -23,6 +23,7 @@ use fkooman\OAuth\Common\Scope;
 use fkooman\Http\Request;
 use fkooman\Rest\Service;
 use fkooman\Http\JsonResponse;
+use fkooman\OAuth\Server\Exception\ApiException;
 
 class Api
 {

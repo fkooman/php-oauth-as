@@ -17,6 +17,8 @@
 
 namespace fkooman\OAuth\Server;
 
+use Exception;
+
 class Utils
 {
     public static function randomHex($len = 16)

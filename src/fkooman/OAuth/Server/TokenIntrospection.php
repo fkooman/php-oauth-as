@@ -21,6 +21,7 @@ use fkooman\Config\Config;
 use fkooman\Json\Json;
 use fkooman\Http\Request;
 use fkooman\Http\JsonResponse;
+use fkooman\OAuth\Server\Exception\TokenIntrospectionException;
 
 class TokenIntrospection
 {

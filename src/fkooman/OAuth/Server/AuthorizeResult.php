@@ -19,6 +19,7 @@ namespace fkooman\OAuth\Server;
 
 use fkooman\OAuth\Common\Scope;
 use fkooman\Http\Uri;
+use fkooman\OAuth\Server\Exception\AuthorizeResultException;
 
 class AuthorizeResult
 {

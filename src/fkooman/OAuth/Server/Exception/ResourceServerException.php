@@ -15,9 +15,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace fkooman\OAuth\Server;
+namespace fkooman\OAuth\Server\Exception;
 
-class TokenIntrospectionException extends \Exception
+class ResourceServerException extends \Exception
 {
     private $description;
 
@@ -27,21 +27,25 @@ class TokenIntrospectionException extends \Exception
         parent::__construct($message, $code, $previous);
     }
 
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
     public function getResponseCode()
     {
         switch ($this->message) {
             case "invalid_request":
                 return 400;
-            case "method_not_allowed":
-                return 405;
+            case "no_token":
+            case "invalid_token":
+                return 401;
+            case "insufficient_scope":
+            case "insufficient_entitlement":
+                return 403;
             default:
                 return 400;
         }
-    }
-
-    public function getDescription()
-    {
-        return $this->description;
     }
 
     public function getLogMessage($includeTrace = false)

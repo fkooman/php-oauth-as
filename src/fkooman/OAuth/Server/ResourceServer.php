@@ -19,6 +19,7 @@ namespace fkooman\OAuth\Server;
 
 use fkooman\Json\Json;
 use fkooman\OAuth\Common\Scope;
+use fkooman\OAuth\Server\Exception\ResourceServerException;
 
 class ResourceServer
 {

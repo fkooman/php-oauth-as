@@ -15,22 +15,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace fkooman\OAuth\Server;
+namespace fkooman\OAuth\Server\Exception;
 
 /**
- * Thrown when the client needs to be informed of an error
+ * Thrown when interaction with the token endpoint fails
+ * https://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-5.2
  */
-class ClientException extends \Exception
+class TokenException extends \Exception
 {
     private $description;
-    private $client;
-    private $state;
 
-    public function __construct($message, $description, $client, $state, $code = 0, Exception $previous = null)
+    public function __construct($message, $description, $code = 0, Exception $previous = null)
     {
         $this->description = $description;
-        $this->client = $client;
-        $this->state = $state;
         parent::__construct($message, $code, $previous);
     }
 
@@ -39,23 +36,20 @@ class ClientException extends \Exception
         return $this->description;
     }
 
-    public function getClient()
+    public function getResponseCode()
     {
-        return $this->client;
-    }
-
-    public function getState()
-    {
-        return $this->state;
+        switch ($this->message) {
+            case "invalid_client":
+                return 401;
+            default:
+                return 400;
+        }
     }
 
     public function getLogMessage($includeTrace = false)
     {
-        $client = $this->getClient();
         $msg = 'Message    : ' . $this->getMessage() . PHP_EOL .
-               'Description: ' . $this->getDescription() . PHP_EOL .
-               'Client     : ' . $client['id'] . PHP_EOL .
-               'State      : ' . $this->getState() . PHP_EOL;
+               'Description: ' . $this->getDescription() . PHP_EOL;
         if ($includeTrace) {
             $msg .= 'Trace      : ' . PHP_EOL . $this->getTraceAsString() . PHP_EOL;
         }

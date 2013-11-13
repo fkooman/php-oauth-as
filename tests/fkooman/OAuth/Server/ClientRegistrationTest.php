@@ -17,6 +17,8 @@
 
 namespace fkooman\OAuth\Server;
 
+use fkooman\OAuth\Server\Exception\ClientRegistrationException;
+
 class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
 {
     public static function validProvider()

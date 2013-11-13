@@ -15,8 +15,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace fkooman\OAuth\Server;
+namespace fkooman\OAuth\Server\Exception;
 
-class AuthorizeResultException extends \Exception
+class ClientRegistrationException extends \Exception
 {
 }

@@ -15,15 +15,22 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace fkooman\OAuth\Server;
+namespace fkooman\OAuth\Server\Exception;
 
-class ResourceServerException extends \Exception
+/**
+ * Thrown when the client needs to be informed of an error
+ */
+class ClientException extends \Exception
 {
     private $description;
+    private $client;
+    private $state;
 
-    public function __construct($message, $description, $code = 0, Exception $previous = null)
+    public function __construct($message, $description, $client, $state, $code = 0, Exception $previous = null)
     {
         $this->description = $description;
+        $this->client = $client;
+        $this->state = $state;
         parent::__construct($message, $code, $previous);
     }
 
@@ -32,26 +39,23 @@ class ResourceServerException extends \Exception
         return $this->description;
     }
 
-    public function getResponseCode()
+    public function getClient()
     {
-        switch ($this->message) {
-            case "invalid_request":
-                return 400;
-            case "no_token":
-            case "invalid_token":
-                return 401;
-            case "insufficient_scope":
-            case "insufficient_entitlement":
-                return 403;
-            default:
-                return 400;
-        }
+        return $this->client;
+    }
+
+    public function getState()
+    {
+        return $this->state;
     }
 
     public function getLogMessage($includeTrace = false)
     {
+        $client = $this->getClient();
         $msg = 'Message    : ' . $this->getMessage() . PHP_EOL .
-               'Description: ' . $this->getDescription() . PHP_EOL;
+               'Description: ' . $this->getDescription() . PHP_EOL .
+               'Client     : ' . $client['id'] . PHP_EOL .
+               'State      : ' . $this->getState() . PHP_EOL;
         if ($includeTrace) {
             $msg .= 'Trace      : ' . PHP_EOL . $this->getTraceAsString() . PHP_EOL;
         }

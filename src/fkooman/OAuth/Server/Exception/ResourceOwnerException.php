@@ -15,41 +15,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace fkooman\OAuth\Server;
+namespace fkooman\OAuth\Server\Exception;
 
 /**
- * Thrown when interaction with the token endpoint fails
- * https://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-5.2
+ * Thrown when the resource owner needs to be  informed of an error
  */
-class TokenException extends \Exception
+class ResourceOwnerException extends \Exception
 {
-    private $description;
-
-    public function __construct($message, $description, $code = 0, Exception $previous = null)
-    {
-        $this->description = $description;
-        parent::__construct($message, $code, $previous);
-    }
-
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    public function getResponseCode()
-    {
-        switch ($this->message) {
-            case "invalid_client":
-                return 401;
-            default:
-                return 400;
-        }
-    }
-
     public function getLogMessage($includeTrace = false)
     {
-        $msg = 'Message    : ' . $this->getMessage() . PHP_EOL .
-               'Description: ' . $this->getDescription() . PHP_EOL;
+        $msg = 'Message    : ' . $this->getMessage() . PHP_EOL;
         if ($includeTrace) {
             $msg .= 'Trace      : ' . PHP_EOL . $this->getTraceAsString() . PHP_EOL;
         }
