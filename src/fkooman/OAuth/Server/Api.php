@@ -24,6 +24,7 @@ use fkooman\Http\Request;
 use fkooman\Rest\Service;
 use fkooman\Http\JsonResponse;
 use fkooman\OAuth\Server\Exception\ApiException;
+use fkooman\OAuth\Server\Exception\ResourceServerException;
 
 class Api
 {
