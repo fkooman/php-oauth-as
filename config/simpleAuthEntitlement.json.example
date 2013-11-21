@@ -1,8 +1,8 @@
 {
-    "admin@example.org": [
+    "admin": [
         "urn:x-oauth:entitlement:applications"
-    ], 
-    "teacher@example.org": [
+    ],
+    "teacher": [
         "urn:x-oauth:entitlement:administration"
     ]
 }
