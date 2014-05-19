@@ -36,10 +36,12 @@ class Authorize
         $this->_config = $c;
         $this->_logger = $l;
 
-        $authMech = 'OAuth\\' . $this->_config->getValue('authenticationMechanism');
+        $authMech = $this->_config->getValue('authenticationMechanism');
+        $authMech = ('\\' === $authMech[0] ? '' : 'OAuth\\') .  $authMech;
         $this->_resourceOwner = new $authMech($this->_config);
 
-        $oauthStorageBackend = 'OAuth\\' . $this->_config->getValue('storageBackend');
+        $oauthStorageBackend = $this->_config->getValue('storageBackend');
+        $oauthStorageBackend = ('\\' === $oauthStorageBackend[0] ? '' : 'OAuth\\') .  $oauthStorageBackend;
         $this->_storage = new $oauthStorageBackend($this->_config);
     }
 
