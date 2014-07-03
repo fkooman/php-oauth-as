@@ -21,6 +21,6 @@
         "fkooman/php-lib-rest": "0.3.*",
         "fkooman/php-oauth-lib-common": "0.4.*",
         "php": ">=5.3.3",
-        "twig/twig": "1.14.*"
+        "twig/twig": "~1.15"
     }
 }
