@@ -30,7 +30,7 @@ class ApiTest extends OAuthHelper
     public function setUp()
     {
         parent::setUp();
-        $this->_api = new Api($this->config, NULL);
+        $this->_api = new Api($this->config, null);
 
         $oauthStorageBackend = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('storageBackend');
         $storage = new $oauthStorageBackend($this->config);
@@ -42,7 +42,7 @@ class ApiTest extends OAuthHelper
         );
         $storage->updateResourceOwner(new MockResourceOwner($resourceOwner));
 
-        $storage->addApproval('testclient', 'fkooman', 'read', NULL);
+        $storage->addApproval('testclient', 'fkooman', 'read', null);
         $storage->storeAccessToken('12345abc', time(), 'testcodeclient', 'fkooman', 'authorizations', 3600);
     }
 

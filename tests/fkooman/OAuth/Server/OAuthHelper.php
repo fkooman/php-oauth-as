@@ -91,7 +91,7 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
 
     public function testNop()
     {
-        $this->assertTrue(TRUE);
+        $this->assertTrue(true);
     }
 
 }

@@ -163,17 +163,17 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.3.16",
+            "version": "v2.3.18",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "2e257c292cfce88bf6c894a03d0fe8d782055aee"
+                "reference": "ec2c1cd7b55321f199c3653c30ef497e852678cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/2e257c292cfce88bf6c894a03d0fe8d782055aee",
-                "reference": "2e257c292cfce88bf6c894a03d0fe8d782055aee",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/ec2c1cd7b55321f199c3653c30ef497e852678cd",
+                "reference": "ec2c1cd7b55321f199c3653c30ef497e852678cd",
                 "shasum": ""
             },
             "require": {
@@ -208,20 +208,20 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2014-05-12 09:13:35"
+            "time": "2014-07-07 10:13:42"
         },
         {
             "name": "twig/twig",
-            "version": "v1.15.1",
+            "version": "v1.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Twig.git",
-                "reference": "1fb5784662f438d7d96a541e305e28b812e2eeed"
+                "reference": "8ce37115802e257a984a82d38254884085060024"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Twig/zipball/1fb5784662f438d7d96a541e305e28b812e2eeed",
-                "reference": "1fb5784662f438d7d96a541e305e28b812e2eeed",
+                "url": "https://api.github.com/repos/fabpot/Twig/zipball/8ce37115802e257a984a82d38254884085060024",
+                "reference": "8ce37115802e257a984a82d38254884085060024",
                 "shasum": ""
             },
             "require": {
@@ -230,7 +230,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.15-dev"
+                    "dev-master": "1.16-dev"
                 }
             },
             "autoload": {
@@ -265,7 +265,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2014-02-13 10:19:29"
+            "time": "2014-07-05 12:19:05"
         }
     ],
     "packages-dev": [
@@ -278,6 +278,7 @@
     "stability-flags": [
 
     ],
+    "prefer-stable": false,
     "platform": {
         "ext-openssl": "*",
         "php": ">=5.3.3"

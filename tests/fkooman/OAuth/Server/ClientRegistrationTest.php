@@ -24,9 +24,9 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
     public static function validProvider()
     {
         return array(
-            array("foo", NULL, "user_agent_based_application", "http://www.example.org/cb", "Foo Client"),
+            array("foo", null, "user_agent_based_application", "http://www.example.org/cb", "Foo Client"),
             array("foo", "s3cr3t", "web_application", "http://www.example.org/cb", "Foo Client"),
-            array("foo:bar", NULL, "user_agent_based_application", "http://www.example.org/cb", "Foo Client"),
+            array("foo:bar", null, "user_agent_based_application", "http://www.example.org/cb", "Foo Client"),
             array("foo", "s3cr3t", "native_application", "twitter://app/callback", "Foo Client"),
         );
     }
@@ -41,23 +41,23 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
     public static function invalidProvider()
     {
         return array(
-            array("foo", NULL, "web_application", "http://www.example.org/cb", "Foo Client", "secret should be set for web application type"),
+            array("foo", null, "web_application", "http://www.example.org/cb", "Foo Client", "secret should be set for web application type"),
             array("foo:bar", "s3cr3t", "native_application", "http://www.example.org/cb", "Foo Client", "client_id cannot contain a colon when using a secret"),
-            array(NULL, NULL, NULL, NULL, NULL, "id cannot be empty"),
-            array('√', NULL, NULL, NULL, NULL, "id contains invalid character"),
-            array('foo', NULL, "xyz", NULL, NULL, "type not supported"),
-            array('foo', "√", NULL, NULL, NULL, "secret contains invalid character"),
-            array('foo', "bar", "web_application", "http://x/y", NULL, "name cannot be empty"),
-            array('foo', "bar", "web_application", "http://", NULL, "redirect_uri should be valid URL"),
-            array('foo', "bar", "web_application", "http://foo/bar#fragment", NULL, "redirect_uri cannot contain a fragment"),
+            array(null, null, null, null, null, "id cannot be empty"),
+            array('√', null, null, null, null, "id contains invalid character"),
+            array('foo', null, "xyz", null, null, "type not supported"),
+            array('foo', "√", null, null, null, "secret contains invalid character"),
+            array('foo', "bar", "web_application", "http://x/y", null, "name cannot be empty"),
+            array('foo', "bar", "web_application", "http://", null, "redirect_uri should be valid URL"),
+            array('foo', "bar", "web_application", "http://foo/bar#fragment", null, "redirect_uri cannot contain a fragment"),
         );
     }
 
     public static function invalidProviderFromArray()
     {
         return array(
-            array('foo', "bar", "web_application", "http://xyz", "Foo", "√", NULL, NULL, NULL, "scope is invalid"),
-            array('foo', "bar", "web_application", "http://xyz", "Foo", "foo", "x", NULL, NULL, "icon should be either empty or valid URL with path"),
+            array('foo', "bar", "web_application", "http://xyz", "Foo", "√", null, null, null, "scope is invalid"),
+            array('foo', "bar", "web_application", "http://xyz", "Foo", "foo", "x", null, null, "icon should be either empty or valid URL with path"),
             array('foo', "bar", "web_application", "http://xyz", "Foo", "foo", "http://x/a.png", "Description", "nomail", "contact email should be either empty or valid email address"),
         );
     }
@@ -86,7 +86,7 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
     {
         try {
             $c = new ClientRegistration($id, $secret, $type, $redirectUri, $name);
-            $this->assertTrue(FALSE);
+            $this->assertTrue(false);
         } catch (ClientRegistrationException $e) {
             $this->assertEquals($exceptionMessage, $e->getMessage());
         }
@@ -117,7 +117,7 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
     {
         try {
             $c = ClientRegistration::fromArray(array("id" => $id, "secret" => $secret, "type" => $type, "redirect_uri" => $redirectUri, "name" =>$name, "allowed_scope" => $allowedScope, "icon" => $icon, "description" => $description, "contact_email" => $contactEmail));
-            $this->assertTrue(FALSE);
+            $this->assertTrue(false);
         } catch (ClientRegistrationException $e) {
             $this->assertEquals($exceptionMessage, $e->getMessage());
         }
@@ -127,7 +127,7 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
     {
         try {
             $c = ClientRegistration::fromArray(array("foo" => "bar"));
-            $this->assertTrue(FALSE);
+            $this->assertTrue(false);
         } catch (ClientRegistrationException $e) {
             $this->assertEquals("not a valid client, 'id' not set", $e->getMessage());
         }
