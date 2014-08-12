@@ -6,7 +6,7 @@ Summary:    OAuth 2.0 Authorization Server written in PHP
 Group:      Applications/Internet
 License:    AGPLv3+
 URL:        https://github.com/fkooman/php-oauth
-Source0:    https://github.com/fkooman/php-oauth/releases/download/%{version}/fkooman-php-oauth-as-%{version}.tar.xz
+Source0:    https://github.com/fkooman/php-oauth/releases/download/%{version}/php-oauth-as-%{version}.tar.xz
 Source1:    php-oauth-as-httpd-conf
 BuildArch:  noarch
 
@@ -31,7 +31,13 @@ install -m 0644 -D -p %{SOURCE1} ${RPM_BUILD_ROOT}%{_sysconfdir}/httpd/conf.d/ph
 
 # Application
 mkdir -p ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as
-cp -pr web vendor views src bin config ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as
+cp -pr web vendor views src bin ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as
+
+mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as
+cp -p config/oauth.ini.defaults ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as/oauth.ini
+cp -p config/simpleAuthEntitlement.json.example ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as/simpleAuthEntitlement.json
+
+ln -s ../../../etc/php-oauth-as ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as/config
 
 # Data directory
 mkdir -p ${RPM_BUILD_ROOT}%{_localstatedir}/lib/php-oauth-as
@@ -39,18 +45,19 @@ mkdir -p ${RPM_BUILD_ROOT}%{_localstatedir}/lib/php-oauth-as
 %files
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/php-oauth-as.conf
+%config(noreplace) %{_sysconfdir}/php-oauth-as
 
 %dir %{_datadir}/php-oauth-as
 %{_datadir}/php-oauth-as/src
 %{_datadir}/php-oauth-as/vendor
 %{_datadir}/php-oauth-as/web
 %{_datadir}/php-oauth-as/views
-%{_datadir}/php-oauth-as/config
 %{_datadir}/php-oauth-as/bin
+%{_datadir}/php-oauth-as/config
 
 %dir %attr(0755,apache,apache) %{_localstatedir}/lib/php-oauth-as
 
-%doc README.md agpl-3.0.txt docs/*
+%doc README.md agpl-3.0.txt docs/ config/
 
 %changelog
 * Tue Aug 12 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-1
