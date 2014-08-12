@@ -34,13 +34,24 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
         }
         $dsn = "sqlite:" . $this->_tmpDb;
 
-        $config = Config::fromIniFile(dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini.defaults");
-        $configArray = $config->toArray();
-        $configArray['accessTokenExpiry'] = 5;
-        $configArray['storageBackend'] = 'PdoOAuthStorage';
-        $configArray['PdoOAuthStorage']['dsn'] = $dsn;
-        $configArray['Api']['enableApi'] = true;
-
+        $configArray = array (
+            'authenticationMechanism' => 'DummyResourceOwner',
+            'DummyResourceOwner' => array (
+                'uid' => "fkooman",
+                'entitlement' => array(
+                    "urn:x-oauth:entitlement:applications",
+                    "urn:x-oauth:entitlement:administration"
+                )
+            ),
+            'accessTokenExpiry' => 5,
+            'storageBackend' => 'PdoOAuthStorage',
+            'PdoOAuthStorage' => array(
+                'dsn' => $dsn
+            ),
+            'Api' => array (
+                'enableApi' => true
+            )
+        );
         $this->config = new Config($configArray);
 
         // intialize storage
