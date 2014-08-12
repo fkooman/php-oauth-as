@@ -5,7 +5,6 @@ INSTALL_DIR=`pwd`
 
 # create directories
 mkdir -p data
-mkdir -p data/logs
 
 # create SQlite files
 touch data/oauth2.sqlite

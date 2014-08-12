@@ -17,27 +17,6 @@ authenticationMechanism = "DummyResourceOwner"
 ; the access token expiry time (in seconds)
 accessTokenExpiry = 3600
 
-; Logging
-[Log]
-; any of DEBUG, INFO, WARNING or FATAL
-;
-; DEBUG (=100) logs DEBUG, INFO, WARNING and FATAL
-; INFO (=200) logs INFO WARNING and FATAL
-; WARNING (=300) logs WARNING and FATAL
-; FATAL (=400) logs FATAL
-;
-; for production we recommend FATAL as that usually represents a bug in the 
-; software or indicates server/DB issues and not a client/user error
-logLevel = 300
-
-; file to write log to
-logFile = "/PATH/TO/APP/data/logs/oauth2.txt"
-
-; Send mails to the following receipients of all log messages also written to
-; to log file
-;logMail[] = "fkooman@example.org"
-;logMail[] = "foo@example.com"
-
 ; Options for the HTTP REST based API for managing the OAuth AS
 [Api]
 enableApi = FALSE
