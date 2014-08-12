@@ -9,8 +9,8 @@ serviceName = "My API"
 ; the storage backend, currently only PDO is supported
 storageBackend = "PdoOAuthStorage"
 
-authenticationMechanism = "DummyResourceOwner"
-;authenticationMechanism = "SimpleAuthResourceOwner"
+authenticationMechanism = "SimpleAuthResourceOwner"
+;authenticationMechanism = "DummyResourceOwner"
 ;authenticationMechanism = "PersonaResourceOwner"
 ;authenticationMechanism = "SspResourceOwner"
 
@@ -19,10 +19,10 @@ accessTokenExpiry = 3600
 
 ; Options for the HTTP REST based API for managing the OAuth AS
 [Api]
-enableApi = FALSE
+enableApi = true
 
 [PdoOAuthStorage]
-dsn = "sqlite:/PATH/TO/APP/data/oauth2.sqlite"
+dsn = "sqlite:/var/lib/php-oauth-as/db.sqlite"
 ;dsn = "mysql:host=localhost;dbname=oauth"
 ;username = "oauth"
 ;password = "s3cr3t"
@@ -30,39 +30,39 @@ dsn = "sqlite:/PATH/TO/APP/data/oauth2.sqlite"
 
 ; use a persistent DB connection, make sure to ENABLE this for PRODUCTION 
 ; systems
-persistentConnection = FALSE
-
-; Dummy Configuration
-[DummyResourceOwner]
-uid           = "fkooman"
-entitlement[] = "urn:x-oauth:entitlement:applications"
-entitlement[] = "urn:x-oauth:entitlement:administration"
+persistentConnection = false
 
 ; SimpleAuth configuration
 [SimpleAuthResourceOwner]
-simpleAuthPath = "/var/www/html/php-simple-auth"
+simpleAuthPath = "/usr/share/php-simple-auth"
 
 ; file contains entitlements for (some) SimpleAuth users. See included 
 ; config/simpleAuthEntitlement.json.example for an example. Copy this file to 
 ; config/simpleAuthEntitlement.json and modify it to set entitlements for 
 ; user identifiers you want to give certain entitlements
-entitlementFile = "/PATH/TO/APP/config/simpleAuthEntitlement.json"
+entitlementFile = "/etc/php-oauth-as/simpleAuthEntitlement.json"
+
+; Dummy Configuration
+;[DummyResourceOwner]
+;uid           = "fkooman"
+;entitlement[] = "urn:x-oauth:entitlement:applications"
+;entitlement[] = "urn:x-oauth:entitlement:administration"
 
 ; Mozilla Persona configuration
-[PersonaResourceOwner]
-personaPath   = "/var/www/html/php-browserid"
-verifierAddress = "https://verifier.login.persona.org/verify"
+;[PersonaResourceOwner]
+;personaPath   = "/var/www/html/php-browserid"
+;verifierAddress = "https://verifier.login.persona.org/verify"
 
 ; file contains entitlements for (some) Persona users. See included 
 ; config/personaEntitlement.json.example for an example. Copy this file to 
 ; config/personaEntitlement.json and modify it to set entitlements for 
 ; email addresses you want to give certain entitlements
-entitlementFile = "/PATH/TO/APP/config/personaEntitlement.json"
+;entitlementFile = "/PATH/TO/APP/config/personaEntitlement.json"
 
 ; simpleSAMLphp configuration
-[SspResourceOwner]
-sspPath    = "/var/simplesamlphp"
-authSource = "default-sp"
+;[SspResourceOwner]
+;sspPath    = "/var/simplesamlphp"
+;authSource = "default-sp"
 
 ; if you want to use an attribute for the resource owner identifier instead of 
 ; the persistent NameID value set it below

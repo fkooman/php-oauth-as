@@ -7,8 +7,8 @@ INSTALL_DIR=`pwd`
 mkdir -p data
 
 # create SQlite files
-touch data/oauth2.sqlite
-chmod o+w data/oauth2.sqlite
+touch data/db.sqlite
+chmod o+w data/db.sqlite
 
 # set permissions
 chmod -R o+w data/
@@ -22,7 +22,9 @@ do
     INI_FILE=`basename ${DEFAULTS_FILE} .defaults`
     if [ ! -f ${INI_FILE} ]
     then
-        cat ${DEFAULTS_FILE} | sed "s|/PATH/TO/APP|${INSTALL_DIR}|g" > ${INI_FILE}
+        cat ${DEFAULTS_FILE} | \
+		sed "s|/etc/php-oauth-as|${INSTALL_DIR}/config|g" | \
+		sed "s|/var/lib/php-oauth-as|${INSTALL_DIR}/data|g" > ${INI_FILE}
     fi
 done
 )
