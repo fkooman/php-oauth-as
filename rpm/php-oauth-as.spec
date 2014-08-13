@@ -15,6 +15,9 @@ Requires:   php-openssl
 Requires:   php-pdo
 Requires:   httpd
 
+Requires(post): policycoreutils-python
+Requires(postun): policycoreutils-python
+
 %description
 This project aims at providing a stand-alone OAuth v2 Authorization 
 Server that is easy to integrate with your existing REST services, 
@@ -42,6 +45,15 @@ ln -s ../../../etc/php-oauth-as ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as/config
 # Data directory
 mkdir -p ${RPM_BUILD_ROOT}%{_localstatedir}/lib/php-oauth-as
 
+%post
+semanage fcontext -a -t httpd_sys_rw_content_t '%{_localstatedir}/lib/php-oauth-as(/.*)?' 2>/dev/null || :
+restorecon -R %{_localstatedir}/lib/php-oauth-as || :
+
+%postun
+if [ $1 -eq 0 ] ; then  # final removal
+semanage fcontext -d -t httpd_sys_rw_content_t '%{_localstatedir}/lib/php-oauth-as(/.*)?' 2>/dev/null || :
+fi
+
 %files
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/php-oauth-as.conf
@@ -55,7 +67,7 @@ mkdir -p ${RPM_BUILD_ROOT}%{_localstatedir}/lib/php-oauth-as
 %{_datadir}/php-oauth-as/bin
 %{_datadir}/php-oauth-as/config
 
-%dir %attr(0755,apache,apache) %{_localstatedir}/lib/php-oauth-as
+%dir %attr(0750,apache,apache) %{_localstatedir}/lib/php-oauth-as
 
 %doc README.md agpl-3.0.txt docs/ config/
 
