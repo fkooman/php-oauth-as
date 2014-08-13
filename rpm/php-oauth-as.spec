@@ -24,7 +24,7 @@ Server that is easy to integrate with your existing REST services,
 written in any language, without requiring extensive changes.
 
 %prep
-%setup -qc php-oauth-as-%{version}
+%setup -q
 
 %build
 
