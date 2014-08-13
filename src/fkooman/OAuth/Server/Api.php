@@ -23,6 +23,7 @@ use fkooman\OAuth\Common\Scope;
 use fkooman\Http\Request;
 use fkooman\Rest\Service;
 use fkooman\Http\JsonResponse;
+use fkooman\Http\Response;
 use fkooman\OAuth\Server\Exception\ApiException;
 use fkooman\OAuth\Server\Exception\ResourceServerException;
 
@@ -52,6 +53,11 @@ class Api
         try {
             if (!$this->config->s('Api')->l('enableApi')) {
                 throw new ApiException("forbidden", "api disabled");
+            }
+
+            // handle CORS
+            if ("OPTIONS" === $request->getRequestMethod()) {
+                return new Response();
             }
 
             $this->resourceServer->verifyAuthorizationHeader($request->getHeader("Authorization"));
