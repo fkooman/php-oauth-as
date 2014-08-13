@@ -6,7 +6,7 @@
         "icon": "https://localhost/php-oauth-as/img/placeholder.png",
         "id": "html-manage-applications",
         "name": "OAuth Application Registration Manager",
-        "redirect_uri": "https://fkooman.ursa.uberspace.de/html-manage-applications/index.html",
+        "redirect_uri": "https://php-oauth-as-manager.5apps.com/index.html",
         "secret": null,
         "type": "user_agent_based_application"
     }
