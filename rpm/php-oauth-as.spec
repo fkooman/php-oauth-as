@@ -1,6 +1,6 @@
 Name:       php-oauth-as
 Version:    0.1.0
-Release:    1%{?dist}
+Release:    0.21%{?dist}
 Summary:    OAuth 2.0 Authorization Server written in PHP
 
 Group:      Applications/Internet
@@ -8,12 +8,29 @@ License:    AGPLv3+
 URL:        https://github.com/fkooman/php-oauth
 Source0:    https://github.com/fkooman/php-oauth/releases/download/%{version}/php-oauth-as-%{version}.tar.xz
 Source1:    php-oauth-as-httpd-conf
+Patch0:     php-oauth-as-autoload.patch
+
 BuildArch:  noarch
 
 Requires:   php >= 5.3.3
 Requires:   php-openssl
 Requires:   php-pdo
 Requires:   httpd
+
+Requires:   php-composer(fkooman/json) >= 0.4.0
+Requires:   php-composer(fkooman/json) < 0.5.0
+
+Requires:   php-composer(fkooman/config) >= 0.3.1
+Requires:   php-composer(fkooman/config) < 0.4.0
+
+Requires:   php-composer(fkooman/rest) >= 0.4.0
+Requires:   php-composer(fkooman/rest) < 0.5.0
+
+Requires:   php-composer(fkooman/oauth-common) >= 0.5.0
+Requires:   php-composer(fkooman/oauth-common) < 0.6.0
+
+Requires:   php-pear(pear.twig-project.org/Twig) >= 1.15
+Requires:   php-pear(pear.twig-project.org/Twig) < 2.0
 
 Requires(post): policycoreutils-python
 Requires(postun): policycoreutils-python
@@ -25,6 +42,13 @@ written in any language, without requiring extensive changes.
 
 %prep
 %setup -q
+
+%patch0
+
+# remove bundled dependencies
+rm -rf vendor/fkooman
+rm -rf vendor/twig
+rm -rf vendor/symfony
 
 %build
 
@@ -69,8 +93,11 @@ fi
 
 %dir %attr(0750,apache,apache) %{_localstatedir}/lib/php-oauth-as
 
-%doc README.md agpl-3.0.txt docs/ config/
+%doc README.md agpl-3.0.txt composer.json docs/ config/
 
 %changelog
-* Tue Aug 12 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-1
-- initial package
+* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.21
+- rebuilt
+
+* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.20
+- rebuilt
