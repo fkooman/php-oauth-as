@@ -26,7 +26,7 @@ RUN php /usr/share/php-oauth-as/bin/initDatabase.php
 ADD ./registration.json /tmp/registration.json
 RUN php /usr/share/php-oauth-as/bin/registerClients.php /tmp/registration.json
 
-user root
+USER root
 
 # Expose port 443 and set httpd as our entrypoint
 EXPOSE 443
