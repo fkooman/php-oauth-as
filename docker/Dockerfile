@@ -1,8 +1,8 @@
 FROM       fedora:20
 MAINTAINER François Kooman <fkooman@tuxed.net>
 
-# Add OAuth repo to /etc/yum.repos.d
-ADD ./php-oauth-as.repo /etc/yum.repos.d/php-oauth-as.repo
+# Add php-oauth repo to /etc/yum.repos.d
+RUN curl -o /etc/yum.repos.d/fedora-php-oauth.repo https://repos.fedorapeople.org/repos/fkooman/php-oauth/fedora-php-oauth.repo
 
 # Perform updates
 RUN yum -y update; yum clean all

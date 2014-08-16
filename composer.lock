@@ -4,26 +4,26 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fda6650ef93e783029bd44e47397c4f6",
+    "hash": "d37a97874d2f3b7fbad937e14863ce17",
     "packages": [
         {
-            "name": "fkooman/php-lib-config",
-            "version": "0.2.2",
+            "name": "fkooman/config",
+            "version": "0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-config.git",
-                "reference": "c00a9ea639647bac3ebef1cf1a430220a4c89d21"
+                "reference": "d3ff8c2be0bcf3abbdaf6a146cf8017dfaedea89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-config/zipball/c00a9ea639647bac3ebef1cf1a430220a4c89d21",
-                "reference": "c00a9ea639647bac3ebef1cf1a430220a4c89d21",
+                "url": "https://api.github.com/repos/fkooman/php-lib-config/zipball/d3ff8c2be0bcf3abbdaf6a146cf8017dfaedea89",
+                "reference": "d3ff8c2be0bcf3abbdaf6a146cf8017dfaedea89",
                 "shasum": ""
             },
             "require": {
-                "fkooman/php-lib-json": "0.3.*",
+                "fkooman/json": "0.4.*",
                 "php": ">=5.3.3",
-                "symfony/yaml": "2.3.*"
+                "symfony/yaml": "~2.3"
             },
             "type": "library",
             "autoload": {
@@ -43,20 +43,20 @@
                 }
             ],
             "description": "PHP library to handle YAML, INI and JSON configuration files",
-            "time": "2013-11-07 15:51:11"
+            "time": "2014-08-15 12:19:12"
         },
         {
-            "name": "fkooman/php-lib-json",
-            "version": "0.3.0",
+            "name": "fkooman/json",
+            "version": "0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-json.git",
-                "reference": "eb64350e01d8a3c11d70d82374ac1bb35a44b7c9"
+                "reference": "325dcd3565856cd7574f65653f7476758a491618"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-json/zipball/eb64350e01d8a3c11d70d82374ac1bb35a44b7c9",
-                "reference": "eb64350e01d8a3c11d70d82374ac1bb35a44b7c9",
+                "url": "https://api.github.com/repos/fkooman/php-lib-json/zipball/325dcd3565856cd7574f65653f7476758a491618",
+                "reference": "325dcd3565856cd7574f65653f7476758a491618",
                 "shasum": ""
             },
             "require": {
@@ -80,49 +80,7 @@
                 }
             ],
             "description": "PHP library to encode and decode JSON",
-            "time": "2013-11-07 15:48:53"
-        },
-        {
-            "name": "fkooman/php-lib-rest",
-            "version": "0.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "c3cf128e4878173b392ca577a65a2c36476f6565"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/c3cf128e4878173b392ca577a65a2c36476f6565",
-                "reference": "c3cf128e4878173b392ca577a65a2c36476f6565",
-                "shasum": ""
-            },
-            "require": {
-                "fkooman/php-lib-json": "0.3.*",
-                "php": ">=5.3.3"
-            },
-            "require-dev": {
-                "sami/sami": "v1.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "fkooman\\Http\\": "src/",
-                    "fkooman\\Rest\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "François Kooman",
-                    "email": "fkooman@tuxed.net",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Simple PHP library for writing REST services.",
-            "time": "2013-11-12 13:32:42"
+            "time": "2014-08-14 07:53:47"
         },
         {
             "name": "fkooman/php-oauth-lib-common",
@@ -162,18 +120,57 @@
             "time": "2014-06-16 08:53:40"
         },
         {
+            "name": "fkooman/rest",
+            "version": "0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fkooman/php-lib-rest.git",
+                "reference": "179d88d3f3b13d43c82a930bf889ebebf2f3634d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/179d88d3f3b13d43c82a930bf889ebebf2f3634d",
+                "reference": "179d88d3f3b13d43c82a930bf889ebebf2f3634d",
+                "shasum": ""
+            },
+            "require": {
+                "fkooman/json": "0.4.*",
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "fkooman\\Http\\": "src/",
+                    "fkooman\\Rest\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "François Kooman",
+                    "email": "fkooman@tuxed.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Simple PHP library for writing REST services.",
+            "time": "2014-08-16 08:57:59"
+        },
+        {
             "name": "symfony/yaml",
-            "version": "v2.3.18",
+            "version": "v2.5.3",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "ec2c1cd7b55321f199c3653c30ef497e852678cd"
+                "reference": "5a75366ae9ca8b4792cd0083e4ca4dff9fe96f1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/ec2c1cd7b55321f199c3653c30ef497e852678cd",
-                "reference": "ec2c1cd7b55321f199c3653c30ef497e852678cd",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/5a75366ae9ca8b4792cd0083e4ca4dff9fe96f1f",
+                "reference": "5a75366ae9ca8b4792cd0083e4ca4dff9fe96f1f",
                 "shasum": ""
             },
             "require": {
@@ -182,7 +179,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.3-dev"
+                    "dev-master": "2.5-dev"
                 }
             },
             "autoload": {
@@ -196,19 +193,17 @@
             ],
             "authors": [
                 {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
-                },
-                {
                     "name": "Symfony Community",
                     "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
                 }
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2014-07-07 10:13:42"
+            "time": "2014-08-05 09:00:40"
         },
         {
             "name": "twig/twig",
@@ -268,22 +263,14 @@
             "time": "2014-07-05 12:19:05"
         }
     ],
-    "packages-dev": [
-
-    ],
-    "aliases": [
-
-    ],
+    "packages-dev": [],
+    "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [
-
-    ],
+    "stability-flags": [],
     "prefer-stable": false,
     "platform": {
         "ext-openssl": "*",
         "php": ">=5.3.3"
     },
-    "platform-dev": [
-
-    ]
+    "platform-dev": []
 }
