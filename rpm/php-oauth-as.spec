@@ -1,6 +1,6 @@
 Name:       php-oauth-as
 Version:    0.1.0
-Release:    0.21%{?dist}
+Release:    0.24%{?dist}
 Summary:    OAuth 2.0 Authorization Server written in PHP
 
 Group:      Applications/Internet
@@ -19,16 +19,12 @@ Requires:   httpd
 
 Requires:   php-composer(fkooman/json) >= 0.4.0
 Requires:   php-composer(fkooman/json) < 0.5.0
-
 Requires:   php-composer(fkooman/config) >= 0.3.1
 Requires:   php-composer(fkooman/config) < 0.4.0
-
 Requires:   php-composer(fkooman/rest) >= 0.4.0
 Requires:   php-composer(fkooman/rest) < 0.5.0
-
 Requires:   php-composer(fkooman/oauth-common) >= 0.5.0
 Requires:   php-composer(fkooman/oauth-common) < 0.6.0
-
 Requires:   php-pear(pear.twig-project.org/Twig) >= 1.15
 Requires:   php-pear(pear.twig-project.org/Twig) < 2.0
 
@@ -60,13 +56,13 @@ install -m 0644 -D -p %{SOURCE1} ${RPM_BUILD_ROOT}%{_sysconfdir}/httpd/conf.d/ph
 mkdir -p ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as
 cp -pr web vendor views src bin ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as
 
+# Config
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as
 cp -p config/oauth.ini.defaults ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as/oauth.ini
 cp -p config/simpleAuthEntitlement.json.example ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as/simpleAuthEntitlement.json
-
 ln -s ../../../etc/php-oauth-as ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as/config
 
-# Data directory
+# Data
 mkdir -p ${RPM_BUILD_ROOT}%{_localstatedir}/lib/php-oauth-as
 
 %post
@@ -82,7 +78,6 @@ fi
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/php-oauth-as.conf
 %config(noreplace) %{_sysconfdir}/php-oauth-as
-
 %dir %{_datadir}/php-oauth-as
 %{_datadir}/php-oauth-as/src
 %{_datadir}/php-oauth-as/vendor
@@ -90,14 +85,15 @@ fi
 %{_datadir}/php-oauth-as/views
 %{_datadir}/php-oauth-as/bin
 %{_datadir}/php-oauth-as/config
-
-%dir %attr(0750,apache,apache) %{_localstatedir}/lib/php-oauth-as
-
+%dir %attr(0700,apache,apache) %{_localstatedir}/lib/php-oauth-as
 %doc README.md agpl-3.0.txt composer.json docs/ config/
 
 %changelog
-* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.21
+* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.24
 - rebuilt
 
-* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.20
+* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.23
+- rebuilt
+
+* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.22
 - rebuilt
