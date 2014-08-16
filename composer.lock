@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d37a97874d2f3b7fbad937e14863ce17",
+    "hash": "c5d9fc1073cfa32ccff67b8cd5a8eb1e",
     "packages": [
         {
             "name": "fkooman/config",
@@ -83,17 +83,17 @@
             "time": "2014-08-14 07:53:47"
         },
         {
-            "name": "fkooman/php-oauth-lib-common",
-            "version": "0.4.2",
+            "name": "fkooman/oauth-common",
+            "version": "0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-oauth-lib-common.git",
-                "reference": "c579d9a367a05f0a5fbd5321e2102ac9441474d8"
+                "reference": "43f92e264b2facf1065feb5af671b96a53366132"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-oauth-lib-common/zipball/c579d9a367a05f0a5fbd5321e2102ac9441474d8",
-                "reference": "c579d9a367a05f0a5fbd5321e2102ac9441474d8",
+                "url": "https://api.github.com/repos/fkooman/php-oauth-lib-common/zipball/43f92e264b2facf1065feb5af671b96a53366132",
+                "reference": "43f92e264b2facf1065feb5af671b96a53366132",
                 "shasum": ""
             },
             "require": {
@@ -117,7 +117,7 @@
                 }
             ],
             "description": "PHP library for common OAuth classes.",
-            "time": "2014-06-16 08:53:40"
+            "time": "2014-08-16 09:22:31"
         },
         {
             "name": "fkooman/rest",
