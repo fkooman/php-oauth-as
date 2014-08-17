@@ -55,6 +55,10 @@ span#userInfo {
     font-size: 75%;
 }
 
+span.mono {
+    font-family: monospace;
+}
+
 div.errorBox, div.warnBox {
     border: 1px solid #888;
     padding: 10px;

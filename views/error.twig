@@ -11,7 +11,8 @@
 <body>
   <div id="wrapper">
       <div id="container">
-        <h3>Error [{{ statusCode|e }} - {{ statusReason|e }}]</h3>
+        <h3>Error</h3>
+        <span class="mono">{{ statusCode|e }} - {{ statusReason|e }}</span>
         <div class="errorBox">
           <strong>ERROR</strong>: {{ errorMessage|e }}
         </div>
