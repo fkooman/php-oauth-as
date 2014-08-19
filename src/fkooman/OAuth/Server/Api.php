@@ -177,7 +177,7 @@ class Api
                 "/applications/",
                 function () use ($request, $storage, $rs) {
                     $rs->requireScope("applications");
-                    // $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
+                    // $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     // do not require entitlement to list clients...
                     $data = $storage->getClients();
                     $response = new JsonResponse(200);
@@ -192,7 +192,7 @@ class Api
                 "/applications/:id",
                 function ($id) use ($request, $storage, $rs) {
                     $rs->requireScope("applications");
-                    $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
+                    $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     if (false === $storage->deleteClient($id)) {
                         throw new ApiException("not_found", "the resource you are trying to delete does not exist");
                     }
@@ -208,7 +208,7 @@ class Api
                 "/applications/:id",
                 function ($id) use ($request, $storage, $rs) {
                     $rs->requireScope("applications");
-                    $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
+                    $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     // FIXME: for now require entitlement as long as password hashing is not
                     // implemented...
 
@@ -228,7 +228,7 @@ class Api
                 "/applications/",
                 function () use ($request, $storage, $rs) {
                     $rs->requireScope("applications");
-                    $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
+                    $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     try {
                         $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
                         $data = $client->getClientAsArray();
@@ -255,7 +255,7 @@ class Api
                 "/stats/",
                 function () use ($request, $storage, $rs) {
                     $rs->requireScope("applications");
-                    $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
+                    $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     $data = $storage->getStats();
 
                     $response = new JsonResponse(200);
@@ -270,7 +270,7 @@ class Api
                 "/applications/:id",
                 function ($id) use ($request, $storage, $rs) {
                     $rs->requireScope("applications");
-                    $rs->requireEntitlement("urn:x-oauth:entitlement:applications");
+                    $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     try {
                         $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
                         $data = $client->getClientAsArray();

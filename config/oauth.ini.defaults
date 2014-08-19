@@ -45,8 +45,7 @@ entitlementFile = "/etc/php-oauth-as/simpleAuthEntitlement.json"
 ; Dummy Configuration
 ;[DummyResourceOwner]
 ;uid           = "fkooman"
-;entitlement[] = "urn:x-oauth:entitlement:applications"
-;entitlement[] = "urn:x-oauth:entitlement:administration"
+;entitlement[] = "http://php-oauth.net/entitlement/manage"
 
 ; Mozilla Persona configuration
 ;[PersonaResourceOwner]

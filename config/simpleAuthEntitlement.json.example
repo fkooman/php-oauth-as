@@ -1,8 +1,5 @@
 {
     "admin": [
-        "urn:x-oauth:entitlement:applications"
-    ],
-    "teacher": [
-        "urn:x-oauth:entitlement:administration"
+        "http://php-oauth.net/entitlement/manage"
     ]
 }

@@ -173,7 +173,7 @@ In the `[Api]` section the management API can be enabled:
     enableApi = TRUE
 
 In particular, the authenticated user (resource owner) needs to have the 
-`urn:x-oauth:entitlement:applications` entitlement in order to be able to modify 
+`http://php-oauth.net/entitlement/manage` entitlement in order to be able to modify 
 application registrations. The entitlements are part of the resource owner's 
 attributes. This maps perfectly to SAML attributes obtained through the
 simpleSAMLphp integration.
@@ -185,12 +185,12 @@ as shown in the snippet below:
     ; Dummy Configuration
     [DummyResourceOwner]
     uid           = "fkooman"
-    entitlement[] = "urn:x-oauth:entitlement:applications"
+    entitlement[] = "http://php-oauth.net/entitlement/manage"
     entitlement[] = "foo"
     entitlement[] = "bar"
 
 Here you can see that the resource owner will be granted the 
-`urn:x-oauth:entitlement:applications`, `foo` and `bar` entitlements. As there is only 
+`http://php-oauth.net/entitlement/manage`, `foo` and `bar` entitlements. As there is only 
 one account in the `DummyResourceOwner` configuration it is quite boring.
 
 ## SimpleAuthResourceOwner 

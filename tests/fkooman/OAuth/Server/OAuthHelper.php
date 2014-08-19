@@ -39,8 +39,7 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
             'DummyResourceOwner' => array (
                 'uid' => "fkooman",
                 'entitlement' => array(
-                    "urn:x-oauth:entitlement:applications",
-                    "urn:x-oauth:entitlement:administration"
+                    "http://php-oauth.net/entitlement/manage"
                 )
             ),
             'accessTokenExpiry' => 5,
