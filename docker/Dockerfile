@@ -23,8 +23,8 @@ USER apache
 RUN php /usr/share/php-oauth-as/bin/initDatabase.php
 
 # Register Clients
-ADD ./registration.json /tmp/registration.json
-RUN php /usr/share/php-oauth-as/bin/registerClients.php /tmp/registration.json
+ADD ./manage.json /tmp/manage.json
+RUN php /usr/share/php-oauth-as/bin/registerClients.php /tmp/manage.json
 
 USER root
 
