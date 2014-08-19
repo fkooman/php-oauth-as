@@ -1,11 +1,11 @@
 [
     {
-        "allowed_scope": "applications",
-        "contact_email": "fkooman@tuxed.net",
-        "description": "Application for administrators to manage OAuth application registrations.",
-        "icon": "https://localhost/php-oauth-as/img/placeholder.png",
-        "id": "html-manage-applications",
-        "name": "OAuth Application Registration Manager",
+        "allowed_scope": "http://php-oauth.net/scope/manage",
+        "contact_email": "support@php-oauth.net",
+        "description": null,
+        "icon": "https://www.php-oauth.net/app/manage/icon.png",
+        "id": "http://php-oauth.net/app/manage",
+        "name": "OAuth Server Management Application",
         "redirect_uri": "https://www.php-oauth.net/app/manage/index.html",
         "secret": null,
         "type": "user_agent_based_application"
