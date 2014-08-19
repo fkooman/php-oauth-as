@@ -6,7 +6,7 @@
         "icon": "https://localhost/php-oauth-as/img/placeholder.png",
         "id": "html-manage-applications",
         "name": "OAuth Application Registration Manager",
-        "redirect_uri": "https://php-oauth-as-manager.5apps.com/index.html",
+        "redirect_uri": "https://www.php-oauth.net/app/manage/index.html",
         "secret": null,
         "type": "user_agent_based_application"
     }
