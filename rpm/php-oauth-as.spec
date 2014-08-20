@@ -1,6 +1,6 @@
 Name:       php-oauth-as
 Version:    0.1.0
-Release:    0.29%{?dist}
+Release:    0.32%{?dist}
 Summary:    OAuth 2.0 Authorization Server written in PHP
 
 Group:      Applications/Internet
@@ -46,8 +46,8 @@ rm -rf vendor/fkooman
 rm -rf vendor/twig
 rm -rf vendor/symfony
 
-sed -i 's|dirname(__DIR__)|%{_datadir}/php-oauth-as|' bin/php-oauth-as-initdb
-sed -i 's|dirname(__DIR__)|%{_datadir}/php-oauth-as|' bin/php-oauth-as-register
+sed -i "s|dirname(__DIR__)|'%{_datadir}/php-oauth-as'|" bin/php-oauth-as-initdb
+sed -i "s|dirname(__DIR__)|'%{_datadir}/php-oauth-as'|" bin/php-oauth-as-register
 
 %build
 
@@ -96,5 +96,35 @@ fi
 %doc README.md agpl-3.0.txt composer.json docs/ config/
 
 %changelog
+* Wed Aug 20 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.32
+- rebuilt
+
+* Wed Aug 20 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.31
+- rebuilt
+
+* Wed Aug 20 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.30
+- rebuilt
+
 * Wed Aug 20 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.29
-- initial package
+- rebuilt
+
+* Wed Aug 20 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.28
+- rebuilt
+
+* Tue Aug 19 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.27
+- rebuilt
+
+* Mon Aug 18 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.26
+- rebuilt
+
+* Sun Aug 17 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.25
+- rebuilt
+
+* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.24
+- rebuilt
+
+* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.23
+- rebuilt
+
+* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.22
+- rebuilt
