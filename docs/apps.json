@@ -1,0 +1,24 @@
+[
+    {
+        "allowed_scope": "http://php-oauth.net/scope/authorize",
+        "contact_email": "support@php-oauth.net",
+        "description": null,
+        "icon": "https://www.php-oauth.net/app/authorize/icon.png",
+        "id": "http://php-oauth.net/app/authorize",
+        "name": "OAuth Authorization Management Application",
+        "redirect_uri": "https://www.php-oauth.net/app/authorize/index.html",
+        "secret": null,
+        "type": "user_agent_based_application"
+    },
+    {
+        "allowed_scope": "http://php-oauth.net/scope/manage",
+        "contact_email": "support@php-oauth.net",
+        "description": null,
+        "icon": "https://www.php-oauth.net/app/manage/icon.png",
+        "id": "http://php-oauth.net/app/manage",
+        "name": "OAuth Server Management Application",
+        "redirect_uri": "https://www.php-oauth.net/app/manage/index.html",
+        "secret": null,
+        "type": "user_agent_based_application"
+    }
+]

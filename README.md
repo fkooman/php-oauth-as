@@ -1,7 +1,7 @@
 # Introduction
-This project aims at providing a stand-alone OAuth v2 Authorization Server that
-is easy to integrate with your existing REST services, written in any language, 
-without requiring extensive changes.
+This project provides an OAuth 2.0 Authorization Server that is easy to 
+integrate with your existing REST services, written in any language, without 
+requiring extensive changes.
 
 [![Build Status](https://travis-ci.org/fkooman/php-oauth.png?branch=master)](https://travis-ci.org/fkooman/php-oauth)
 
@@ -19,7 +19,7 @@ it). Refer to the license for the exact details.
 # Features
 * PDO (database abstraction layer for various databases) storage backend for
   OAuth tokens
-* OAuth v2 (authorization code and implicit grant) support
+* OAuth 2.0 (authorization code and implicit grant) support
 * SimpleAuth authentication support ([php-simple-auth](https://github.com/fkooman/php-simple-auth/))
 * SAML authentication support ([simpleSAMLphp](http://www.simplesamlphp.org)) 
 * [Mozilla Persona](https://login.persona.org/) authentication support using 
@@ -34,33 +34,26 @@ This is a screenshot of the OAuth consent dialog.
 # Requirements
 The installation requirements on Fedora/CentOS can be installed like this:
 
-    $ su -c 'yum install git php-pdo php httpd'
+    $ su -c 'yum install git php-pdo httpd'
 
 On Debian/Ubuntu:
 
-    $ sudo apt-get install git sqlite3 php5 php5-sqlite
+    $ sudo apt-get install git sqlite3 php5-sqlite
 
 # Installation
 *NOTE*: in the `chown` line you need to use your own user account name!
-*NOTE*: On Ubuntu (Debian) you would typically install in `/var/www/php-oauth` and not 
-in `/var/www/html/php-oauth` and you use `sudo` instead of `su -c`.
+*NOTE*: On Ubuntu (Debian) you would typically install in `/var/www/php-oauth-as` and not 
+in `/var/www/html/php-oauth-as` and you use `sudo` instead of `su -c`.
 
     $ cd /var/www/html
-    $ su -c 'mkdir php-oauth'
-    $ su -c 'chown fkooman:fkooman php-oauth'
-    $ git clone git://github.com/fkooman/php-oauth.git
-    $ cd php-oauth
+    # mkdir php-oauth-as
+    # chown fkooman:fkooman php-oauth-as
+    $ git clone git://github.com/fkooman/php-oauth.git php-oauth-as
+    $ cd php-oauth-as
 
 Install the external dependencies in the `vendor` directory using [Composer](http://getcomposer.org/):
 
     $ php /path/to/composer.phar install
-
-Now you can create the default configuration files, the paths will be 
-automatically set, permissions set and a sample Apache configuration file will 
-be generated and shown on the screen (see below for more information on
-Apache configuration).
-
-    $ bin/configure.sh
 
 Next make sure to configure the database settings in `config/oauth.ini`, and 
 possibly other settings. If you want to keep using SQlite you are good to go 
@@ -70,24 +63,11 @@ i.e. to install the tables, run:
     $ php bin/php-oauth-as-initdb.php
 
 It is also possible to already preregister some clients which makes sense if 
-you want to use the management clients mentioned below. The sample registrations
-are listed in `docs/registration.json`. By default they point to 
-`http://localhost`, but if you run this software on a "real" domain you need to
-modify the `docs/registration.json` file to point to your domain name and 
-full path where the management clients will be installed.
+you want to use the management clients mentioned below. 
 
-To modify the domain of where the clients will be located in one go, you can
-run the following command:
+    $ php bin/php-oauth-as-register.php docs/apps.json
 
-    $ sed 's|http://localhost|https://www.example.org|g' docs/registration.json > config/myregistration.json
-
-You can still modify the `config/myregistration.json` by hand if you desire, and 
-then load them in the database:
-
-    $ php bin/php-oauth-as-register.php config/myregistration.json
-
-This should take care of the initial setup and you can now move to installing 
-the management clients, see below.
+This should take care of the initial setup.
 
 # Management Clients
 There are two reference management clients available:
@@ -98,8 +78,12 @@ There are two reference management clients available:
 These clients are written in HTML, CSS and JavaScript only and can be hosted on 
 any (static) web server. See the accompanying READMEs for more information. If 
 you followed the client registration in the previous section they should start
-working immediately if you install the applications at the correct URL. Do not
-forget to enable the management API in `config/oauth.ini`.
+working immediately.
+
+By default you will use the applications hosted at `https://www.php-oauth.net`.
+This is secure because no access tokens will ever leave your browser, only the
+application is loaded from that website. Of course, you can also install the 
+applications yourself and register them in your OAuth server.
 
 # SELinux
 The install script already takes care of setting the file permissions of the
@@ -110,7 +94,8 @@ root:
 
     $ sudo setsebool -P httpd_can_network_connect=on
 
-If you want the logger to send out email, you need the following as well:
+If you want the logger to send out email, you need the following as well (not
+supported right now):
 
     $ sudo setsebool -P httpd_can_sendmail=on
 
@@ -120,14 +105,12 @@ Fedora.
 If you want the labeling of the `data/` directory to survive file system 
 relabeling you have to update the policy as well.
 
-*FIXME*: add how to update the policy...
-
 # Apache
 There is an example configuration file in `docs/apache.conf`. 
 
 On Red Hat based distributions the file can be placed in 
-`/etc/httpd/conf.d/php-oauth.conf`. On Debian based distributions the file can
-be placed in `/etc/apache2/conf.d/php-oauth`. Be sure to modify it to suit your 
+`/etc/httpd/conf.d/php-oauth-as.conf`. On Debian based distributions the file can
+be placed in `/etc/apache2/conf.d/php-oauth-as`. Be sure to modify it to suit your 
 environment and do not forget to restart Apache. 
 
 The `bin/configure.sh` script from the previous section outputs a config for 
@@ -148,7 +131,7 @@ There are thee plugins provided to authenticate users:
 
 * `DummyResourceOwner` - one static account configured in `config/oauth.ini`
 * `SimpleAuthResourceOwner` - very simple username/password authentication \
-  library
+  library (DEFAULT)
 * `SspResourceOwner` - simpleSAMLphp plugin for SAML authentication
 * `PersonaResourceOwner` - Mozilla Persona plugin
 
@@ -160,8 +143,8 @@ A more complex part of the authentication and authorization is the use of
 entitlements. This is a bit similar to scope in OAuth, only entitlements are 
 for a specific resource owner, while scope is only for an OAuth client.
 
-The entitlements are for example used by the `php-oauth` API. It is possible to 
-write a client application that uses the `php-oauth` API to manage OAuth client 
+The entitlements are for example used by the `php-oauth-as` API. It is possible to 
+write a client application that uses the `php-oauth-as` API to manage OAuth client 
 registrations. The problem now is how to decide who is allowed to manage 
 OAuth client registrations. Clearly not all users who can successfully 
 authenticate, but only a subset. The way now to determine who gets to do what
@@ -251,7 +234,7 @@ An example, the RS gets the following `Authorization` header from the client:
 
 Now in order to verify it, the RS can send a request to the OAuth service:
 
-    $ curl http://localhost/php-oauth/introspect.php?token=eeae9c3366af8cb7acb74dd5635c44e6
+    $ curl http://localhost/php-oauth-as/introspect.php?token=eeae9c3366af8cb7acb74dd5635c44e6
 
 If the token is valid, a response (formatted here for display purposes) will be 
 given back to the RS:
