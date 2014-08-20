@@ -20,11 +20,11 @@ RUN sed -i 's/Require local/Require all granted/' /etc/httpd/conf.d/php-simple-a
 USER apache
 
 # Init Database
-RUN php /usr/share/php-oauth-as/bin/initDatabase.php
+RUN php /usr/share/php-oauth-as/bin/php-oauth-as-initdb.php
 
 # Register Clients
 ADD ./manage.json /tmp/manage.json
-RUN php /usr/share/php-oauth-as/bin/registerClients.php /tmp/manage.json
+RUN php /usr/share/php-oauth-as/bin/php-oauth-as-register.php /tmp/manage.json
 
 USER root
 

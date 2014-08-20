@@ -67,7 +67,7 @@ possibly other settings. If you want to keep using SQlite you are good to go
 without fiddling with the database settings. Now to initialize the database,
 i.e. to install the tables, run:
 
-    $ php bin/initOAuthDatabase.php
+    $ php bin/php-oauth-as-initdb.php
 
 It is also possible to already preregister some clients which makes sense if 
 you want to use the management clients mentioned below. The sample registrations
@@ -84,7 +84,7 @@ run the following command:
 You can still modify the `config/myregistration.json` by hand if you desire, and 
 then load them in the database:
 
-    $ php bin/registerClients.php config/myregistration.json
+    $ php bin/php-oauth-as-register.php config/myregistration.json
 
 This should take care of the initial setup and you can now move to installing 
 the management clients, see below.
