@@ -60,12 +60,12 @@ possibly other settings. If you want to keep using SQlite you are good to go
 without fiddling with the database settings. Now to initialize the database,
 i.e. to install the tables, run:
 
-    $ php bin/php-oauth-as-initdb.php
+    $ ./bin/php-oauth-as-initdb
 
 It is also possible to already preregister some clients which makes sense if 
 you want to use the management clients mentioned below. 
 
-    $ php bin/php-oauth-as-register.php docs/apps.json
+    $ ./bin/php-oauth-as-register docs/apps.json
 
 This should take care of the initial setup.
 
