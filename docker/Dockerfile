@@ -23,7 +23,7 @@ USER apache
 RUN php-oauth-as-initdb
 
 # Register Default Clients
-RUN php-oauth-as-register /usr/share/docs/php-oauth-as/docs/apps.json
+RUN php-oauth-as-register /usr/share/doc/php-oauth-as/docs/apps.json
 
 USER root
 

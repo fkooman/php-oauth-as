@@ -71,7 +71,7 @@ class Api
                 "POST",
                 "/authorizations/",
                 function () use ($request, $storage, $rs) {
-                    $rs->requireScope("authorizations");
+                    $rs->requireScope("http://php-oauth.net/scope/authorize");
                     $data = Json::decode($request->getContent());
                     if (null === $data || !is_array($data) || !array_key_exists("client_id", $data) || !array_key_exists("scope", $data)) {
                         throw new ApiException("invalid_request", "missing required parameters");
@@ -115,7 +115,7 @@ class Api
                 "GET",
                 "/authorizations/:id",
                 function ($id) use ($request, $storage, $rs) {
-                    $rs->requireScope("authorizations");
+                    $rs->requireScope("http://php-oauth.net/scope/authorize");
                     $data = $storage->getApprovalByResourceOwnerId($id, $rs->getResourceOwnerId());
                     if (false === $data) {
                         throw new ApiException("not_found", "the resource you are trying to retrieve does not exist");
@@ -131,7 +131,7 @@ class Api
                 "GET",
                 "/authorizations/:id",
                 function ($id) use ($request, $storage, $rs) {
-                    $rs->requireScope("authorizations");
+                    $rs->requireScope("http://php-oauth.net/scope/authorize");
                     $data = $storage->getApprovalByResourceOwnerId($id, $rs->getResourceOwnerId());
                     if (false === $data) {
                         throw new ApiException("not_found", "the resource you are trying to retrieve does not exist");
@@ -147,7 +147,7 @@ class Api
                 "DELETE",
                 "/authorizations/:id",
                 function ($id) use ($request, $storage, $rs) {
-                    $rs->requireScope("authorizations");
+                    $rs->requireScope("http://php-oauth.net/scope/authorize");
                     if (false === $storage->deleteApproval($id, $rs->getResourceOwnerId())) {
                         throw new ApiException("not_found", "the resource you are trying to delete does not exist");
                     }
@@ -162,7 +162,7 @@ class Api
                 "GET",
                 "/authorizations/",
                 function () use ($request, $storage, $rs) {
-                    $rs->requireScope("authorizations");
+                    $rs->requireScope("http://php-oauth.net/scope/authorize");
                     $data = $storage->getApprovals($rs->getResourceOwnerId());
 
                     $response = new JsonResponse(200);
@@ -176,7 +176,7 @@ class Api
                 "GET",
                 "/applications/",
                 function () use ($request, $storage, $rs) {
-                    $rs->requireScope("applications");
+                    $rs->requireScope("http://php-oauth.net/scope/manage");
                     // $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     // do not require entitlement to list clients...
                     $data = $storage->getClients();
@@ -191,7 +191,7 @@ class Api
                 "DELETE",
                 "/applications/:id",
                 function ($id) use ($request, $storage, $rs) {
-                    $rs->requireScope("applications");
+                    $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     if (false === $storage->deleteClient($id)) {
                         throw new ApiException("not_found", "the resource you are trying to delete does not exist");
@@ -207,7 +207,7 @@ class Api
                 "GET",
                 "/applications/:id",
                 function ($id) use ($request, $storage, $rs) {
-                    $rs->requireScope("applications");
+                    $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     // FIXME: for now require entitlement as long as password hashing is not
                     // implemented...
@@ -227,7 +227,7 @@ class Api
                 "POST",
                 "/applications/",
                 function () use ($request, $storage, $rs) {
-                    $rs->requireScope("applications");
+                    $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     try {
                         $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
@@ -254,7 +254,7 @@ class Api
                 "GET",
                 "/stats/",
                 function () use ($request, $storage, $rs) {
-                    $rs->requireScope("applications");
+                    $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     $data = $storage->getStats();
 
@@ -269,7 +269,7 @@ class Api
                 "PUT",
                 "/applications/:id",
                 function ($id) use ($request, $storage, $rs) {
-                    $rs->requireScope("applications");
+                    $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     try {
                         $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
