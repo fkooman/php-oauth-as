@@ -1,5 +1,0 @@
-[php-oauth-as]
-name=OAuth 2.0 Repository
-baseurl=https://fkooman.fedorapeople.org/frkorepo/
-enabled=1
-gpgcheck=0

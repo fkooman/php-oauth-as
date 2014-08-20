@@ -22,9 +22,8 @@ USER apache
 # Init Database
 RUN php /usr/share/php-oauth-as/bin/php-oauth-as-initdb.php
 
-# Register Clients
-ADD ./manage.json /tmp/manage.json
-RUN php /usr/share/php-oauth-as/bin/php-oauth-as-register.php /tmp/manage.json
+# Register Default Clients
+RUN php /usr/share/php-oauth-as/bin/php-oauth-as-register.php /usr/share/docs/php-oauth-as/docs/apps.json
 
 USER root
 
