@@ -43,7 +43,7 @@ class ApiTest extends OAuthHelper
         $storage->updateResourceOwner(new MockResourceOwner($resourceOwner));
 
         $storage->addApproval('testclient', 'fkooman', 'read', null);
-        $storage->storeAccessToken('12345abc', time(), 'testcodeclient', 'fkooman', 'authorizations', 3600);
+        $storage->storeAccessToken('12345abc', time(), 'testcodeclient', 'fkooman', 'http://php-oauth.net/scope/authorize', 3600);
     }
 
     public function testRetrieveAuthorizations()
