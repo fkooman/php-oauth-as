@@ -1,6 +1,6 @@
 Name:       php-oauth-as
 Version:    0.1.0
-Release:    0.24%{?dist}
+Release:    0.29%{?dist}
 Summary:    OAuth 2.0 Authorization Server written in PHP
 
 Group:      Applications/Internet
@@ -46,6 +46,9 @@ rm -rf vendor/fkooman
 rm -rf vendor/twig
 rm -rf vendor/symfony
 
+sed -i 's|dirname(__DIR__)|%{_datadir}/php-oauth-as|' bin/php-oauth-as-initdb
+sed -i 's|dirname(__DIR__)|%{_datadir}/php-oauth-as|' bin/php-oauth-as-register
+
 %build
 
 %install
@@ -54,7 +57,10 @@ install -m 0644 -D -p %{SOURCE1} ${RPM_BUILD_ROOT}%{_sysconfdir}/httpd/conf.d/ph
 
 # Application
 mkdir -p ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as
-cp -pr web vendor views src bin ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as
+cp -pr web vendor views src ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as
+
+mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
+cp -pr bin/* ${RPM_BUILD_ROOT}%{_bindir}
 
 # Config
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as
@@ -78,22 +84,17 @@ fi
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/php-oauth-as.conf
 %config(noreplace) %{_sysconfdir}/php-oauth-as
+%{_bindir}/php-oauth-as-initdb
+%{_bindir}/php-oauth-as-register
 %dir %{_datadir}/php-oauth-as
 %{_datadir}/php-oauth-as/src
 %{_datadir}/php-oauth-as/vendor
 %{_datadir}/php-oauth-as/web
 %{_datadir}/php-oauth-as/views
-%{_datadir}/php-oauth-as/bin
 %{_datadir}/php-oauth-as/config
 %dir %attr(0700,apache,apache) %{_localstatedir}/lib/php-oauth-as
 %doc README.md agpl-3.0.txt composer.json docs/ config/
 
 %changelog
-* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.24
-- rebuilt
-
-* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.23
-- rebuilt
-
-* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.22
-- rebuilt
+* Wed Aug 20 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.29
+- initial package
