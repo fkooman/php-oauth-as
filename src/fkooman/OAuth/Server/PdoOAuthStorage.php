@@ -51,7 +51,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function getClients()
     {
-        $stmt = $this->pdo->prepare("SELECT id, name, description, redirect_uri, type, icon, allowed_scope FROM Client");
+        $stmt = $this->pdo->prepare("SELECT id, name, description, redirect_uri, type, icon, allowed_scope FROM clients");
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -59,7 +59,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function getClient($clientId)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM Client WHERE id = :client_id");
+        $stmt = $this->pdo->prepare("SELECT * FROM clients WHERE id = :client_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -68,7 +68,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function updateClient($clientId, $data)
     {
-        $stmt = $this->pdo->prepare("UPDATE Client SET name = :name, description = :description, secret = :secret, redirect_uri = :redirect_uri, type = :type, icon = :icon, allowed_scope = :allowed_scope, contact_email = :contact_email WHERE id = :client_id");
+        $stmt = $this->pdo->prepare("UPDATE clients SET name = :name, description = :description, secret = :secret, redirect_uri = :redirect_uri, type = :type, icon = :icon, allowed_scope = :allowed_scope, contact_email = :contact_email WHERE id = :client_id");
         $stmt->bindValue(":name", $data['name'], PDO::PARAM_STR);
         $stmt->bindValue(":description", $data['description'], PDO::PARAM_STR);
         $stmt->bindValue(":secret", $data['secret'], PDO::PARAM_STR);
@@ -85,7 +85,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function addClient($data)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO Client (id, name, description, secret, redirect_uri, type, icon, allowed_scope, contact_email) VALUES(:client_id, :name, :description, :secret, :redirect_uri, :type, :icon, :allowed_scope, :contact_email)");
+        $stmt = $this->pdo->prepare("INSERT INTO clients (id, name, description, secret, redirect_uri, type, icon, allowed_scope, contact_email) VALUES(:client_id, :name, :description, :secret, :redirect_uri, :type, :icon, :allowed_scope, :contact_email)");
         $stmt->bindValue(":client_id", $data['id'], PDO::PARAM_STR);
         $stmt->bindValue(":name", $data['name'], PDO::PARAM_STR);
         $stmt->bindValue(":description", $data['description'], PDO::PARAM_STR);
@@ -103,7 +103,7 @@ class PdoOAuthStorage implements IOAuthStorage
     public function deleteClient($clientId)
     {
         // cascading in foreign keys takes care of deleting all tokens
-        $stmt = $this->pdo->prepare("DELETE FROM Client WHERE id = :client_id");
+        $stmt = $this->pdo->prepare("DELETE FROM clients WHERE id = :client_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -112,7 +112,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function addApproval($clientId, $resourceOwnerId, $scope, $refreshToken)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO Approval (client_id, resource_owner_id, scope, refresh_token) VALUES(:client_id, :resource_owner_id, :scope, :refresh_token)");
+        $stmt = $this->pdo->prepare("INSERT INTO approvals (client_id, resource_owner_id, scope, refresh_token) VALUES(:client_id, :resource_owner_id, :scope, :refresh_token)");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->bindValue(":scope", $scope, PDO::PARAM_STR);
@@ -125,7 +125,7 @@ class PdoOAuthStorage implements IOAuthStorage
     public function updateApproval($clientId, $resourceOwnerId, $scope)
     {
         // FIXME: should we regenerate the refresh_token?
-        $stmt = $this->pdo->prepare("UPDATE Approval SET scope = :scope WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
+        $stmt = $this->pdo->prepare("UPDATE approvals SET scope = :scope WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->bindValue(":scope", $scope, PDO::PARAM_STR);
@@ -136,7 +136,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function getApprovalByResourceOwnerId($clientId, $resourceOwnerId)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM Approval WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
+        $stmt = $this->pdo->prepare("SELECT * FROM approvals WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
@@ -146,7 +146,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function getApprovalByRefreshToken($clientId, $refreshToken)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM Approval WHERE client_id = :client_id AND refresh_token = :refresh_token");
+        $stmt = $this->pdo->prepare("SELECT * FROM approvals WHERE client_id = :client_id AND refresh_token = :refresh_token");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":refresh_token", $refreshToken, PDO::PARAM_STR);
         $stmt->execute();
@@ -156,7 +156,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function storeAccessToken($accessToken, $issueTime, $clientId, $resourceOwnerId, $scope, $expiry)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO AccessToken (client_id, resource_owner_id, issue_time, expires_in, scope, access_token) VALUES(:client_id, :resource_owner_id, :issue_time, :expires_in, :scope, :access_token)");
+        $stmt = $this->pdo->prepare("INSERT INTO access_tokens (client_id, resource_owner_id, issue_time, expires_in, scope, access_token) VALUES(:client_id, :resource_owner_id, :issue_time, :expires_in, :scope, :access_token)");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->bindValue(":issue_time", time(), PDO::PARAM_INT);
@@ -171,7 +171,7 @@ class PdoOAuthStorage implements IOAuthStorage
     public function deleteExpiredAccessTokens()
     {
         // delete access tokens that expired 8 hours or longer ago
-        $stmt = $this->pdo->prepare("DELETE FROM AccessToken WHERE issue_time + expires_in < :time");
+        $stmt = $this->pdo->prepare("DELETE FROM access_tokens WHERE issue_time + expires_in < :time");
         $stmt->bindValue(":time", time() - 28800, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -181,7 +181,7 @@ class PdoOAuthStorage implements IOAuthStorage
     public function deleteExpiredAuthorizationCodes()
     {
         // delete authorization codes that expired 8 hours or longer ago
-        $stmt = $this->pdo->prepare("DELETE FROM AuthorizationCode WHERE issue_time + 600 < :time");
+        $stmt = $this->pdo->prepare("DELETE FROM authorization_codes WHERE issue_time + 600 < :time");
         $stmt->bindValue(":time", time() - 28800, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -190,7 +190,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function storeAuthorizationCode($authorizationCode, $resourceOwnerId, $issueTime, $clientId, $redirectUri, $scope)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO AuthorizationCode (client_id, resource_owner_id, authorization_code, redirect_uri, issue_time, scope) VALUES(:client_id, :resource_owner_id, :authorization_code, :redirect_uri, :issue_time, :scope)");
+        $stmt = $this->pdo->prepare("INSERT INTO authorization_codes (client_id, resource_owner_id, authorization_code, redirect_uri, issue_time, scope) VALUES(:client_id, :resource_owner_id, :authorization_code, :redirect_uri, :issue_time, :scope)");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
@@ -205,10 +205,10 @@ class PdoOAuthStorage implements IOAuthStorage
     public function getAuthorizationCode($clientId, $authorizationCode, $redirectUri)
     {
         if (null !== $redirectUri) {
-            $stmt = $this->pdo->prepare("SELECT * FROM AuthorizationCode WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri = :redirect_uri");
+            $stmt = $this->pdo->prepare("SELECT * FROM authorization_codes WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri = :redirect_uri");
             $stmt->bindValue(":redirect_uri", $redirectUri, PDO::PARAM_STR);
         } else {
-            $stmt = $this->pdo->prepare("SELECT * FROM AuthorizationCode WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri IS NULL");
+            $stmt = $this->pdo->prepare("SELECT * FROM authorization_codes WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri IS NULL");
         }
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
@@ -220,10 +220,10 @@ class PdoOAuthStorage implements IOAuthStorage
     public function deleteAuthorizationCode($clientId, $authorizationCode, $redirectUri)
     {
         if (null !== $redirectUri) {
-            $stmt = $this->pdo->prepare("DELETE FROM AuthorizationCode WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri = :redirect_uri");
+            $stmt = $this->pdo->prepare("DELETE FROM authorization_codes WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri = :redirect_uri");
             $stmt->bindValue(":redirect_uri", $redirectUri, PDO::PARAM_STR);
         } else {
-            $stmt = $this->pdo->prepare("DELETE FROM AuthorizationCode WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri IS NULL");
+            $stmt = $this->pdo->prepare("DELETE FROM authorization_codes WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri IS NULL");
         }
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
@@ -234,7 +234,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function getAccessToken($accessToken)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM AccessToken WHERE access_token = :access_token");
+        $stmt = $this->pdo->prepare("SELECT * FROM access_tokens WHERE access_token = :access_token");
         $stmt->bindValue(":access_token", $accessToken, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -243,7 +243,7 @@ class PdoOAuthStorage implements IOAuthStorage
 
     public function getApprovals($resourceOwnerId)
     {
-        $stmt = $this->pdo->prepare("SELECT a.scope, c.id, c.name, c.description, c.redirect_uri, c.type, c.icon, c.allowed_scope FROM Approval a, Client c WHERE resource_owner_id = :resource_owner_id AND a.client_id = c.id");
+        $stmt = $this->pdo->prepare("SELECT a.scope, c.id, c.name, c.description, c.redirect_uri, c.type, c.icon, c.allowed_scope FROM approvals a, clients c WHERE resource_owner_id = :resource_owner_id AND a.client_id = c.id");
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -253,13 +253,13 @@ class PdoOAuthStorage implements IOAuthStorage
     public function deleteApproval($clientId, $resourceOwnerId)
     {
         // remove access token
-        $stmt = $this->pdo->prepare("DELETE FROM AccessToken WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
+        $stmt = $this->pdo->prepare("DELETE FROM access_tokens WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
 
         // remove approval
-        $stmt = $this->pdo->prepare("DELETE FROM Approval WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
+        $stmt = $this->pdo->prepare("DELETE FROM approvals WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
@@ -303,7 +303,7 @@ class PdoOAuthStorage implements IOAuthStorage
         $data = array();
 
         // determine number of valid access tokens per client/user
-        $stmt = $this->pdo->prepare("SELECT client_id, COUNT(resource_owner_id) AS active_tokens FROM AccessToken GROUP BY client_id");
+        $stmt = $this->pdo->prepare("SELECT client_id, COUNT(resource_owner_id) AS active_tokens FROM access_tokens GROUP BY client_id");
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -312,7 +312,7 @@ class PdoOAuthStorage implements IOAuthStorage
         }
 
         // determine number of consents per client/user
-        $stmt = $this->pdo->prepare("SELECT client_id, COUNT(resource_owner_id) AS consent_given FROM Approval GROUP BY client_id");
+        $stmt = $this->pdo->prepare("SELECT client_id, COUNT(resource_owner_id) AS consent_given FROM approvals GROUP BY client_id");
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -353,7 +353,7 @@ class PdoOAuthStorage implements IOAuthStorage
                 PRIMARY KEY (id)
             )",
 
-            "CREATE TABLE IF NOT EXISTS Client (
+            "CREATE TABLE IF NOT EXISTS clients (
                 id VARCHAR(64) NOT NULL,
                 name TEXT NOT NULL,
                 description TEXT DEFAULT NULL,
@@ -366,7 +366,7 @@ class PdoOAuthStorage implements IOAuthStorage
                 PRIMARY KEY (id)
             )",
 
-            "CREATE TABLE IF NOT EXISTS AccessToken (
+            "CREATE TABLE IF NOT EXISTS access_tokens (
                 access_token VARCHAR(64) NOT NULL,
                 client_id VARCHAR(64) NOT NULL,
                 resource_owner_id VARCHAR(64) NOT NULL,
@@ -375,20 +375,20 @@ class PdoOAuthStorage implements IOAuthStorage
                 scope TEXT NOT NULL,
                 PRIMARY KEY (access_token),
                 FOREIGN KEY (client_id)
-                    REFERENCES Client (id)
+                    REFERENCES clients (id)
                     ON UPDATE CASCADE ON DELETE CASCADE,
                 FOREIGN KEY (resource_owner_id)
                     REFERENCES resource_owner (id)
                     ON UPDATE CASCADE ON DELETE CASCADE
             )",
 
-            "CREATE TABLE IF NOT EXISTS Approval (
+            "CREATE TABLE IF NOT EXISTS approvals (
                 client_id VARCHAR(64) NOT NULL,
                 resource_owner_id VARCHAR(64) NOT NULL,
                 scope TEXT DEFAULT NULL,
                 refresh_token TEXT DEFAULT NULL,
                 FOREIGN KEY (client_id)
-                    REFERENCES Client (id)
+                    REFERENCES clients (id)
                     ON UPDATE CASCADE ON DELETE CASCADE,
                 UNIQUE (client_id , resource_owner_id),
                 FOREIGN KEY (resource_owner_id)
@@ -396,7 +396,7 @@ class PdoOAuthStorage implements IOAuthStorage
                     ON UPDATE CASCADE ON DELETE CASCADE
             )",
 
-            "CREATE TABLE IF NOT EXISTS AuthorizationCode (
+            "CREATE TABLE IF NOT EXISTS authorization_codes (
                 authorization_code VARCHAR(64) NOT NULL,
                 client_id VARCHAR(64) NOT NULL,
                 resource_owner_id VARCHAR(64) NOT NULL,
@@ -405,7 +405,7 @@ class PdoOAuthStorage implements IOAuthStorage
                 scope TEXT DEFAULT NULL,
                 PRIMARY KEY (authorization_code),
                 FOREIGN KEY (client_id)
-                    REFERENCES Client (id)
+                    REFERENCES clients (id)
                     ON UPDATE CASCADE ON DELETE CASCADE,
                 FOREIGN KEY (resource_owner_id)
                     REFERENCES resource_owner (id)
@@ -425,10 +425,10 @@ class PdoOAuthStorage implements IOAuthStorage
 
         // make sure the tables are empty
         $this->pdo->query("DELETE FROM resource_owner");
-        $this->pdo->query("DELETE FROM Client");
-        $this->pdo->query("DELETE FROM AccessToken");
-        $this->pdo->query("DELETE FROM Approval");
-        $this->pdo->query("DELETE FROM AuthorizationCode");
+        $this->pdo->query("DELETE FROM clients");
+        $this->pdo->query("DELETE FROM access_tokens");
+        $this->pdo->query("DELETE FROM approvals");
+        $this->pdo->query("DELETE FROM authorization_codes");
         $this->pdo->query("DELETE FROM db_changelog");
     }
 

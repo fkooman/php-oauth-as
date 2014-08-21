@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS resource_owner (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS Client (
+CREATE TABLE IF NOT EXISTS clients (
     id VARCHAR(64) NOT NULL,
     name TEXT NOT NULL,
     description TEXT DEFAULT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS Client (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS AccessToken (
+CREATE TABLE IF NOT EXISTS access_tokens (
     access_token VARCHAR(64) NOT NULL,
     client_id VARCHAR(64) NOT NULL,
     resource_owner_id VARCHAR(64) NOT NULL,
@@ -27,20 +27,20 @@ CREATE TABLE IF NOT EXISTS AccessToken (
     scope TEXT NOT NULL,
     PRIMARY KEY (access_token),
     FOREIGN KEY (client_id)
-        REFERENCES Client (id)
+        REFERENCES clients (id)
         ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (resource_owner_id)
         REFERENCES resource_owner (id)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
   
-CREATE TABLE IF NOT EXISTS Approval (
+CREATE TABLE IF NOT EXISTS approvals (
     client_id VARCHAR(64) NOT NULL,
     resource_owner_id VARCHAR(64) NOT NULL,
     scope TEXT DEFAULT NULL,
     refresh_token TEXT DEFAULT NULL,
     FOREIGN KEY (client_id)
-        REFERENCES Client (id)
+        REFERENCES clients (id)
         ON UPDATE CASCADE ON DELETE CASCADE,
     UNIQUE (client_id , resource_owner_id),
     FOREIGN KEY (resource_owner_id)
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS Approval (
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS AuthorizationCode (
+CREATE TABLE IF NOT EXISTS authorization_codes (
     authorization_code VARCHAR(64) NOT NULL,
     client_id VARCHAR(64) NOT NULL,
     resource_owner_id VARCHAR(64) NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS AuthorizationCode (
     scope TEXT DEFAULT NULL,
     PRIMARY KEY (authorization_code),
     FOREIGN KEY (client_id)
-        REFERENCES Client (id)
+        REFERENCES clients (id)
         ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (resource_owner_id)
         REFERENCES resource_owner (id)
