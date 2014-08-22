@@ -116,22 +116,6 @@ class Api
             );
 
             $service->match(
-                "GET",
-                "/authorizations/:id",
-                function ($id) use ($request, $storage, $rs) {
-                    $rs->requireScope("http://php-oauth.net/scope/authorize");
-                    $data = $storage->getApprovalByResourceOwnerId($id, $rs->getResourceOwnerId());
-                    if (false === $data) {
-                        throw new ApiException("not_found", "the resource you are trying to retrieve does not exist");
-                    }
-                    $response = new JsonResponse(200);
-                    $response->setContent($data);
-
-                    return $response;
-                }
-            );
-
-            $service->match(
                 "DELETE",
                 "/authorizations/:id",
                 function ($id) use ($request, $storage, $rs) {
@@ -197,9 +181,6 @@ class Api
                 function ($id) use ($request, $storage, $rs) {
                     $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
-                    // FIXME: for now require entitlement as long as password hashing is not
-                    // implemented...
-
                     $data = $storage->getClient($id);
                     if (false === $data) {
                         throw new ApiException("not_found", "the resource you are trying to retrieve does not exist");
@@ -229,27 +210,13 @@ class Api
                             throw new ApiException("invalid_request", "application already exists");
                         }
                         $response = new JsonResponse(201);
+                        // FIXME: return URL of newly created application?
                         $response->setContent(array("ok" => true));
 
                         return $response;
                     } catch (ClientRegistrationException $e) {
                         throw new ApiException("invalid_request", $e->getMessage());
                     }
-                }
-            );
-
-            $service->match(
-                "GET",
-                "/stats/",
-                function () use ($request, $storage, $rs) {
-                    $rs->requireScope("http://php-oauth.net/scope/manage");
-                    $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
-                    $data = $storage->getStats();
-
-                    $response = new JsonResponse(200);
-                    $response->setContent($data);
-
-                    return $response;
                 }
             );
 
@@ -273,6 +240,21 @@ class Api
                     }
                     $response = new JsonResponse(200);
                     $response->setContent(array("ok" => true));
+
+                    return $response;
+                }
+            );
+
+            $service->match(
+                "GET",
+                "/stats/",
+                function () use ($request, $storage, $rs) {
+                    $rs->requireScope("http://php-oauth.net/scope/manage");
+                    $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
+                    $data = $storage->getStats();
+
+                    $response = new JsonResponse(200);
+                    $response->setContent($data);
 
                     return $response;
                 }
