@@ -27,7 +27,11 @@ try {
     $config = Config::fromIniFile(
         dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini"
     );
-    $api = new Api($config);
+
+    $oauthStorageBackend = 'fkooman\\OAuth\\Server\\' . $config->getValue('storageBackend');
+    $storage = new $oauthStorageBackend($config);
+
+    $api = new Api($storage);
     $request = Request::fromIncomingRequest(new IncomingRequest());
     $response = $api->handleRequest($request);
     $response->sendResponse();

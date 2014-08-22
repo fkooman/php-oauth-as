@@ -17,7 +17,6 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Config\Config;
 use fkooman\Json\Json;
 use fkooman\OAuth\Common\Scope;
 use fkooman\Http\Request;
@@ -29,23 +28,16 @@ use fkooman\OAuth\Server\Exception\ResourceServerException;
 
 class Api
 {
-    /** @var fkooman\Config\Config */
-    private $config;
-
     /** @var fkooman\OAuth\Server\IOAuthStorage */
     private $storage;
 
     /** @var fkooman\OAuth\Server\ResourceServer */
     private $resourceServer;
 
-    public function __construct(Config $c)
+    public function __construct(IOAuthStorage $storage)
     {
-        $this->config = $c;
-
-        $oauthStorageBackend = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('storageBackend');
-        $this->storage = new $oauthStorageBackend($this->config);
-
-        $this->resourceServer = new ResourceServer($this->storage);
+        $this->storage = $storage;
+        $this->resourceServer = new ResourceServer($storage);
     }
 
     public function handleRequest(Request $request)
