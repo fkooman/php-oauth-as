@@ -55,8 +55,8 @@ class SimpleAuthResourceOwner implements IResourceOwner
 
     public function getEntitlement()
     {
-        $entitlementFile = $this->config->s('SimpleAuthResourceOwner')->l('entitlementFile');
-        $fileContents = @file_get_contents($entitlementFile);
+        $entitlementsFile = $this->config->l('entitlementsFile');
+        $fileContents = @file_get_contents($entitlementsFile);
         if (false === $fileContents) {
             // no entitlement file, so no entitlement
             return array();

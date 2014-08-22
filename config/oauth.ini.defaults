@@ -1,7 +1,7 @@
 ; This is the OAuth Authorization Server configuration
 
 ; name of service
-serviceName = "My API"
+serviceName = "My Protected API"
 ;serviceLogoUri = "https://example.org/logo.png"
 ;serviceLogoWidth = 64;
 ;serviceLogoHeight = 64;
@@ -16,6 +16,12 @@ authenticationMechanism = "SimpleAuthResourceOwner"
 
 ; the access token expiry time (in seconds)
 accessTokenExpiry = 3600
+
+; file contains entitlements for users. See included 
+; config/entitlements.json.example for an example. Copy this file to 
+; config/entitlements.json and modify it to set entitlements for user 
+;identifiers you want to give certain entitlements
+entitlementsFile = "/etc/php-oauth-as/entitlements.json"
 
 [PdoOAuthStorage]
 dsn = "sqlite:/var/lib/php-oauth-as/db.sqlite"
@@ -32,12 +38,6 @@ persistentConnection = false
 [SimpleAuthResourceOwner]
 simpleAuthPath = "/usr/share/php-simple-auth"
 
-; file contains entitlements for (some) SimpleAuth users. See included 
-; config/simpleAuthEntitlement.json.example for an example. Copy this file to 
-; config/simpleAuthEntitlement.json and modify it to set entitlements for 
-; user identifiers you want to give certain entitlements
-entitlementFile = "/etc/php-oauth-as/simpleAuthEntitlement.json"
-
 ; Dummy Configuration
 ;[DummyResourceOwner]
 ;uid           = "fkooman"
@@ -45,18 +45,12 @@ entitlementFile = "/etc/php-oauth-as/simpleAuthEntitlement.json"
 
 ; Mozilla Persona configuration
 ;[PersonaResourceOwner]
-;personaPath   = "/var/www/html/php-browserid"
+;personaPath   = "/usr/share/php-browserid"
 ;verifierAddress = "https://verifier.login.persona.org/verify"
-
-; file contains entitlements for (some) Persona users. See included 
-; config/personaEntitlement.json.example for an example. Copy this file to 
-; config/personaEntitlement.json and modify it to set entitlements for 
-; email addresses you want to give certain entitlements
-;entitlementFile = "/PATH/TO/APP/config/personaEntitlement.json"
 
 ; simpleSAMLphp configuration
 ;[SspResourceOwner]
-;sspPath    = "/var/simplesamlphp"
+;sspPath    = "/usr/share/simplesamlphp"
 ;authSource = "default-sp"
 
 ; if you want to use an attribute for the resource owner identifier instead of 
