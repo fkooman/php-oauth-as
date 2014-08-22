@@ -51,10 +51,6 @@ class Api
     public function handleRequest(Request $request)
     {
         try {
-            if (!$this->config->s('Api')->l('enableApi')) {
-                throw new ApiException("forbidden", "api disabled");
-            }
-
             // handle CORS
             if ("OPTIONS" === $request->getRequestMethod()) {
                 return new Response();

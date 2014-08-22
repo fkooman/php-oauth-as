@@ -17,10 +17,6 @@ authenticationMechanism = "SimpleAuthResourceOwner"
 ; the access token expiry time (in seconds)
 accessTokenExpiry = 3600
 
-; Options for the HTTP REST based API for managing the OAuth AS
-[Api]
-enableApi = true
-
 [PdoOAuthStorage]
 dsn = "sqlite:/var/lib/php-oauth-as/db.sqlite"
 ;dsn = "mysql:host=localhost;dbname=oauth"

@@ -46,9 +46,6 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
             'storageBackend' => 'PdoOAuthStorage',
             'PdoOAuthStorage' => array(
                 'dsn' => $dsn
-            ),
-            'Api' => array (
-                'enableApi' => true
             )
         );
         $this->config = new Config($configArray);
