@@ -1,6 +1,6 @@
 Name:       php-oauth-as
 Version:    0.1.0
-Release:    0.32%{?dist}
+Release:    0.35%{?dist}
 Summary:    OAuth 2.0 Authorization Server written in PHP
 
 Group:      Applications/Internet
@@ -65,7 +65,7 @@ cp -pr bin/* ${RPM_BUILD_ROOT}%{_bindir}
 # Config
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as
 cp -p config/oauth.ini.defaults ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as/oauth.ini
-cp -p config/simpleAuthEntitlement.json.example ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as/simpleAuthEntitlement.json
+cp -p config/entitlements.json.example ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as/entitlements.json
 ln -s ../../../etc/php-oauth-as ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as/config
 
 # Data
@@ -96,35 +96,5 @@ fi
 %doc README.md agpl-3.0.txt composer.json docs/ config/
 
 %changelog
-* Wed Aug 20 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.32
-- rebuilt
-
-* Wed Aug 20 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.31
-- rebuilt
-
-* Wed Aug 20 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.30
-- rebuilt
-
-* Wed Aug 20 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.29
-- rebuilt
-
-* Wed Aug 20 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.28
-- rebuilt
-
-* Tue Aug 19 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.27
-- rebuilt
-
-* Mon Aug 18 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.26
-- rebuilt
-
-* Sun Aug 17 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.25
-- rebuilt
-
-* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.24
-- rebuilt
-
-* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.23
-- rebuilt
-
-* Sat Aug 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.22
+* Fri Aug 22 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.35
 - rebuilt
