@@ -21,6 +21,15 @@ use Exception;
 
 class Utils
 {
+    public static function randomUuid()
+    {
+        if (!function_exists('uuid_create')) {
+            return null;
+        }
+
+        return uuid_create(UUID_TYPE_RANDOM);
+    }
+
     public static function randomHex($len = 16)
     {
         $randomString = bin2hex(openssl_random_pseudo_bytes($len, $strong));

@@ -72,7 +72,11 @@ class ClientRegistration
     public function setId($i)
     {
         if (empty($i)) {
-            throw new ClientRegistrationException("id cannot be empty");
+            // generate an id for this client
+            $i = Utils::randomUuid();
+            if (null === $i) {
+                throw new ClientRegistrationException("id cannot be empty or could not be generated");
+            }
         }
         $result = preg_match($this->regExpVSCHAR, $i);
         if (1 !== $result) {
@@ -138,7 +142,9 @@ class ClientRegistration
         if ("web_application" === $t) {
             // secret cannot be empty when type is "web_application"
             if (null === $this->client['secret']) {
-                throw new ClientRegistrationException("secret should be set for web application type");
+                // generate a password for this client
+                $this->client['secret'] = Utils::randomHex();
+                //throw new ClientRegistrationException("secret should be set for web application type");
             }
         }
         if (null !== $this->client['secret']) {

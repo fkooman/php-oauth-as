@@ -32,65 +32,63 @@ This is a screenshot of the OAuth consent dialog.
 ![oauth_consent](https://github.com/fkooman/php-oauth/raw/master/docs/oauth_consent.png)
 
 # Requirements
-The installation requirements on Fedora/CentOS can be installed like this:
+On Fedora/CentOS:
 
-    $ su -c 'yum install git php-pdo httpd'
+    $ sudo yum install php-pdo php-pecl-uuid php-openssl php-password-compat httpd'
 
-On Debian/Ubuntu:
-
-    $ sudo apt-get install git sqlite3 php5-sqlite
+We tested Fedora 20 and CentOS 6 and 7.
 
 # Installation
 *NOTE*: in the `chown` line you need to use your own user account name!
-*NOTE*: On Ubuntu (Debian) you would typically install in `/var/www/php-oauth-as` and not 
-in `/var/www/html/php-oauth-as` and you use `sudo` instead of `su -c`.
 
-    $ cd /var/www/html
-    # mkdir php-oauth-as
-    # chown fkooman:fkooman php-oauth-as
+    $ cd /var/www
+    $ sudo mkdir php-oauth-as
+    $ sudo chown fkooman:fkooman php-oauth-as
     $ git clone git://github.com/fkooman/php-oauth.git php-oauth-as
     $ cd php-oauth-as
 
-Install the external dependencies in the `vendor` directory using [Composer](http://getcomposer.org/):
+Install the external dependencies in the `vendor` directory using 
+[Composer](http://getcomposer.org/):
 
     $ php /path/to/composer.phar install
 
 Next make sure to configure the database settings in `config/oauth.ini`, and 
-possibly other settings. If you want to keep using SQlite you are good to go 
-without fiddling with the database settings. Now to initialize the database,
-i.e. to install the tables, run:
+possibly other settings. Make sure you set the correct path for `dsn`. If you
+follow the instructions above make it 
+`sqlite:/var/www/php-oauth-as/data/db.sqlite`. 
 
-    $ ./bin/php-oauth-as-initdb
+Now to set the permissions and initialize the database, i.e. to install the 
+tables, run:
+    
+    $ mkdir data
+    $ sudo chown apache:apache data
+    $ sudo chcon -t httpd_sys_rw_content_t data
+    $ sudo -u apache ./bin/php-oauth-as-initdb
 
 It is also possible to already preregister some clients which makes sense if 
 you want to use the management clients mentioned below. 
 
-    $ ./bin/php-oauth-as-register docs/apps.json
+    $ sudo -u apache ./bin/php-oauth-as-register docs/apps.json
 
-This should take care of the initial setup.
+This should take care of the initial setup. You can now use the 
+[manage](https://www.php-oauth.net/app/manage/index.html) and 
+[authorize](https://www.php-oauth.net/app/authorize/index.html) clients hosted
+on [https://www.php-oauth.net](https://www.php-oauth.net) from. This is secure 
+because the access token will never leave the user's browser.
 
 # Management Clients
-There are two reference management clients available:
+There are two management clients available:
 
 * [Manage Applications](https://github.com/fkooman/html-manage-applications/). 
 * [Manage Authorizations](https://github.com/fkooman/html-manage-authorizations/). 
 
 These clients are written in HTML, CSS and JavaScript only and can be hosted on 
-any (static) web server. See the accompanying READMEs for more information. If 
-you followed the client registration in the previous section they should start
-working immediately.
-
-By default you will use the applications hosted at `https://www.php-oauth.net`.
-This is secure because no access tokens will ever leave your browser, only the
-application is loaded from that website. Of course, you can also install the 
-applications yourself and register them in your OAuth server.
+any (static) web server. See the accompanying READMEs for more information.
 
 # SELinux
-The install script already takes care of setting the file permissions of the
-`data/` directory to allow Apache to write to the directory. If you want to use
-the Mozilla Persona authentication plugin you also need to give Apache permission 
-to access the network. These permissions can be given by using `setsebool` as 
-root:
+If you want to use the Mozilla Persona authentication plugin you also need to 
+give Apache permission to access the network. These permissions can be given 
+by using `setsebool` as root:
 
     $ sudo setsebool -P httpd_can_network_connect=on
 
@@ -149,11 +147,6 @@ registrations. The problem now is how to decide who is allowed to manage
 OAuth client registrations. Clearly not all users who can successfully 
 authenticate, but only a subset. The way now to determine who gets to do what
 is accomplished through entitlements. 
-
-In the `[Api]` section the management API can be enabled:
-
-    [Api]
-    enableApi = TRUE
 
 In particular, the authenticated user (resource owner) needs to have the 
 `http://php-oauth.net/entitlement/manage` entitlement in order to be able to modify 

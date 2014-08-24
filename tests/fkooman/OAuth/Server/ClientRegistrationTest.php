@@ -28,6 +28,8 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
             array("foo", "s3cr3t", "web_application", "http://www.example.org/cb", "Foo Client"),
             array("foo:bar", null, "user_agent_based_application", "http://www.example.org/cb", "Foo Client"),
             array("foo", "s3cr3t", "native_application", "twitter://app/callback", "Foo Client"),
+            array(null, null, "web_application", "http://www.example.org/cb", "Foo Client"),
+            array(null, "s3cr3t", "web_application", "http://www.example.org/cb", "Foo Client")
         );
     }
 
@@ -41,9 +43,6 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
     public static function invalidProvider()
     {
         return array(
-            array("foo", null, "web_application", "http://www.example.org/cb", "Foo Client", "secret should be set for web application type"),
-            array("foo:bar", "s3cr3t", "native_application", "http://www.example.org/cb", "Foo Client", "client_id cannot contain a colon when using a secret"),
-            array(null, null, null, null, null, "id cannot be empty"),
             array('√', null, null, null, null, "id contains invalid character"),
             array('foo', null, "xyz", null, null, "type not supported"),
             array('foo', "√", null, null, null, "secret contains invalid character"),
@@ -68,8 +67,17 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
     public function testValid($id, $secret, $type, $redirectUri, $name)
     {
         $c = new ClientRegistration($id, $secret, $type, $redirectUri, $name);
-        $this->assertEquals($id, $c->getId());
-        $this->assertEquals($secret, $c->getSecret());
+        if (null === $id) {
+            // generated, match regexp
+            $this->assertRegexp("|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|", $c->getId());
+        } else {
+            $this->assertEquals($id, $c->getId());
+        }
+        if (null === $secret && "web_application" === $c->getType()) {
+            $this->assertRegexp("|[0-9a-f]+|", $c->getSecret());
+        } else {
+            $this->assertEquals($secret, $c->getSecret());
+        }
         $this->assertEquals($type, $c->getType());
         $this->assertEquals($redirectUri, $c->getRedirectUri());
         $this->assertEquals($name, $c->getName());
