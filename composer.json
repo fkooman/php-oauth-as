@@ -16,7 +16,7 @@
     "name": "fkooman/php-oauth-as",
     "require": {
         "ext-openssl": "*",
-        "ext-uuid": "*",
+	"rhumsaa/uuid": "~2.7",
         "fkooman/config": "0.3.*",
         "fkooman/json": "0.4.*",
         "fkooman/oauth-common": "0.5.*",

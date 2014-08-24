@@ -17,17 +17,14 @@
 
 namespace fkooman\OAuth\Server;
 
+use Rhumsaa\Uuid\Uuid;
 use Exception;
 
 class Utils
 {
     public static function randomUuid()
     {
-        if (!function_exists('uuid_create')) {
-            return null;
-        }
-
-        return uuid_create(UUID_TYPE_RANDOM);
+        return strval(Uuid::uuid4());
     }
 
     public static function randomHex($len = 16)
