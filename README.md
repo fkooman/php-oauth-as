@@ -61,6 +61,7 @@ Now to set the permissions and initialize the database, i.e. to install the
 tables, run:
     
     $ mkdir data
+    $ chmod 750 data
     $ sudo chown apache:apache data
     $ sudo chcon -t httpd_sys_rw_content_t data
     $ sudo -u apache ./bin/php-oauth-as-initdb
