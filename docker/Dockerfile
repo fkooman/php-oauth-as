@@ -6,7 +6,7 @@ MAINTAINER François Kooman <fkooman@tuxed.net>
 #RUN yum -y install https://download.fedoraproject.org/pub/epel/beta/7/x86_64/epel-release-7-0.2.noarch.rpm ; yum clean all
 
 # Add php-oauth repo to /etc/yum.repos.d
-RUN curl -o /etc/yum.repos.d/fedora-php-oauth.repo https://repos.fedorapeople.org/repos/fkooman/php-oauth/fedora-php-oauth.repo
+RUN curl -s -o /etc/yum.repos.d/fedora-php-oauth.repo https://repos.fedorapeople.org/repos/fkooman/php-oauth/fedora-php-oauth.repo
 
 # Perform updates
 RUN yum -y update; yum clean all
