@@ -35,8 +35,8 @@ class Token
     public function __construct(Config $c)
     {
         $this->config = $c;
-        $oauthStorageBackend = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('storageBackend');
-        $this->storage = new $oauthStorageBackend($this->config);
+        $this->storage = new PdoStorage($this->config);
+
         // occasionally delete expired access tokens and authorization codes
         if (3 === rand(0, 5)) {
             $this->storage->deleteExpiredAccessTokens();

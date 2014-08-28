@@ -27,9 +27,7 @@ class TokenTest extends OAuthHelper
     public function setUp()
     {
         parent::setUp();
-
-        $oauthStorageBackend = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('storageBackend');
-        $storage = new $oauthStorageBackend($this->config);
+        $storage = new PdoStorage($this->config);
 
         $resourceOwner = array(
             "id" => "fkooman",

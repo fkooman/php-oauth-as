@@ -6,9 +6,6 @@ serviceName = "My Protected API"
 ;serviceLogoWidth = 64;
 ;serviceLogoHeight = 64;
 
-; the storage backend, currently only PDO is supported
-storageBackend = "PdoOAuthStorage"
-
 authenticationMechanism = "SimpleAuthResourceOwner"
 ;authenticationMechanism = "DummyResourceOwner"
 ;authenticationMechanism = "PersonaResourceOwner"
@@ -23,7 +20,7 @@ accessTokenExpiry = 3600
 ;identifiers you want to give certain entitlements
 entitlementsFile = "/etc/php-oauth-as/entitlements.json"
 
-[PdoOAuthStorage]
+[PdoStorage]
 dsn = "sqlite:/var/lib/php-oauth-as/db.sqlite"
 ;dsn = "mysql:host=localhost;dbname=oauth"
 ;username = "oauth"

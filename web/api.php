@@ -22,16 +22,13 @@ use fkooman\OAuth\Server\Api;
 use fkooman\Http\Request;
 use fkooman\Http\JsonResponse;
 use fkooman\Http\IncomingRequest;
+use fkooman\OAuth\Server\PdoStorage;
 
 try {
     $config = Config::fromIniFile(
         dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini"
     );
-
-    $oauthStorageBackend = 'fkooman\\OAuth\\Server\\' . $config->getValue('storageBackend');
-    $storage = new $oauthStorageBackend($config);
-
-    $api = new Api($storage);
+    $api = new Api(new PdoStorage($config));
     $request = Request::fromIncomingRequest(new IncomingRequest());
     $response = $api->handleRequest($request);
     $response->sendResponse();

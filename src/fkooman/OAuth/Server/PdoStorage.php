@@ -24,7 +24,7 @@ use PDO;
 /**
  * Class to implement storage for the OAuth Authorization Server using PDO.
  */
-class PdoOAuthStorage implements IOAuthStorage
+class PdoStorage implements IOAuthStorage
 {
     /** @var fkooman\Config\Config */
     private $config;
@@ -37,13 +37,13 @@ class PdoOAuthStorage implements IOAuthStorage
         $this->config = $c;
 
         $driverOptions = array();
-        if ($this->config->s('PdoOAuthStorage')->l('persistentConnection')) {
+        if ($this->config->s('PdoStorage')->l('persistentConnection')) {
             $driverOptions[PDO::ATTR_PERSISTENT] = true;
         }
 
-        $this->pdo = new PDO($this->config->s('PdoOAuthStorage')->l('dsn'), $this->config->s('PdoOAuthStorage')->l('username', false), $this->config->s('PdoOAuthStorage')->l('password', false), $driverOptions);
+        $this->pdo = new PDO($this->config->s('PdoStorage')->l('dsn'), $this->config->s('PdoStorage')->l('username', false), $this->config->s('PdoStorage')->l('password', false), $driverOptions);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        if (0 === strpos($this->config->s('PdoOAuthStorage')->l('dsn'), "sqlite:")) {
+        if (0 === strpos($this->config->s('PdoStorage')->l('dsn'), "sqlite:")) {
             // only for SQlite
             $this->pdo->exec("PRAGMA foreign_keys = ON");
         }

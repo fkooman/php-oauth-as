@@ -46,9 +46,7 @@ class Authorize
 
         $authMech = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('authenticationMechanism');
         $this->resourceOwner = new $authMech($this->config);
-
-        $oauthStorageBackend = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('storageBackend');
-        $this->storage = new $oauthStorageBackend($this->config);
+        $this->storage = new PdoStorage($this->config);
     }
 
     public function handleRequest(Request $request)

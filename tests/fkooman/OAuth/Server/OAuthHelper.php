@@ -43,15 +43,14 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
                 )
             ),
             'accessTokenExpiry' => 5,
-            'storageBackend' => 'PdoOAuthStorage',
-            'PdoOAuthStorage' => array(
+            'PdoStorage' => array(
                 'dsn' => $dsn
             )
         );
         $this->config = new Config($configArray);
 
         // intialize storage
-        $storage = new PdoOAuthStorage($this->config);
+        $storage = new PdoStorage($this->config);
         $storage->initDatabase();
 
         // add some clients

@@ -31,8 +31,7 @@ class ApiTest extends OAuthHelper
     {
         parent::setUp();
 
-        $oauthStorageBackend = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('storageBackend');
-        $storage = new $oauthStorageBackend($this->config);
+        $storage = new PdoStorage($this->config);
 
         $this->api = new Api($storage);
 
