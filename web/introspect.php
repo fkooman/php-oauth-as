@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+require_once dirname(__DIR__) . "/vendor/autoload.php";
 
 use fkooman\Config\Config;
 use fkooman\OAuth\Server\TokenIntrospection;
@@ -25,7 +25,7 @@ use fkooman\Http\IncomingRequest;
 
 try {
     $config = Config::fromIniFile(
-        dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini"
+        dirname(__DIR__) . "/config/oauth.ini"
     );
     $tokenIntrospection = new TokenIntrospection($config);
     $request = Request::fromIncomingRequest(new IncomingRequest());

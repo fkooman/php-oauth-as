@@ -6,7 +6,7 @@ use fkooman\Config\Config;
 use fkooman\OAuth\Server\PdoStorage;
 
 try {
-    $config = Config::fromIniFile(dirname(__DIR__) . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "oauth.ini");
+    $config = Config::fromIniFile(dirname(__DIR__) . "/config/oauth.ini");
     $storage = new PdoStorage($config);
     $storage->initDatabase();
 } catch (Exception $e) {
