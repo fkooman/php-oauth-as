@@ -34,7 +34,7 @@ class Authorize
     /** @var fkooman\Config\Config */
     private $config;
 
-    /** @var fkooman\OAuth\Server\IOAuthStorage */
+    /** @var fkooman\OAuth\Server\PdoStorage */
     private $storage;
 
     /** @var fkooman\OAuth\Server\IResourceOwner */

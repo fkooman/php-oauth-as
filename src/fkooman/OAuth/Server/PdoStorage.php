@@ -24,7 +24,7 @@ use PDO;
 /**
  * Class to implement storage for the OAuth Authorization Server using PDO.
  */
-class PdoStorage implements IOAuthStorage
+class PdoStorage
 {
     /** @var fkooman\Config\Config */
     private $config;

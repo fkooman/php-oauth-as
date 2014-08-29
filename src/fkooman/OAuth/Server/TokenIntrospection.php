@@ -28,7 +28,7 @@ class TokenIntrospection
     /** @var fkooman\Config\Config */
     private $config;
 
-    /** @var fkooman\OAuth\Server\IOAuthStorage */
+    /** @var fkooman\OAuth\Server\PdoStorage */
     private $storage;
 
     public function __construct(Config $c)

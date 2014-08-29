@@ -28,13 +28,13 @@ use fkooman\OAuth\Server\Exception\ResourceServerException;
 
 class Api
 {
-    /** @var fkooman\OAuth\Server\IOAuthStorage */
+    /** @var fkooman\OAuth\Server\PdoStorage */
     private $storage;
 
     /** @var fkooman\OAuth\Server\ResourceServer */
     private $resourceServer;
 
-    public function __construct(IOAuthStorage $storage)
+    public function __construct(PdoStorage $storage)
     {
         $this->storage = $storage;
         $this->resourceServer = new ResourceServer($storage);

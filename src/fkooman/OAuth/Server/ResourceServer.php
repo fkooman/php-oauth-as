@@ -30,7 +30,7 @@ class ResourceServer
     private $resourceOwnerEntitlement;
     private $resourceOwnerExt;
 
-    public function __construct(IOAuthStorage $s)
+    public function __construct(PdoStorage $s)
     {
         $this->storage = $s;
         $this->entitlementEnforcement = true;
