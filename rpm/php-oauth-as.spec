@@ -1,14 +1,17 @@
+%global github_owner     fkooman
+%global github_name      php-oauth-as
+
 Name:       php-oauth-as
-Version:    0.1.0
-Release:    0.35%{?dist}
+Version:    0.1.1
+Release:    1%{?dist}
 Summary:    OAuth 2.0 Authorization Server written in PHP
 
 Group:      Applications/Internet
 License:    AGPLv3+
-URL:        https://github.com/fkooman/php-oauth
-Source0:    https://github.com/fkooman/php-oauth/releases/download/%{version}/php-oauth-as-%{version}.tar.xz
+URL:        https://github.com/fkooman/php-oauth-as
+Source0:    https://github.com/%{github_owner}/%{github_name}/archive/%{version}.tar.gz
 Source1:    php-oauth-as-httpd-conf
-Patch0:     php-oauth-as-autoload.patch
+Source2:    php-oauth-as-autoload.php
 
 BuildArch:  noarch
 
@@ -27,6 +30,14 @@ Requires:   php-composer(fkooman/oauth-common) >= 0.5.0
 Requires:   php-composer(fkooman/oauth-common) < 0.6.0
 Requires:   php-pear(pear.twig-project.org/Twig) >= 1.15
 Requires:   php-pear(pear.twig-project.org/Twig) < 2.0
+Requires:   php-composer(rhumsaa/uuid) >= 2.7
+Requires:   php-composer(rhumsaa/uuid) < 3.0
+
+#Starting F21 we can use the composer dependency for Symfony
+#Requires:   php-composer(symfony/classloader) >= 2.3.9
+#Requires:   php-composer(symfony/classloader) < 3.0
+Requires:   php-pear(pear.symfony.com/ClassLoader) >= 2.3.9
+Requires:   php-pear(pear.symfony.com/ClassLoader) < 3.0
 
 Requires(post): policycoreutils-python
 Requires(postun): policycoreutils-python
@@ -37,14 +48,7 @@ Server that is easy to integrate with your existing REST services,
 written in any language, without requiring extensive changes.
 
 %prep
-%setup -q
-
-%patch0
-
-# remove bundled dependencies
-rm -rf vendor/fkooman
-rm -rf vendor/twig
-rm -rf vendor/symfony
+%setup -qn %{github_name}-%{version}
 
 sed -i "s|dirname(__DIR__)|'%{_datadir}/php-oauth-as'|" bin/php-oauth-as-initdb
 sed -i "s|dirname(__DIR__)|'%{_datadir}/php-oauth-as'|" bin/php-oauth-as-register
@@ -57,7 +61,11 @@ install -m 0644 -D -p %{SOURCE1} ${RPM_BUILD_ROOT}%{_sysconfdir}/httpd/conf.d/ph
 
 # Application
 mkdir -p ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as
-cp -pr web vendor views src ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as
+cp -pr web views src ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as
+
+# use our own class loader
+mkdir -p ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as/vendor
+cp -pr %{SOURCE2} ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as/vendor/autoload.php
 
 mkdir -p ${RPM_BUILD_ROOT}%{_bindir}
 cp -pr bin/* ${RPM_BUILD_ROOT}%{_bindir}
@@ -96,5 +104,5 @@ fi
 %doc README.md agpl-3.0.txt composer.json docs/ config/
 
 %changelog
-* Fri Aug 22 2014 François Kooman <fkooman@tuxed.net> - 0.1.0-0.35
-- rebuilt
+* Sat Aug 30 2014 François Kooman <fkooman@tuxed.net> - 0.1.1-1
+- initial package
