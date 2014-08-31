@@ -94,15 +94,45 @@ To remove the policy:
     # semanage fcontext -d -t httpd_sys_rw_content_t '/var/www/php-oauth-as/data(/.*)?'
 
 # Apache
-There is an example configuration file in `docs/apache.conf`. 
 
-On Red Hat based distributions the file can be placed in 
-`/etc/httpd/conf.d/php-oauth-as.conf`. On Debian based distributions the file can
-be placed in `/etc/apache2/conf.d/php-oauth-as`. Be sure to modify it to suit your 
-environment and do not forget to restart Apache. 
+    Alias /php-oauth-as /var/www/php-oauth-as/web
 
-The `bin/configure.sh` script from the previous section outputs a config for 
-your system which replaces the `/PATH/TO/APP` with the actual install directory.
+    <Directory /var/www/php-oauth-as/web>
+        <IfModule mod_authz_core.c>
+          # Apache 2.4
+          Require local
+        </IfModule>
+        <IfModule !mod_authz_core.c>
+          # Apache 2.2
+          Order Deny,Allow
+          Deny from All
+          Allow from 127.0.0.1
+          Allow from ::1
+        </IfModule>
+        
+        # CORS
+        <FilesMatch "api.php|introspect.php">
+            Header set Access-Control-Allow-Origin "*"
+            Header set Access-Control-Allow-Headers "Authorization, Content-Type"
+            Header set Access-Control-Allow-Methods "POST, PUT, GET, DELETE, OPTIONS"
+        </FilesMatch>
+
+        RewriteEngine On
+        RewriteCond %{HTTP:Authorization} ^(.+)$
+        RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+        AllowOverride None
+        Options FollowSymLinks
+
+        # CSP: https://developer.mozilla.org/en-US/docs/Security/CSP
+        Header set Content-Security-Policy "default-src 'self'"
+
+        # X-Frame-Options: https://developer.mozilla.org/en-US/docs/HTTP/X-Frame-Options
+        Header set X-Frame-Options DENY
+
+        # HSTS: https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security
+        #Header set Strict-Transport-Security max-age=604800
+    </Directory>
 
 ## Security
 Please follow the recommended Apache configuration, and set the headers 
@@ -117,58 +147,33 @@ HTTPS.
 # Authentication
 There are thee plugins provided to authenticate users:
 
-* `DummyResourceOwner` - one static account configured in `config/oauth.ini`
-* `SimpleAuthResourceOwner` - very simple username/password authentication \
-  library (DEFAULT)
+* `SimpleAuthResourceOwner` - very simple username/password authentication 
+  library (**DEFAULT**)
 * `SspResourceOwner` - simpleSAMLphp plugin for SAML authentication
+* `DummyResourceOwner` - one static account configured in `config/oauth.ini`
 
-You can configure which plugin to use by modifying the `authenticationMechanism`
-setting in `config/oauth.ini`.
+You can configure which plugin to use by modifying the 
+`authenticationMechanism` setting in `config/oauth.ini`.
 
 ## Entitlements
 A more complex part of the authentication and authorization is the use of 
 entitlements. This is a bit similar to scope in OAuth, only entitlements are 
 for a specific resource owner, while scope is only for an OAuth client.
 
-The entitlements are for example used by the `php-oauth-as` API. It is possible to 
-write a client application that uses the `php-oauth-as` API to manage OAuth client 
-registrations. The problem now is how to decide who is allowed to manage 
+The entitlements are for example used by the `php-oauth-as` API. It is possible 
+to write a client application that uses the `php-oauth-as` API to manage OAuth 
+client registrations. The problem now is how to decide who is allowed to manage 
 OAuth client registrations. Clearly not all users who can successfully 
 authenticate, but only a subset. The way now to determine who gets to do what
 is accomplished through entitlements. 
 
 In particular, the authenticated user (resource owner) needs to have the 
-`http://php-oauth.net/entitlement/manage` entitlement in order to be able to modify 
-application registrations. The entitlements are part of the resource owner's 
-attributes. This maps perfectly to SAML attributes obtained through the
+`http://php-oauth.net/entitlement/manage` entitlement in order to be able to 
+modify application registrations. The entitlements are part of the resource 
+owner's attributes. This maps perfectly to SAML attributes obtained through the
 simpleSAMLphp integration.
 
-## DummyResourceOwner
-For instance in the `DummyResourceOwner` section, the user has this entitlement
-as shown in the snippet below:
-
-    ; Dummy Configuration
-    [DummyResourceOwner]
-    uid           = "fkooman"
-    entitlement[] = "http://php-oauth.net/entitlement/manage"
-    entitlement[] = "foo"
-    entitlement[] = "bar"
-
-Here you can see that the resource owner will be granted the 
-`http://php-oauth.net/entitlement/manage`, `foo` and `bar` entitlements. As there is only 
-one account in the `DummyResourceOwner` configuration it is quite boring.
-
 ## SimpleAuthResourceOwner 
-The entitlements for the `SimpleAuthResourceOwner` are configured in the 
-entitlement file, located in `config/simpleAuthEntitlement.json`. An example is 
-also available. You can assign entitlements to resource owner identifiers.
-
-The users listed match the default set from `php-simple-auth`. You can copy
-the example file to `config/simpleAuthEntitlement.json` and modify it for your
-needs. This authentication backend is not meant for production use as it will
-require a lot of manual configuration per user. Better use the 
-`SspResourceOwner` authentication library for serious deployments.
-
 For this authentication source you also need to install and configure
 ([php-simple-auth](https://github.com/fkooman/php-simple-auth/)).
 
@@ -204,6 +209,18 @@ by the simpleSAMLphp as SP:
 
 You need to modify this (the URLs and the certificate fingerprint) to work with 
 your IdP and possibly the attribute mapping rules. 
+
+## DummyResourceOwner
+For instance in the `DummyResourceOwner` section, the user has this entitlement
+as shown in the snippet below:
+
+    ; Dummy Configuration
+    [DummyResourceOwner]
+    uid           = "admin"
+
+This just sets the user id to `admin` without requiring any authentication.
+This is easy for development purposes only and should NEVER be used for 
+anything else.
 
 # Resource Servers
 If you are writing a resource server (RS) an API is available to verify the 
