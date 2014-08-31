@@ -2,7 +2,7 @@
     {
         "allowed_scope": "http://php-oauth.net/scope/authorize",
         "contact_email": "support@php-oauth.net",
-        "description": null,
+        "description": "Manage the authorized applications using resources provided by this service.",
         "icon": "https://www.php-oauth.net/app/authorize/icon.png",
         "id": "5ff08a00-18a4-40d3-bf4c-431af85a9670",
         "name": "OAuth Authorization Management Application",
@@ -13,10 +13,10 @@
     {
         "allowed_scope": "http://php-oauth.net/scope/manage",
         "contact_email": "support@php-oauth.net",
-        "description": null,
+        "description": "Manage the registration for applications that are allowed to use this service.",
         "icon": "https://www.php-oauth.net/app/manage/icon.png",
         "id": "2352ea44-612d-448b-be10-6e29562e5130",
-        "name": "OAuth Server Management Application",
+        "name": "OAuth Authorization Server Management Application",
         "redirect_uri": "https://www.php-oauth.net/app/manage/index.html",
         "secret": null,
         "type": "user_agent_based_application"
