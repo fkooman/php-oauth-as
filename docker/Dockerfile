@@ -18,7 +18,8 @@ RUN yum install -y mod_ssl php-oauth-as php-simple-auth; yum clean all
 RUN sed -i 's/Require local/Require all granted/' /etc/httpd/conf.d/php-oauth-as.conf
 RUN sed -i 's/Require local/Require all granted/' /etc/httpd/conf.d/php-simple-auth.conf
 
-# Add a new user to php-simple-auth
+# Add users to php-simple-auth
+RUN php-simple-auth-add-user /etc/php-simple-auth/users.json admin adm1n
 RUN php-simple-auth-add-user /etc/php-simple-auth/users.json fkooman foobar
 
 USER apache

@@ -16,12 +16,7 @@ try {
             throw new Exception("ERROR: please specify file with client registration information");
     }
 
-    $registrationFile = $argv[1];
-    if (!file_exists($registrationFile) || !is_file($registrationFile) || !is_readable($registrationFile)) {
-            throw new Exception("ERROR: unable to read client registration file");
-    }
-
-    $registration = Json::decode(file_get_contents($registrationFile));
+    $registration = Json::decodeFromFile($argv[1]);
 
     foreach ($registration as $r) {
         // first load it in ClientRegistration object to check it...
