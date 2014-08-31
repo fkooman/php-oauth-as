@@ -32,7 +32,7 @@ This is a screenshot of the OAuth consent dialog.
 # Requirements
 On Fedora/CentOS:
 
-    $ sudo yum install php-pdo php-pecl-uuid php-openssl php-password-compat httpd'
+    $ sudo yum install php-pdo php-pecl-uuid php-openssl httpd'
 
 We tested Fedora 20 and CentOS 6 and 7.
 
