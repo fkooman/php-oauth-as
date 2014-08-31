@@ -1,7 +1,7 @@
 <?php
 $vendorDir = '/usr/share/php';
 $pearDir   = '/usr/share/pear';
-$baseDir   = __DIR__;
+$baseDir   = dirname(__DIR__);
 
 require_once $vendorDir . '/Symfony/Component/ClassLoader/UniversalClassLoader.php';
 
@@ -19,7 +19,7 @@ $loader->registerNamespaces(array(
     'Symfony\\Component\\Yaml' => $vendorDir,
 ));
 $loader->registerPrefixes(array(
-    'Twig_'               => $pearDir,
+    'Twig_'               => array($pearDir, $vendorDir),
 ));
 
 $loader->register();

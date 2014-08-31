@@ -23,7 +23,6 @@ Alias /php-oauth-as /usr/share/php-oauth-as/web
     RewriteEngine On
     RewriteCond %{HTTP:Authorization} ^(.+)$
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
     AllowOverride None
     Options FollowSymLinks
 
