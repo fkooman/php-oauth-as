@@ -1,12 +1,16 @@
 FROM       fedora:20
+#FROM       centos:centos6
 #FROM       centos:centos7
 MAINTAINER François Kooman <fkooman@tuxed.net>
 
-# Add EPEL repository (CentOS only)
-#RUN yum -y install https://download.fedoraproject.org/pub/epel/beta/7/x86_64/epel-release-7-0.2.noarch.rpm ; yum clean all
+# Add EPEL repository (CentOS 6)
+#RUN yum -y install https://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
-# Add php-oauth repo to /etc/yum.repos.d
-RUN curl -s -o /etc/yum.repos.d/fedora-php-oauth.repo https://repos.fedorapeople.org/repos/fkooman/php-oauth/fedora-php-oauth.repo
+# Add EPEL repository (CentOS 7)
+#RUN yum -y install https://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-1.noarch.rpm
+
+# Add php-oauth repository (Fedora, CentOS 6, CentOS 7)
+RUN curl -s -L -o /etc/yum.repos.d/fedora-php-oauth.repo https://repos.fedorapeople.org/repos/fkooman/php-oauth/fedora-php-oauth.repo
 
 # Perform updates
 RUN yum -y update; yum clean all
@@ -28,8 +32,8 @@ USER apache
 RUN php-oauth-as-initdb
 
 # Register Default Clients
-# Doesn't work on CentOS as no docs are installed in Docker image...
-RUN php-oauth-as-register /usr/share/doc/php-oauth-as/docs/apps.json
+RUN curl -s -L -o /tmp/config.json https://www.php-oauth.net/app/config.json
+RUN php-oauth-as-register /tmp/config.json
 
 USER root
 
