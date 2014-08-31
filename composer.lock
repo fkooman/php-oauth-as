@@ -47,20 +47,20 @@
         },
         {
             "name": "fkooman/json",
-            "version": "0.4.0",
+            "version": "0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-json.git",
-                "reference": "325dcd3565856cd7574f65653f7476758a491618"
+                "reference": "f657ee01e03c9cf472bce07abe020ae721025f16"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-json/zipball/325dcd3565856cd7574f65653f7476758a491618",
-                "reference": "325dcd3565856cd7574f65653f7476758a491618",
+                "url": "https://api.github.com/repos/fkooman/php-lib-json/zipball/f657ee01e03c9cf472bce07abe020ae721025f16",
+                "reference": "f657ee01e03c9cf472bce07abe020ae721025f16",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=5.3.3"
             },
             "type": "library",
             "autoload": {
@@ -80,7 +80,7 @@
                 }
             ],
             "description": "PHP library to encode and decode JSON",
-            "time": "2014-08-14 07:53:47"
+            "time": "2014-08-31 09:05:32"
         },
         {
             "name": "fkooman/oauth-common",
