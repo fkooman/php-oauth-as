@@ -19,6 +19,9 @@ namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
 use fkooman\Json\Json;
+use fkooman\Json\JsonException;
+use RuntimeException;
+
 use fkooman\SimpleAuth\SimpleAuth;
 use fkooman\OAuth\Server\Exception\SimpleAuthResourceOwnerException;
 
@@ -55,13 +58,16 @@ class SimpleAuthResourceOwner implements IResourceOwner
 
     public function getEntitlement()
     {
-        $entitlementsFile = $this->config->l('entitlementsFile');
-        $fileContents = @file_get_contents($entitlementsFile);
-        if (false === $fileContents) {
-            // no entitlement file, so no entitlement
+        $entitlement = array();
+        try {
+            $entitlement = Json::decodeFromFile($this->config->l('entitlementsFile'));
+        } catch (RuntimeException $e) {
+            // problem with reading the entitlement file
+            return array();
+        } catch (JsonException $e) {
+            // problem with the JSON formatting of entitlement file
             return array();
         }
-        $entitlement = Json::decode($fileContents);
         if (is_array($entitlement) && isset($entitlement[$this->getId()]) && is_array($entitlement[$this->getId()])) {
             return $entitlement[$this->getId()];
         }
