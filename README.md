@@ -22,8 +22,6 @@ it). Refer to the license for the exact details.
 * OAuth 2.0 (authorization code and implicit grant) support
 * SimpleAuth authentication support ([php-simple-auth](https://github.com/fkooman/php-simple-auth/))
 * SAML authentication support ([simpleSAMLphp](http://www.simplesamlphp.org)) 
-* [Mozilla Persona](https://login.persona.org/) authentication support using 
-([php-browserid](https://github.com/fkooman/php-browserid/))
 * Token introspection for resource servers
 
 # Screenshots
@@ -63,7 +61,6 @@ tables, run:
     $ mkdir data
     $ chmod 750 data
     $ sudo chown apache:apache data
-    $ sudo chcon -t httpd_sys_rw_content_t data
     $ sudo -u apache ./bin/php-oauth-as-initdb
 
 It is also possible to already preregister some clients which makes sense if 
@@ -87,22 +84,14 @@ These clients are written in HTML, CSS and JavaScript only and can be hosted on
 any (static) web server. See the accompanying READMEs for more information.
 
 # SELinux
-If you want to use the Mozilla Persona authentication plugin you also need to 
-give Apache permission to access the network. These permissions can be given 
-by using `setsebool` as root:
+To update the policy for the data directory use the following commands:
 
-    $ sudo setsebool -P httpd_can_network_connect=on
+    # semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/php-oauth-as/data(/.*)?'
+    # restorecon -R /var/www/php-oauth-as/data
 
-If you want the logger to send out email, you need the following as well (not
-supported right now):
+To remove the policy:
 
-    $ sudo setsebool -P httpd_can_sendmail=on
-
-This is only for Red Hat based Linux distributions like RHEL, CentOS and 
-Fedora.
-
-If you want the labeling of the `data/` directory to survive file system 
-relabeling you have to update the policy as well.
+    # semanage fcontext -d -t httpd_sys_rw_content_t '/var/www/php-oauth-as/data(/.*)?'
 
 # Apache
 There is an example configuration file in `docs/apache.conf`. 
@@ -132,7 +121,6 @@ There are thee plugins provided to authenticate users:
 * `SimpleAuthResourceOwner` - very simple username/password authentication \
   library (DEFAULT)
 * `SspResourceOwner` - simpleSAMLphp plugin for SAML authentication
-* `PersonaResourceOwner` - Mozilla Persona plugin
 
 You can configure which plugin to use by modifying the `authenticationMechanism`
 setting in `config/oauth.ini`.

@@ -8,7 +8,6 @@ serviceName = "My Protected API"
 
 authenticationMechanism = "SimpleAuthResourceOwner"
 ;authenticationMechanism = "DummyResourceOwner"
-;authenticationMechanism = "PersonaResourceOwner"
 ;authenticationMechanism = "SspResourceOwner"
 
 ; the access token expiry time (in seconds)
@@ -39,11 +38,6 @@ simpleAuthPath = "/usr/share/php-simple-auth"
 ;[DummyResourceOwner]
 ;uid           = "fkooman"
 ;entitlement[] = "http://php-oauth.net/entitlement/manage"
-
-; Mozilla Persona configuration
-;[PersonaResourceOwner]
-;personaPath   = "/usr/share/php-browserid"
-;verifierAddress = "https://verifier.login.persona.org/verify"
 
 ; simpleSAMLphp configuration
 ;[SspResourceOwner]
