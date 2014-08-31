@@ -41,7 +41,18 @@ class DummyResourceOwner implements IResourceOwner
 
     public function getEntitlement()
     {
-        return $this->config->s('DummyResourceOwner')->s('entitlement')->toArray();
+        $entitlementsFile = $this->config->l('entitlementsFile');
+        $fileContents = @file_get_contents($entitlementsFile);
+        if (false === $fileContents) {
+            // no entitlement file, so no entitlement
+            return array();
+        }
+        $entitlement = Json::decode($fileContents);
+        if (is_array($entitlement) && isset($entitlement[$this->getId()]) && is_array($entitlement[$this->getId()])) {
+            return $entitlement[$this->getId()];
+        }
+
+        return array();
     }
 
     public function getExt()

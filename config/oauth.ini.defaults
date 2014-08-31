@@ -36,8 +36,7 @@ simpleAuthPath = "/usr/share/php-simple-auth"
 
 ; Dummy Configuration
 ;[DummyResourceOwner]
-;uid           = "fkooman"
-;entitlement[] = "http://php-oauth.net/entitlement/manage"
+;uid           = "admin"
 
 ; simpleSAMLphp configuration
 ;[SspResourceOwner]
