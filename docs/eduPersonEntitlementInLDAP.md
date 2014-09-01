@@ -8,7 +8,7 @@ authentication backend together with some LDAP server.
 
 ## 389 Directory Server
 We assume you are running a recently modern 389 Directory Server instance, for 
-example on Fedora 17.
+example on Fedora 20.
 
 Make sure you are able to use `ldapsearch` to query your LDAP and are able to 
 authenticate using the Directory Manager account. For example:
@@ -35,8 +35,8 @@ Now you can add this to the LDAP using `ldapmodify`:
 That is all to add the `objectClass` to the entry for the user `fkooman`.
 
 ### Adding the `eduPersonEntitlement`
-To add the entitlements `http://php-oauth.net/entitlement/manage`, `foo`, `bar` and `baz`, 
-the following `LDIF` file can be used:
+To add the entitlements `http://php-oauth.net/entitlement/manage`, `foo`, `bar` 
+and `baz`, the following `LDIF` file can be used:
 
     dn: uid=fkooman,ou=People,dc=wind,dc=surfnet,dc=nl
     changetype: modify
@@ -50,5 +50,5 @@ And added to the LDAP like this:
 
     $ ldapmodify -W -H ldap://localhost -D 'cn=Directory Manager' < add_eduPersonEntitlement.ldif
 
-The `http://php-oauth.net/entitlement/manage` entitlement will make it possible for this 
-user to manage the OAuth client registrations using the API.
+The `http://php-oauth.net/entitlement/manage` entitlement will make it possible 
+for this user to manage the OAuth client registrations using the API.
