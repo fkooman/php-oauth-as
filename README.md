@@ -12,7 +12,7 @@ later version.
 
     https://www.gnu.org/licenses/agpl.html
 
-This rougly means that if you use this software in your service you need to 
+This roughly means that if you use this software in your service you need to 
 make the source code available to the users of your service (if you modify
 it). Refer to the license for the exact details.
 
@@ -21,8 +21,8 @@ it). Refer to the license for the exact details.
 * Authorization Code and Implicit Grant support
 * [SimpleAuth](https://github.com/fkooman/php-simple-auth/) authentication 
   backend
-* [simpleSAMLphp](http://www.simplesamlphp.org)) authentication backend
-* Token Introspection for Resource Rervers
+* [simpleSAMLphp](http://www.simplesamlphp.org) authentication backend
+* Token Introspection for Resource Servers
 * Management API to manage Client Registration and Authorizations
 
 # Screenshots
@@ -33,7 +33,7 @@ This is a screenshot of the consent dialog:
 # Installation
 Please use the RPM packages for actually running it on a server. The RPM 
 packages can for now be found in the 
-[https://repos.fedoraproject.org/repo/fkooman/php-oauth](repository). For 
+[repository](https://repos.fedoraproject.org/repo/fkooman/php-oauth). For 
 setting up a development environment, see below.
 
 # Development Requirements
@@ -68,7 +68,7 @@ Edit `oauth.ini` to match the configuration.
     $ sudo -u apache bin/php-oauth-as-initdb 
     $ sudo -u apache bin/php-oauth-as-register https://www.php-oauth.net/app/config.json
 
-Copy paste the contents of the Apache section in the file 
+Copy paste the contents of the Apache section (see below) in the file 
 `/etc/httpd/conf.d/php-oauth-as.conf`.
 
     $ sudo service httpd restart
@@ -162,12 +162,12 @@ you would put that in `config/entitlements.json`:
         ]
     }
 
-Now, whenever the `admin` user succesfully authenticates it can manage clients
+Now, whenever the `admin` user successfully authenticates it can manage clients
 through the API. Users with other IDs will not be able to manage the clients.
 
 ## SimpleAuthResourceOwner 
 For the `SimpleAuthResourceOwner` backend you also need to install 
-([SimpleAuth](https://github.com/fkooman/php-simple-auth/)). See the 
+[SimpleAuth](https://github.com/fkooman/php-simple-auth/). See the 
 instructions there on how to install and configure this. Make sure you set the
 correct path for `simpleAuthPath` in `config/oauth.ini`.
 
@@ -199,8 +199,8 @@ There are two management clients available:
 
 These clients are written in HTML, CSS and JavaScript only and can be hosted on 
 any (static) web server. See the accompanying READMEs for more information.
-For your convienience they are hosted on 
-[https://www.php-oauth.net](https://www.php-oauth.net)` so you do not need to 
+For your convenience they are hosted on 
+[https://www.php-oauth.net](https://www.php-oauth.net) so you do not need to 
 setup the applications yourself and can immediately use the hosted versions. 
 Just specify the endpoint to your Authorization Server to get started. They 
 also work with the Docker image, you can then use 
