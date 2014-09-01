@@ -7,7 +7,6 @@ serviceName = "My Protected API"
 ;serviceLogoHeight = 64;
 
 authenticationMechanism = "SimpleAuthResourceOwner"
-;authenticationMechanism = "DummyResourceOwner"
 ;authenticationMechanism = "SspResourceOwner"
 
 ; the access token expiry time (in seconds)
@@ -33,10 +32,6 @@ persistentConnection = false
 ; SimpleAuth configuration
 [SimpleAuthResourceOwner]
 simpleAuthPath = "/usr/share/php-simple-auth"
-
-; Dummy Configuration
-;[DummyResourceOwner]
-;uid           = "admin"
 
 ; simpleSAMLphp configuration
 ;[SspResourceOwner]

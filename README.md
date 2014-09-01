@@ -62,9 +62,21 @@ also work on RHEL 6 and RHEL 7.
     $ cd config
     $ cp oauth.ini.defaults oauth.ini
 
-Edit `oauth.ini` to match the configuration.
+Edit `oauth.ini` to match the configuration. You need to at least modify the
+following lines, and set them to the values shown here:
+
+    entitlementsFile = "/var/www/php-oauth-as/config/entitlements.json"
+    dsn = "sqlite:/var/www/php-oauth-as/data/db.sqlite"
+    simpleAuthPath = "/var/www/php-simple-auth"
+
+Now continue with the configuration:
 
     $ cp entitlements.json.example entitlements.json
+
+You can modify the `entitlements.json` file to list your own user ID to 
+specify the `manage` entitlement. By default the `admin` user ID has this
+entitlement.
+
     $ sudo -u apache bin/php-oauth-as-initdb 
     $ sudo -u apache bin/php-oauth-as-register https://www.php-oauth.net/app/config.json
 
