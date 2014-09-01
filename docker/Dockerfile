@@ -1,10 +1,10 @@
-#FROM       fedora:20
-FROM       centos:centos6
+FROM       fedora:20
+#FROM       centos:centos6
 #FROM       centos:centos7
 MAINTAINER François Kooman <fkooman@tuxed.net>
 
 # Add EPEL repository (CentOS 6)
-RUN yum -y install https://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm ; yum clean all
+#RUN yum -y install https://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm ; yum clean all
 
 # Add EPEL repository (CentOS 7)
 #RUN yum -y install https://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-1.noarch.rpm ; yum clean all
