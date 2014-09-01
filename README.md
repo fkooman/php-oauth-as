@@ -1,9 +1,9 @@
-# Introduction
-This project provides an OAuth 2.0 Authorization Server that is easy to 
-integrate with your existing REST services, written in any language, without 
-requiring extensive changes.
+[![Build Status](https://travis-ci.org/fkooman/php-oauth-as.png?branch=master)](https://travis-ci.org/fkooman/php-oauth-as)
 
-[![Build Status](https://travis-ci.org/fkooman/php-oauth.png?branch=master)](https://travis-ci.org/fkooman/php-oauth)
+# Introduction
+This is an OAuth 2.0 Authorization Server written in PHP that is easy to 
+integrate with your existing REST services, written in any language. It will
+require minimal changes to your existing software.
 
 # License
 Licensed under the GNU Affero General Public License as published by the Free 
@@ -17,83 +17,69 @@ make the source code available to the users of your service (if you modify
 it). Refer to the license for the exact details.
 
 # Features
-* PDO (database abstraction layer for various databases) storage backend for
-  OAuth tokens
-* OAuth 2.0 (authorization code and implicit grant) support
-* SimpleAuth authentication support ([php-simple-auth](https://github.com/fkooman/php-simple-auth/))
-* SAML authentication support ([simpleSAMLphp](http://www.simplesamlphp.org)) 
-* Token introspection for resource servers
+* PDO database backend support
+* Authorization Code and Implicit Grant support
+* [SimpleAuth](https://github.com/fkooman/php-simple-auth/) authentication 
+  backend
+* [simpleSAMLphp](http://www.simplesamlphp.org)) authentication backend
+* Token Introspection for Resource Rervers
+* Management API to manage Client Registration and Authorizations
 
 # Screenshots
-This is a screenshot of the OAuth consent dialog.
+This is a screenshot of the consent dialog:
 
-![oauth_consent](https://github.com/fkooman/php-oauth/raw/master/docs/oauth_consent.png)
-
-# Requirements
-On Fedora/CentOS:
-
-    $ sudo yum install php-pdo php-pecl-uuid php-openssl httpd'
-
-We tested Fedora 20 and CentOS 6 and 7.
+![oauth_consent](https://github.com/fkooman/php-oauth-as/raw/master/docs/oauth_consent.png)
 
 # Installation
+Please use the RPM packages for actually running it on a server. The RPM 
+packages can for now be found in the 
+[https://repos.fedoraproject.org/repo/fkooman/php-oauth](repository). For 
+setting up a development environment, see below.
+
+# Development Requirements
+On Fedora/CentOS:
+
+    $ sudo yum install php-pdo php-openssl httpd'
+
+You also need to download [Composer](https://getcomposer.org/).
+
+The software is being tested with Fedora 20, CentOS 6 and CentOS 7 and should 
+also work on RHEL 6 and RHEL 7.
+
+# Development Installation
 *NOTE*: in the `chown` line you need to use your own user account name!
 
     $ cd /var/www
     $ sudo mkdir php-oauth-as
-    $ sudo chown fkooman:fkooman php-oauth-as
-    $ git clone git://github.com/fkooman/php-oauth.git php-oauth-as
+    $ sudo chown fkooman.fkooman php-oauth-as
+    $ git clone https://github.com/fkooman/php-oauth-as.git
     $ cd php-oauth-as
-
-Install the external dependencies in the `vendor` directory using 
-[Composer](http://getcomposer.org/):
-
-    $ php /path/to/composer.phar install
-
-Next make sure to configure the database settings in `config/oauth.ini`, and 
-possibly other settings. Make sure you set the correct path for `dsn`. If you
-follow the instructions above make it 
-`sqlite:/var/www/php-oauth-as/data/db.sqlite`. 
-
-Now to set the permissions and initialize the database, i.e. to install the 
-tables, run:
-    
+    $ /path/to/composer.phar install
     $ mkdir data
-    $ chmod 750 data
-    $ sudo chown apache:apache data
-    $ sudo -u apache ./bin/php-oauth-as-initdb
+    $ sudo chown apache.apache data
+    $ sudo semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/php-oauth-as/data(/.*)?'
+    $ sudo restorecon -R /var/www/php-oauth-as/data
+    $ cd config
+    $ cp oauth.ini.defaults oauth.ini
 
-It is also possible to already preregister some clients which makes sense if 
-you want to use the management clients mentioned below. 
+Edit `oauth.ini` to match the configuration.
 
-    $ sudo -u apache ./bin/php-oauth-as-register docs/apps.json
+    $ cp entitlements.json.example entitlements.json
+    $ sudo -u apache bin/php-oauth-as-initdb 
+    $ sudo -u apache bin/php-oauth-as-register https://www.php-oauth.net/app/config.json
 
-This should take care of the initial setup. You can now use the 
-[manage](https://www.php-oauth.net/app/manage/index.html) and 
-[authorize](https://www.php-oauth.net/app/authorize/index.html) clients hosted
-on [https://www.php-oauth.net](https://www.php-oauth.net) from. This is secure 
-because the access token will never leave the user's browser.
+Copy paste the contents of the Apache section in the file 
+`/etc/httpd/conf.d/php-oauth-as.conf`.
 
-# Management Clients
-There are two management clients available:
+    $ sudo service httpd restart
 
-* [Manage Applications](https://github.com/fkooman/html-manage-applications/). 
-* [Manage Authorizations](https://github.com/fkooman/html-manage-authorizations/). 
+If you ever remove the software, you can also remove the SELinux context:
 
-These clients are written in HTML, CSS and JavaScript only and can be hosted on 
-any (static) web server. See the accompanying READMEs for more information.
-
-# SELinux
-To update the policy for the data directory use the following commands:
-
-    # semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/php-oauth-as/data(/.*)?'
-    # restorecon -R /var/www/php-oauth-as/data
-
-To remove the policy:
-
-    # semanage fcontext -d -t httpd_sys_rw_content_t '/var/www/php-oauth-as/data(/.*)?'
+    $ sudo semanage fcontext -d -t httpd_sys_rw_content_t '/var/www/php-oauth-as/data(/.*)?'
 
 # Apache
+This is the Apache configuration you use for development. Place it in 
+`/etc/httpd/conf.d/php-oauth-as.conf` and don't forget to restart Apache:
 
     Alias /php-oauth-as /var/www/php-oauth-as/web
 
@@ -134,123 +120,117 @@ To remove the policy:
         #Header set Strict-Transport-Security max-age=604800
     </Directory>
 
-## Security
-Please follow the recommended Apache configuration, and set the headers 
-mentioned there to increase security. Important headers are 
-[`Content-Security-Policy`](https://developer.mozilla.org/en-US/docs/Security/CSP), 
-[`X-Frame-Options`](https://developer.mozilla.org/en-US/docs/HTTP/X-Frame-Options) and 
-[`Strict-Transport-Security`](https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security). 
-
-You MUST also disable any connection to this service over HTTP, and only use
-HTTPS.
+Restart Apache with `service httpd restart`.
 
 # Authentication
-There are thee plugins provided to authenticate users:
+There are two plugins provided for user authentication:
 
-* `SimpleAuthResourceOwner` - very simple username/password authentication 
+* `SimpleAuthResourceOwner` - Simple static username/password authentication 
   library (**DEFAULT**)
 * `SspResourceOwner` - simpleSAMLphp plugin for SAML authentication
-* `DummyResourceOwner` - one static account configured in `config/oauth.ini`
 
 You can configure which plugin to use by modifying the 
 `authenticationMechanism` setting in `config/oauth.ini`.
 
+You do need to configure these authentication backend separately. See the 
+respective documentation for those projects.
+
 ## Entitlements
-A more complex part of the authentication and authorization is the use of 
-entitlements. This is a bit similar to scope in OAuth, only entitlements are 
-for a specific resource owner, while scope is only for an OAuth client.
+This OAuth server also uses *entitlements*. Entitlements are certain access 
+rights a particular user using the API has. For instance, you can configure a
+user to have `manage` rights on the API of the Authorization Server. 
 
-The entitlements are for example used by the `php-oauth-as` API. It is possible 
-to write a client application that uses the `php-oauth-as` API to manage OAuth 
-client registrations. The problem now is how to decide who is allowed to manage 
-OAuth client registrations. Clearly not all users who can successfully 
-authenticate, but only a subset. The way now to determine who gets to do what
-is accomplished through entitlements. 
+These entitlements can be provided either by the authentication backend, in the
+case of the `SimpleAuthResourceOwner` backend, or through a static
+configuration file in `config/entitlements.json`. 
 
-In particular, the authenticated user (resource owner) needs to have the 
+Entitlements are needed because sometimes you want users to be able to use the
+provided API, but not be able to manage client registration, or on some APIs, 
+some users have more rights. For instance, a special user can access data for
+all users through the API while regular users can only access their own data.
+
+The API for managing the authorization server supports the 
 `http://php-oauth.net/entitlement/manage` entitlement in order to be able to 
-modify application registrations. The entitlements are part of the resource 
-owner's attributes. This maps perfectly to SAML attributes obtained through the
-simpleSAMLphp integration.
+modify application registrations. If for instance the authentication backend 
+supports the users `admin`, `fkooman` and `demo` and you want to give the user
+with the ID `admin` the entitlement to manage the application registrations, 
+you would put that in `config/entitlements.json`:
+
+    {
+        "admin": [
+            "http://php-oauth.net/entitlement/manage"
+        ]
+    }
+
+Now, whenever the `admin` user succesfully authenticates it can manage clients
+through the API. Users with other IDs will not be able to manage the clients.
 
 ## SimpleAuthResourceOwner 
-For this authentication source you also need to install and configure
-([php-simple-auth](https://github.com/fkooman/php-simple-auth/)).
+For the `SimpleAuthResourceOwner` backend you also need to install 
+([SimpleAuth](https://github.com/fkooman/php-simple-auth/)). See the 
+instructions there on how to install and configure this. Make sure you set the
+correct path for `simpleAuthPath` in `config/oauth.ini`.
 
 ## SspResourceOwner
-Now, for the `SspResourceOwner` configuration it is a little bit more complex.
-Dealing with this is left to the simpleSAMLphp configuration and we just 
-expect a certain configuration.
-
 In the configuration file `config/oauth.ini` only a few aspects can be 
-configured. To configure the SAML integration, make sure the following settings 
-are at least correct.
+configured. To configure the SAML integration, make sure at least the following 
+settings are correct:
 
     authenticationMechanism = "SspResourceOwner"
 
     ; simpleSAMLphp configuration
     [SspResourceOwner]
-    sspPath = "/var/simplesamlphp"
+    sspPath = "/usr/share/simplesamlphp"
     authSource = "default-sp"
     ;resourceOwnerIdAttribute = "eduPersonPrincipalName"
 
-Now on to the simpleSAMLphp configuration. You configure simpleSAMLphp 
-according to the manual. The snippets below will help you with the 
-configuration to get the entitlements right.
+If you do not set `resourceOwnerIdAttribute` the 'persistent NameID value' will
+be requested and used to identify the users on subsequent visits. If this is 
+not available, authentication will fail. To work around this, use an attribute
+provided by the IdP that uniquely identifies the user. We assume you already
+have a working IdP/SP connection. See the simpleSAMLphp documentation for 
+more information.
 
-First the `metadata/saml20-idp-remote.php` to configure the IdP that is used
-by the simpleSAMLphp as SP:
+# Management Clients
+There are two management clients available:
 
-    $metadata['http://localhost/simplesaml/saml2/idp/metadata.php'] = array(
-        'SingleSignOnService' => 'http://localhost/simplesaml/saml2/idp/SSOService.php',
-        'SingleLogoutService' => 'http://localhost/simplesaml/saml2/idp/SingleLogoutService.php',
-        'certFingerprint' => '4bff319a0fa4903e4f6ed52956fb02e1ebec5166',
-    );
+* [Manage Applications](https://github.com/fkooman/html-manage-applications/)
+* [Manage Authorizations](https://github.com/fkooman/html-manage-authorizations/)
 
-You need to modify this (the URLs and the certificate fingerprint) to work with 
-your IdP and possibly the attribute mapping rules. 
-
-## DummyResourceOwner
-For instance in the `DummyResourceOwner` section, the user has this entitlement
-as shown in the snippet below:
-
-    ; Dummy Configuration
-    [DummyResourceOwner]
-    uid           = "admin"
-
-This just sets the user id to `admin` without requiring any authentication.
-This is easy for development purposes only and should NEVER be used for 
-anything else.
+These clients are written in HTML, CSS and JavaScript only and can be hosted on 
+any (static) web server. See the accompanying READMEs for more information.
+For your convienience they are hosted on 
+[https://www.php-oauth.net](https://www.php-oauth.net)` so you do not need to 
+setup the applications yourself and can immediately use the hosted versions. 
+Just specify the endpoint to your Authorization Server to get started. They 
+also work with the Docker image, you can then use 
+`https://localhost/php-oauth-as` as the URL to connect to.
 
 # Resource Servers
 If you are writing a resource server (RS) an API is available to verify the 
 `Bearer` token you receive from the client. Currently a draft specification
-(draft-richer-oauth-introspection) is implemented to support this.
+`draft-richer-oauth-introspection` is implemented to support this.
 
 An example, the RS gets the following `Authorization` header from the client:
 
-    Authorization: Bearer eeae9c3366af8cb7acb74dd5635c44e6
+    Authorization: Bearer 40da7666a9f76b4b6b87969a7cc06421
 
 Now in order to verify it, the RS can send a request to the OAuth service:
 
-    $ curl http://localhost/php-oauth-as/introspect.php?token=eeae9c3366af8cb7acb74dd5635c44e6
-
-If the token is valid, a response (formatted here for display purposes) will be 
-given back to the RS:
-
+    $ curl -k -s https://localhost/php-oauth-as/introspect.php?token=40da7666a9f76b4b6b87969a7cc06421 | python -mjson.tool
     {
-        "active": true, 
-        "client_id": "testclient", 
-        "exp": 2366377846, 
-        "iat": 1366376612, 
-        "scope": "foo bar", 
-        "sub": "fkooman", 
+        "active": true,
+        "client_id": "2352ea44-612d-448b-be10-6e29562e5130",
+        "exp": 1409564548,
+        "iat": 1409560948,
+        "scope": "http://php-oauth.net/scope/manage",
+        "sub": "admin",
+        "token_type": "bearer",
         "x-entitlement": [
-            "urn:x-foo:service:access", 
-            "urn:x-bar:privilege:admin"
+            "http://php-oauth.net/entitlement/manage"
         ]
     }
-
+    
 The RS can now figure out more about the resource owner. If you provide an 
 invalid access token, the following response is returned:
 
