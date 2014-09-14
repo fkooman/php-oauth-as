@@ -96,6 +96,9 @@ This is the Apache configuration you use for development. Place it in
     Alias /php-oauth-as /var/www/php-oauth-as/web
 
     <Directory /var/www/php-oauth-as/web>
+        AllowOverride None
+        Options FollowSymLinks
+
         <IfModule mod_authz_core.c>
           # Apache 2.4
           Require local
@@ -115,18 +118,17 @@ This is the Apache configuration you use for development. Place it in
             Header set Access-Control-Allow-Methods "POST, PUT, GET, DELETE, OPTIONS"
         </FilesMatch>
 
+        <FilesMatch "authorize.php">
+            # CSP: https://developer.mozilla.org/en-US/docs/Security/CSP
+            Header set Content-Security-Policy "default-src 'self'"
+
+            # X-Frame-Options: https://developer.mozilla.org/en-US/docs/HTTP/X-Frame-Options
+            Header set X-Frame-Options DENY
+        </FilesMatch>
+
         RewriteEngine On
         RewriteCond %{HTTP:Authorization} ^(.+)$
         RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
-        AllowOverride None
-        Options FollowSymLinks
-
-        # CSP: https://developer.mozilla.org/en-US/docs/Security/CSP
-        Header set Content-Security-Policy "default-src 'self'"
-
-        # X-Frame-Options: https://developer.mozilla.org/en-US/docs/HTTP/X-Frame-Options
-        Header set X-Frame-Options DENY
 
         # HSTS: https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security
         #Header set Strict-Transport-Security max-age=604800

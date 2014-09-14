@@ -35,7 +35,7 @@ try {
     // internal server error, inform resource owner through browser
     $response = new Response(500);
     $loader = new Twig_Loader_Filesystem(
-        dirname(__DIR__) . DIRECTORY_SEPARATOR . "views"
+        dirname(__DIR__) . "/views"
     );
     $twig = new Twig_Environment($loader);
     $output = $twig->render(

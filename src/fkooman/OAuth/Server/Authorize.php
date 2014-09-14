@@ -65,7 +65,7 @@ class Authorize
                     $result = $this->handleAuthorize($this->resourceOwner, $request->getQueryParameters());
                     if (AuthorizeResult::ASK_APPROVAL === $result->getAction()) {
                         $loader = new Twig_Loader_Filesystem(
-                            dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . "views"
+                            dirname(dirname(dirname(dirname(__DIR__)))) . "/views"
                         );
                         $twig = new Twig_Environment($loader);
 
@@ -147,7 +147,7 @@ class Authorize
             // tell resource owner about the error (through browser)
             $response->setStatusCode(400);
             $loader = new Twig_Loader_Filesystem(
-                dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . "views"
+                dirname(dirname(dirname(dirname(__DIR__)))) . "/views"
             );
             $twig = new Twig_Environment($loader);
             $output = $twig->render(
