@@ -4,24 +4,24 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9b17d23b97405415c804946f7700f81d",
+    "hash": "f8ae222830870a57c3eda7050a633e80",
     "packages": [
         {
             "name": "fkooman/config",
-            "version": "0.3.1",
+            "version": "0.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-config.git",
-                "reference": "d3ff8c2be0bcf3abbdaf6a146cf8017dfaedea89"
+                "reference": "f2d34bc367f19c3315c41193d8029588c2d68538"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-config/zipball/d3ff8c2be0bcf3abbdaf6a146cf8017dfaedea89",
-                "reference": "d3ff8c2be0bcf3abbdaf6a146cf8017dfaedea89",
+                "url": "https://api.github.com/repos/fkooman/php-lib-config/zipball/f2d34bc367f19c3315c41193d8029588c2d68538",
+                "reference": "f2d34bc367f19c3315c41193d8029588c2d68538",
                 "shasum": ""
             },
             "require": {
-                "fkooman/json": "0.4.*",
+                "fkooman/json": "~0.5.1",
                 "php": ">=5.3.3",
                 "symfony/yaml": "~2.3"
             },
@@ -43,20 +43,20 @@
                 }
             ],
             "description": "PHP library to handle YAML, INI and JSON configuration files",
-            "time": "2014-08-15 12:19:12"
+            "time": "2014-09-16 11:21:12"
         },
         {
             "name": "fkooman/json",
-            "version": "0.4.1",
+            "version": "0.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-json.git",
-                "reference": "f657ee01e03c9cf472bce07abe020ae721025f16"
+                "reference": "b07e3e4166e14ff41ac23f917285fb4061c21ad3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-json/zipball/f657ee01e03c9cf472bce07abe020ae721025f16",
-                "reference": "f657ee01e03c9cf472bce07abe020ae721025f16",
+                "url": "https://api.github.com/repos/fkooman/php-lib-json/zipball/b07e3e4166e14ff41ac23f917285fb4061c21ad3",
+                "reference": "b07e3e4166e14ff41ac23f917285fb4061c21ad3",
                 "shasum": ""
             },
             "require": {
@@ -80,7 +80,7 @@
                 }
             ],
             "description": "PHP library to encode and decode JSON",
-            "time": "2014-08-31 09:05:32"
+            "time": "2014-09-16 11:16:29"
         },
         {
             "name": "fkooman/oauth-common",
@@ -121,20 +121,20 @@
         },
         {
             "name": "fkooman/rest",
-            "version": "0.4.0",
+            "version": "0.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "179d88d3f3b13d43c82a930bf889ebebf2f3634d"
+                "reference": "bcf05eb275a79fff5e64f014304b1fb6c8a8d6ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/179d88d3f3b13d43c82a930bf889ebebf2f3634d",
-                "reference": "179d88d3f3b13d43c82a930bf889ebebf2f3634d",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/bcf05eb275a79fff5e64f014304b1fb6c8a8d6ba",
+                "reference": "bcf05eb275a79fff5e64f014304b1fb6c8a8d6ba",
                 "shasum": ""
             },
             "require": {
-                "fkooman/json": "0.4.*",
+                "fkooman/json": "~0.5.1",
                 "php": ">=5.3.3"
             },
             "type": "library",
@@ -156,7 +156,7 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2014-08-16 08:57:59"
+            "time": "2014-09-16 11:22:24"
         },
         {
             "name": "rhumsaa/uuid",

@@ -271,18 +271,20 @@ class PdoStorage
     {
         $result = $this->getResourceOwner($resourceOwner->getId());
         if (false === $result) {
+            $j = new Json();
             $stmt = $this->pdo->prepare("INSERT INTO resource_owner (id, entitlement, ext) VALUES(:id, :entitlement, :ext)");
             $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
-            $stmt->bindValue(":entitlement", Json::encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
-            $stmt->bindValue(":ext", Json::encode($resourceOwner->getExt()), PDO::PARAM_STR);
+            $stmt->bindValue(":entitlement", $j->encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
+            $stmt->bindValue(":ext", $j->encode($resourceOwner->getExt()), PDO::PARAM_STR);
             $stmt->execute();
 
             return 1 === $stmt->rowCount();
         } else {
+            $j = new Json();
             $stmt = $this->pdo->prepare("UPDATE resource_owner SET entitlement = :entitlement, ext = :ext WHERE id = :id");
             $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
-            $stmt->bindValue(":entitlement", Json::encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
-            $stmt->bindValue(":ext", Json::encode($resourceOwner->getExt()), PDO::PARAM_STR);
+            $stmt->bindValue(":entitlement", $j->encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
+            $stmt->bindValue(":ext", $j->encode($resourceOwner->getExt()), PDO::PARAM_STR);
             $stmt->execute();
 
             return 1 === $stmt->rowCount();

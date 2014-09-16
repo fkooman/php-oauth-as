@@ -24,6 +24,9 @@ use fkooman\Json\Json;
 
 class TokenIntrospectionTest extends OAuthHelper
 {
+    /** @var fkooman\Json\Json */
+    private $j;
+
     public function setUp()
     {
         parent::setUp();
@@ -47,6 +50,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $storage->storeAccessToken("foo", time(), "testclient", "fkooman", "foo bar", 1234);
         $storage->storeAccessToken("bar", time(), "testclient", "frko", "a b c", 1234);
 
+        $this->j = new Json();
     }
 
     public function testGetTokenIntrospection()
@@ -55,7 +59,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->config, null);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":\["urn:x-foo:service:access","urn:x-bar:privilege:admin"\]}|', Json::encode($response->getContent()));
+        $this->assertRegexp('|{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":\["urn:x-foo:service:access","urn:x-bar:privilege:admin"\]}|', $this->j->encode($response->getContent()));
     }
 
     public function testPostTokenIntrospection()
@@ -65,7 +69,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->config, null);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":\["urn:x-foo:service:access","urn:x-bar:privilege:admin"\]}', Json::encode($response->getContent()));
+        $this->assertRegexp('{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":\["urn:x-foo:service:access","urn:x-bar:privilege:admin"\]}', $this->j->encode($response->getContent()));
     }
 
     public function testPostTokenIntrospectionNoEntitlement()
@@ -75,7 +79,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->config, null);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"a b c","client_id":"testclient","sub":"frko","token_type":"bearer"}|', Json::encode($response->getContent()));
+        $this->assertRegexp('|{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"a b c","client_id":"testclient","sub":"frko","token_type":"bearer"}|', $this->j->encode($response->getContent()));
     }
 
     public function testMissingGetTokenIntrospection()
@@ -84,7 +88,7 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->config, null);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('{"active":false}', Json::encode($response->getContent()));
+        $this->assertEquals('{"active":false}', $this->j->encode($response->getContent()));
     }
 
     public function testUnsupportedMethod()
@@ -93,6 +97,6 @@ class TokenIntrospectionTest extends OAuthHelper
         $t = new TokenIntrospection($this->config, null);
         $response = $t->handleRequest($h);
         $this->assertEquals(405, $response->getStatusCode());
-        $this->assertEquals('{"error":"method_not_allowed","error_description":"invalid request method"}', Json::encode($response->getContent()));
+        $this->assertEquals('{"error":"method_not_allowed","error_description":"invalid request method"}', $this->j->encode($response->getContent()));
     }
 }

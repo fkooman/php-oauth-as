@@ -18,7 +18,6 @@
 namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
-use fkooman\Json\Json;
 use fkooman\OAuth\Common\Scope;
 use fkooman\Http\Request;
 use fkooman\Http\JsonResponse;

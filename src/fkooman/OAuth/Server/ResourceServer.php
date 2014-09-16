@@ -62,8 +62,9 @@ class ResourceServer
         $this->resourceOwnerId = $token['resource_owner_id'];
         $this->grantedScope = $token['scope'];
         $resourceOwner = $this->storage->getResourceOwner($token['resource_owner_id']);
-        $this->resourceOwnerEntitlement = Json::decode($resourceOwner['entitlement']);
-        $this->resourceOwnerExt = Json::decode($resourceOwner['ext']);
+        $j = new Json();
+        $this->resourceOwnerEntitlement = $j->decode($resourceOwner['entitlement']);
+        $this->resourceOwnerExt = $j->decode($resourceOwner['ext']);
     }
 
     public function setEntitlementEnforcement($enforce = true)

@@ -60,7 +60,8 @@ class Api
                 "/authorizations/",
                 function () use ($request, $storage, $rs) {
                     $rs->requireScope("http://php-oauth.net/scope/authorize");
-                    $data = Json::decode($request->getContent());
+                    $j = new Json();
+                    $data = $j->decode($request->getContent());
                     if (null === $data || !is_array($data) || !array_key_exists("client_id", $data) || !array_key_exists("scope", $data)) {
                         throw new ApiException("invalid_request", "missing required parameters");
                     }
@@ -199,7 +200,8 @@ class Api
                     $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     try {
-                        $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
+                        $j = new Json();
+                        $client = ClientRegistration::fromArray($j->decode($request->getContent()));
                         $data = $client->getClientAsArray();
                         // check to see if an application with this id already exists
                         if (false === $storage->getClient($data['id'])) {
@@ -227,7 +229,8 @@ class Api
                     $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     try {
-                        $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
+                        $j = new Json();
+                        $client = ClientRegistration::fromArray($j->decode($request->getContent()));
                         $data = $client->getClientAsArray();
                         if ($data['id'] !== $id) {
                             throw new ApiException("invalid_request", "resource does not match client id value");

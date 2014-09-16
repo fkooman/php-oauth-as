@@ -19,7 +19,7 @@ namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
 use fkooman\Json\Json;
-use fkooman\Json\JsonException;
+use fkooman\Json\Exception\JsonException;
 use RuntimeException;
 
 use fkooman\SimpleAuth\SimpleAuth;
@@ -60,7 +60,8 @@ class SimpleAuthResourceOwner implements IResourceOwner
     {
         $entitlement = array();
         try {
-            $entitlement = Json::decodeFromFile($this->config->l('entitlementsFile'));
+            $j = new Json();
+            $entitlement = $j->decodeFile($this->config->l('entitlementsFile'));
         } catch (RuntimeException $e) {
             // problem with reading the entitlement file
             return array();

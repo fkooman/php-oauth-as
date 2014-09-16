@@ -16,7 +16,7 @@ try {
             throw new Exception("ERROR: please specify file with client registration information");
     }
 
-    $registration = Json::decodeFromFile($argv[1]);
+    $registration = Json::decodeFile($argv[1]);
 
     foreach ($registration as $r) {
         // first load it in ClientRegistration object to check it...
