@@ -121,16 +121,16 @@
         },
         {
             "name": "fkooman/rest",
-            "version": "0.4.3",
+            "version": "0.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "bcf05eb275a79fff5e64f014304b1fb6c8a8d6ba"
+                "reference": "cac30e0637e03dd17304d37bfdcd58746dc82f80"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/bcf05eb275a79fff5e64f014304b1fb6c8a8d6ba",
-                "reference": "bcf05eb275a79fff5e64f014304b1fb6c8a8d6ba",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/cac30e0637e03dd17304d37bfdcd58746dc82f80",
+                "reference": "cac30e0637e03dd17304d37bfdcd58746dc82f80",
                 "shasum": ""
             },
             "require": {
@@ -156,7 +156,7 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2014-09-16 11:22:24"
+            "time": "2014-09-20 20:25:52"
         },
         {
             "name": "rhumsaa/uuid",
