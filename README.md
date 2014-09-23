@@ -112,10 +112,16 @@ This is the Apache configuration you use for development. Place it in
         </IfModule>
         
         # CORS
-        <FilesMatch "api.php|introspect.php">
+        <FilesMatch "api.php">
             Header set Access-Control-Allow-Origin "*"
             Header set Access-Control-Allow-Headers "Authorization, Content-Type"
             Header set Access-Control-Allow-Methods "POST, PUT, GET, DELETE, OPTIONS"
+        </FilesMatch>
+
+        <FilesMatch "introspect.php">
+            Header set Access-Control-Allow-Origin "*"
+            Header set Access-Control-Allow-Headers "Authorization"
+            Header set Access-Control-Allow-Methods "GET, OPTIONS"
         </FilesMatch>
 
         <FilesMatch "authorize.php">
