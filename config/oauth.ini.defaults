@@ -18,6 +18,10 @@ accessTokenExpiry = 3600
 ;identifiers you want to give certain entitlements
 entitlementsFile = "/etc/php-oauth-as/entitlements.json"
 
+; Allow remoteStorage (http://remotestorage.io) clients to automatically
+; connect without registration
+allowRemoteStorageClients = false 
+
 [PdoStorage]
 dsn = "sqlite:/var/lib/php-oauth-as/db.sqlite"
 ;dsn = "mysql:host=localhost;dbname=oauth"

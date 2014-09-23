@@ -184,7 +184,30 @@ class Authorize
 
             $client = $this->storage->getClient($clientId);
             if (false === $client) {
-                throw new ResourceOwnerException('client not registered');
+                if ($this->config->getValue('allowRemoteStorageClients', false, false)) {
+                    // dynamic registration, validate parameters
+                    if ($clientId !== $redirectUri) {
+                        // clientId and redirectUri must match
+                        throw new ResourceOwnerException("client_id and redirect_uri must be the same for remoteStorage clients");
+                    }
+                    if ("token" !== $responseType) {
+                        throw new ResourceOwnerException("response_type must be token for remoteStorage clients");
+                    }
+                    $clientRegistration = ClientRegistration::fromArray(
+                        array(
+                            'id' => $clientId,
+                            'secret' => null,
+                            'type' => 'user_agent_based_application',
+                            'redirect_uri' => $redirectUri,
+                            'name' => $clientId,
+                            'allowed_scope' => $scope->toString()
+                        )
+                    );
+                    $this->storage->addClient($clientRegistration->getClientAsArray());
+                    $client = $this->storage->getClient($clientId);
+                } else {
+                    throw new ResourceOwnerException('client not registered');
+                }
             }
 
             if (null !== $redirectUri) {
