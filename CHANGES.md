@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6
+- require `client_id` and `redirect_uri` to have the same host for
+  remoteStorage clients
+
 ## 0.1.5
 - fix the registration script
 - do not require `client_id` and `redirect_uri` to match for remoteStorage 
