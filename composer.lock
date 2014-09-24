@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f8ae222830870a57c3eda7050a633e80",
+    "hash": "78a7fecc9645ed4b0998c7885578db4c",
     "packages": [
         {
             "name": "fkooman/config",
@@ -121,16 +121,16 @@
         },
         {
             "name": "fkooman/rest",
-            "version": "0.4.5",
+            "version": "0.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "cac30e0637e03dd17304d37bfdcd58746dc82f80"
+                "reference": "28df6c3752bb2d1313f1ac03bbd9f9402258783d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/cac30e0637e03dd17304d37bfdcd58746dc82f80",
-                "reference": "cac30e0637e03dd17304d37bfdcd58746dc82f80",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/28df6c3752bb2d1313f1ac03bbd9f9402258783d",
+                "reference": "28df6c3752bb2d1313f1ac03bbd9f9402258783d",
                 "shasum": ""
             },
             "require": {
@@ -156,7 +156,7 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2014-09-20 20:25:52"
+            "time": "2014-09-23 15:12:21"
         },
         {
             "name": "rhumsaa/uuid",

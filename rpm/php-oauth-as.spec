@@ -2,8 +2,8 @@
 %global github_name      php-oauth-as
 
 Name:       php-oauth-as
-Version:    0.1.4
-Release:    1%{?dist}
+Version:    0.1.5
+Release:    2%{?dist}
 Summary:    OAuth 2.0 Authorization Server written in PHP
 
 Group:      Applications/Internet
@@ -24,7 +24,7 @@ Requires:   php-composer(fkooman/json) >= 0.5.1
 Requires:   php-composer(fkooman/json) < 0.6.0
 Requires:   php-composer(fkooman/config) >= 0.3.3
 Requires:   php-composer(fkooman/config) < 0.4.0
-Requires:   php-composer(fkooman/rest) >= 0.4.5
+Requires:   php-composer(fkooman/rest) >= 0.4.7
 Requires:   php-composer(fkooman/rest) < 0.5.0
 Requires:   php-composer(fkooman/oauth-common) >= 0.5.0
 Requires:   php-composer(fkooman/oauth-common) < 0.6.0
@@ -104,6 +104,9 @@ fi
 %doc README.md agpl-3.0.txt composer.json docs/ config/
 
 %changelog
+* Wed Sep 24 2014 François Kooman <fkooman@tuxed.net> - 0.1.5-1
+- update to 0.1.5
+
 * Mon Sep 22 2014 François Kooman <fkooman@tuxed.net> - 0.1.4-1
 - update to 0.1.4
 
