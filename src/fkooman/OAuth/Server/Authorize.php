@@ -189,6 +189,14 @@ class Authorize
                     if ("token" !== $responseType) {
                         throw new ResourceOwnerException("response_type must be token for remoteStorage clients");
                     }
+                    // the domain of the client_id and redirect_uri MUST be the
+                    // same, this server does not display the redirect_uri by
+                    // default
+                    $cUri = new Uri($clientId);
+                    $rUri = new Uri($redirectUri);
+                    if ($cUri->getHost() !== $rUri->getHost()) {
+                        throw new ResourceOwnerException("client_id host and redirect_uri host must be the same");
+                    }
                     $clientRegistration = ClientRegistration::fromArray(
                         array(
                             'id' => $clientId,
