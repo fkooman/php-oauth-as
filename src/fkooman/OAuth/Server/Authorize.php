@@ -186,10 +186,6 @@ class Authorize
             if (false === $client) {
                 if ($this->config->getValue('allowRemoteStorageClients', false, false)) {
                     // dynamic registration, validate parameters
-                    if ($clientId !== $redirectUri) {
-                        // clientId and redirectUri must match
-                        throw new ResourceOwnerException("client_id and redirect_uri must be the same for remoteStorage clients");
-                    }
                     if ("token" !== $responseType) {
                         throw new ResourceOwnerException("response_type must be token for remoteStorage clients");
                     }
