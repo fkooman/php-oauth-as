@@ -3,7 +3,7 @@
 
 Name:       php-oauth-as
 Version:    0.1.5
-Release:    2%{?dist}
+Release:    1%{?dist}
 Summary:    OAuth 2.0 Authorization Server written in PHP
 
 Group:      Applications/Internet
