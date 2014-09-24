@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.5
+- fix the registration script
+- do not require `client_id` and `redirect_uri` to match for remoteStorage 
+  clients
+
 ## 0.1.4
 - update dependency `fkooman/rest`
 - support dynamic registration for [remoteStorage](http://remotestorage.io) 
