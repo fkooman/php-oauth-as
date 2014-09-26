@@ -28,8 +28,8 @@ RUN sed -i 's/Allow from 127.0.0.1/Allow from All/' /etc/httpd/conf.d/php-simple
 RUN sed -i 's/Allow from ::1//' /etc/httpd/conf.d/php-simple-auth.conf
 
 # Add users to php-simple-auth
-RUN php-simple-auth-add-user /etc/php-simple-auth/users.json admin adm1n
-RUN php-simple-auth-add-user /etc/php-simple-auth/users.json fkooman foobar
+RUN php-simple-auth-add-user admin adm1n
+RUN php-simple-auth-add-user fkooman foobar
 
 USER apache
 
