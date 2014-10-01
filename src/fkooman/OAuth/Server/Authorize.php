@@ -23,6 +23,7 @@ use fkooman\OAuth\Common\Exception\ScopeException;
 use fkooman\Http\Request;
 use fkooman\Http\Response;
 use fkooman\Http\Uri;
+use fkooman\Http\UriException;
 use fkooman\OAuth\Server\Exception\ClientException;
 use fkooman\OAuth\Server\Exception\ResourceOwnerException;
 use Exception;
@@ -185,18 +186,28 @@ class Authorize
             $client = $this->storage->getClient($clientId);
             if (false === $client) {
                 if ($this->config->getValue('allowRemoteStorageClients', false, false)) {
-                    // dynamic registration, validate parameters
+                    // first we need to figure out of the authorize request is
+                    // coming from remoteStorage client, this is hard... if the
+                    // client_id and the redirect_uri are both set and both a
+                    // URI and have the same domain, we assume it is a
+                    // new remoteStorage client
+                    try {
+                        $clientIdUri = new Uri($clientId);
+                        $redirectUri = new Uri($redirectUri);
+                        if ($clientIdUri->getHost() !== $redirectUri->getHost()) {
+                            // client_id host and redirect_uri do not have the same host, we are done
+                            throw new ResourceOwnerException('client not registered');
+                        }
+                    } catch (UriException $e) {
+                        // client_id or redirect_uri is not a URI, so we are done again
+                        throw new ResourceOwnerException('client not registered');
+                    }
+
                     if ("token" !== $responseType) {
-                        throw new ResourceOwnerException("response_type must be token for remoteStorage clients");
+                        // if it is not a token response_type, we are done once more
+                        throw new ResourceOwnerException('client not registered');
                     }
-                    // the domain of the client_id and redirect_uri MUST be the
-                    // same, this server does not display the redirect_uri by
-                    // default
-                    $cUri = new Uri($clientId);
-                    $rUri = new Uri($redirectUri);
-                    if ($cUri->getHost() !== $rUri->getHost()) {
-                        throw new ResourceOwnerException("client_id host and redirect_uri host must be the same");
-                    }
+
                     $clientRegistration = ClientRegistration::fromArray(
                         array(
                             'id' => $clientId,
@@ -223,9 +234,18 @@ class Authorize
             }
 
             // we need to make sure the client can only request the grant types belonging to its profile
-            $allowedClientProfiles = array ( "web_application" => array ("code"),
-                                             "native_application" => array ("token", "code"),
-                                             "user_agent_based_application" => array ("token"));
+            $allowedClientProfiles = array(
+                "web_application" => array(
+                    "code"
+                ),
+                "native_application" => array(
+                    "token",
+                    "code"
+                ),
+                "user_agent_based_application" => array(
+                    "token"
+                )
+            );
 
             if (!in_array($responseType, $allowedClientProfiles[$client['type']])) {
                 throw new ClientException(
