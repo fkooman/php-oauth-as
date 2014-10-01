@@ -24,7 +24,7 @@ Requires:   php-composer(fkooman/json) >= 0.5.1
 Requires:   php-composer(fkooman/json) < 0.6.0
 Requires:   php-composer(fkooman/config) >= 0.3.3
 Requires:   php-composer(fkooman/config) < 0.4.0
-Requires:   php-composer(fkooman/rest) >= 0.4.7
+Requires:   php-composer(fkooman/rest) >= 0.4.9
 Requires:   php-composer(fkooman/rest) < 0.5.0
 Requires:   php-composer(fkooman/oauth-common) >= 0.5.0
 Requires:   php-composer(fkooman/oauth-common) < 0.6.0

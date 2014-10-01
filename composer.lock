@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "78a7fecc9645ed4b0998c7885578db4c",
+    "hash": "b63e08aece442aed32d66b4bf6400bab",
     "packages": [
         {
             "name": "fkooman/config",
@@ -121,16 +121,16 @@
         },
         {
             "name": "fkooman/rest",
-            "version": "0.4.7",
+            "version": "0.4.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "28df6c3752bb2d1313f1ac03bbd9f9402258783d"
+                "reference": "b065e541f72ba1cde3b4b8cf9255dd6a97cd99bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/28df6c3752bb2d1313f1ac03bbd9f9402258783d",
-                "reference": "28df6c3752bb2d1313f1ac03bbd9f9402258783d",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/b065e541f72ba1cde3b4b8cf9255dd6a97cd99bb",
+                "reference": "b065e541f72ba1cde3b4b8cf9255dd6a97cd99bb",
                 "shasum": ""
             },
             "require": {
@@ -156,7 +156,7 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2014-09-23 15:12:21"
+            "time": "2014-09-30 13:33:20"
         },
         {
             "name": "rhumsaa/uuid",
@@ -226,17 +226,17 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.5.4",
+            "version": "v2.5.5",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "01a7695bcfb013d0a15c6757e15aae120342986f"
+                "reference": "b1dbc53593b98c2d694ebf383660ac9134d30b96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/01a7695bcfb013d0a15c6757e15aae120342986f",
-                "reference": "01a7695bcfb013d0a15c6757e15aae120342986f",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/b1dbc53593b98c2d694ebf383660ac9134d30b96",
+                "reference": "b1dbc53593b98c2d694ebf383660ac9134d30b96",
                 "shasum": ""
             },
             "require": {
@@ -269,7 +269,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2014-08-31 03:22:04"
+            "time": "2014-09-22 09:14:18"
         },
         {
             "name": "twig/twig",
