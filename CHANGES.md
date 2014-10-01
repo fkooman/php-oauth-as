@@ -1,6 +1,9 @@
 # Changelog
 
 ## 0.1.6
+- better error handling for unregistered clients that are not 
+  remoteStorage clients when dynamic registration for remoteStorage
+  clients is enabled
 - require `client_id` and `redirect_uri` to have the same host for
   remoteStorage clients
 
