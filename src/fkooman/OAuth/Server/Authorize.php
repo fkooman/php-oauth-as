@@ -192,9 +192,9 @@ class Authorize
                     // URI and have the same domain, we assume it is a
                     // new remoteStorage client
                     try {
-                        $clientIdUri = new Uri($clientId);
-                        $redirectUri = new Uri($redirectUri);
-                        if ($clientIdUri->getHost() !== $redirectUri->getHost()) {
+                        $clientIdAsUri = new Uri($clientId);
+                        $redirectUriAsUri = new Uri($redirectUri);
+                        if ($clientIdAsUri->getHost() !== $redirectUriAsUri->getHost()) {
                             // client_id host and redirect_uri do not have the same host, we are done
                             throw new ResourceOwnerException('client not registered');
                         }
