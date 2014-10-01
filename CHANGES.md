@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.7
+- fix small bug in remoteStorage client dynamic registation
+
 ## 0.1.6
 - better error handling for unregistered clients that are not 
   remoteStorage clients when dynamic registration for remoteStorage
