@@ -32,20 +32,20 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
         if (FALSE === $this->_tmpDb) {
             throw new Exception("unable to generate temporary file for database");
         }
-        $dsn = "sqlite:" . $this->_tmpDb;
+        $dsn = "sqlite:".$this->_tmpDb;
 
         $configArray = array (
             'authenticationMechanism' => 'DummyResourceOwner',
             'DummyResourceOwner' => array (
                 'uid' => "fkooman",
                 'entitlement' => array(
-                    "http://php-oauth.net/entitlement/manage"
-                )
+                    "http://php-oauth.net/entitlement/manage",
+                ),
             ),
             'accessTokenExpiry' => 5,
             'PdoStorage' => array(
-                'dsn' => $dsn
-            )
+                'dsn' => $dsn,
+            ),
         );
         $this->config = new Config($configArray);
 
@@ -62,7 +62,7 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
                   "allowed_scope" => "read",
                   "contact_email" => "foo@example.org",
                   "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
-                  "type" => "user_agent_based_application");
+                  "type" => "user_agent_based_application", );
 
         $wa = array ("id" => "testcodeclient",
                   "name" => "Simple Test Client for Authorization Code Profile",
@@ -72,7 +72,7 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
                   "allowed_scope" => "read write foo bar foobar",
                   "contact_email" => NULL,
                   "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
-                  "type" => "web_application");
+                  "type" => "web_application", );
         $na = array ("id" => "testnativeclient",
                   "name" => "Simple Test Client for Authorization Code Native Profile",
                   "description" => "Client for unit testing",
@@ -81,7 +81,7 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
                   "allowed_scope" => "read",
                   "contact_email" => NULL,
                   "redirect_uri" => "oauth://callback",
-                  "type" => "native_application");
+                  "type" => "native_application", );
 
         $storage->addClient($uaba);
         $storage->addClient($wa);
@@ -97,5 +97,4 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
     {
         $this->assertTrue(true);
     }
-
 }

@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(__DIR__) . "/vendor/autoload.php";
+require_once dirname(__DIR__)."/vendor/autoload.php";
 
 use fkooman\Config\Config;
 use fkooman\OAuth\Server\Authorize;
@@ -25,7 +25,7 @@ use fkooman\Http\IncomingRequest;
 
 try {
     $config = Config::fromIniFile(
-        dirname(__DIR__) . "/config/oauth.ini"
+        dirname(__DIR__)."/config/oauth.ini"
     );
     $authorize = new Authorize($config);
     $request = Request::fromIncomingRequest(new IncomingRequest());
@@ -35,7 +35,7 @@ try {
     // internal server error, inform resource owner through browser
     $response = new Response(500);
     $loader = new Twig_Loader_Filesystem(
-        dirname(__DIR__) . "/views"
+        dirname(__DIR__)."/views"
     );
     $twig = new Twig_Environment($loader);
     $output = $twig->render(
@@ -43,7 +43,7 @@ try {
         array(
             "statusCode" => $response->getStatusCode(),
             "statusReason" => $response->getStatusReason(),
-            "errorMessage" => $e->getMessage()
+            "errorMessage" => $e->getMessage(),
         )
     );
     $response->setContent($output);

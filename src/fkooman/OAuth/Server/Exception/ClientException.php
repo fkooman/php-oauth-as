@@ -52,12 +52,12 @@ class ClientException extends \Exception
     public function getLogMessage($includeTrace = false)
     {
         $client = $this->getClient();
-        $msg = 'Message    : ' . $this->getMessage() . PHP_EOL .
-               'Description: ' . $this->getDescription() . PHP_EOL .
-               'Client     : ' . $client['id'] . PHP_EOL .
-               'State      : ' . $this->getState() . PHP_EOL;
+        $msg = 'Message    : '.$this->getMessage().PHP_EOL.
+               'Description: '.$this->getDescription().PHP_EOL.
+               'Client     : '.$client['id'].PHP_EOL.
+               'State      : '.$this->getState().PHP_EOL;
         if ($includeTrace) {
-            $msg .= 'Trace      : ' . PHP_EOL . $this->getTraceAsString() . PHP_EOL;
+            $msg .= 'Trace      : '.PHP_EOL.$this->getTraceAsString().PHP_EOL;
         }
 
         return $msg;

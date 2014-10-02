@@ -122,5 +122,4 @@ class AuthorizeTest extends OAuthHelper
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals("http://localhost/php-oauth/unit/test.html#error=unsupported_response_type&error_description=response_type+not+supported+by+client+profile", $response->getHeader("Location"));
     }
-
 }

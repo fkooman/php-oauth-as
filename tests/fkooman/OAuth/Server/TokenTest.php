@@ -35,7 +35,7 @@ class TokenTest extends OAuthHelper
         $resourceOwner = array(
             "id" => "fkooman",
             "entitlement" => array(),
-            "ext" => array()
+            "ext" => array(),
         );
         $storage->updateResourceOwner(new MockResourceOwner($resourceOwner));
 

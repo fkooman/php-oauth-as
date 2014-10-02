@@ -47,7 +47,7 @@ class ResourceServer
         }
         // b64token = 1*( ALPHA / DIGIT / "-" / "." / "_" / "~" / "+" / "/" ) *"="
         $b64TokenRegExp = '(?:[[:alpha:][:digit:]-._~+/]+=*)';
-        $result = preg_match('|^Bearer (?P<value>' . $b64TokenRegExp . ')$|', $authorizationHeader, $matches);
+        $result = preg_match('|^Bearer (?P<value>'.$b64TokenRegExp.')$|', $authorizationHeader, $matches);
         if ($result === false || $result === 0) {
             throw new ResourceServerException("invalid_token", "the access token is malformed");
         }

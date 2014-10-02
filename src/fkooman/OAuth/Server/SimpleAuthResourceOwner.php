@@ -21,7 +21,6 @@ use fkooman\Config\Config;
 use fkooman\Json\Json;
 use fkooman\Json\Exception\JsonException;
 use RuntimeException;
-
 use fkooman\SimpleAuth\SimpleAuth;
 use fkooman\OAuth\Server\Exception\SimpleAuthResourceOwnerException;
 
@@ -37,7 +36,7 @@ class SimpleAuthResourceOwner implements IResourceOwner
     {
         $this->config = $config;
 
-        $bPath = $this->config->s('SimpleAuthResourceOwner')->l('simpleAuthPath') . '/vendor/autoload.php';
+        $bPath = $this->config->s('SimpleAuthResourceOwner')->l('simpleAuthPath').'/vendor/autoload.php';
         if (!file_exists($bPath) || !is_file($bPath) || !is_readable($bPath)) {
             throw new SimpleAuthResourceOwnerException("invalid path to php-simple-auth");
         }

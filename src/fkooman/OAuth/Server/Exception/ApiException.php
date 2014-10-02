@@ -48,10 +48,10 @@ class ApiException extends \Exception
 
     public function getLogMessage($includeTrace = false)
     {
-        $msg = 'Message    : ' . $this->getMessage() . PHP_EOL .
-               'Description: ' . $this->getDescription() . PHP_EOL;
+        $msg = 'Message    : '.$this->getMessage().PHP_EOL.
+               'Description: '.$this->getDescription().PHP_EOL;
         if ($includeTrace) {
-            $msg .= 'Trace      : ' . PHP_EOL . $this->getTraceAsString() . PHP_EOL;
+            $msg .= 'Trace      : '.PHP_EOL.$this->getTraceAsString().PHP_EOL;
         }
 
         return $msg;

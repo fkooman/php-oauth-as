@@ -48,7 +48,7 @@ class ClientRegistration
         $requiredFields = array ("id", "secret", "type", "redirect_uri", "name");
         foreach ($requiredFields as $r) {
             if (!array_key_exists($r, $a)) {
-                throw new ClientRegistrationException("not a valid client, '" . $r . "' not set");
+                throw new ClientRegistrationException("not a valid client, '".$r."' not set");
             }
         }
         $c = new static($a['id'], $a['secret'], $a['type'], $a['redirect_uri'], $a['name']);

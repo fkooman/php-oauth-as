@@ -29,7 +29,7 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
             array("foo:bar", null, "user_agent_based_application", "http://www.example.org/cb", "Foo Client"),
             array("foo", "s3cr3t", "native_application", "twitter://app/callback", "Foo Client"),
             array(null, null, "web_application", "http://www.example.org/cb", "Foo Client"),
-            array(null, "s3cr3t", "web_application", "http://www.example.org/cb", "Foo Client")
+            array(null, "s3cr3t", "web_application", "http://www.example.org/cb", "Foo Client"),
         );
     }
 
@@ -105,7 +105,7 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidFromArray($id, $secret, $type, $redirectUri, $name, $allowedScope, $icon, $description, $contactEmail)
     {
-        $c = ClientRegistration::fromArray(array("id" => $id, "secret" => $secret, "type" => $type, "redirect_uri" => $redirectUri, "name" =>$name, "allowed_scope" => $allowedScope, "icon" => $icon, "description" => $description, "contact_email" => $contactEmail));
+        $c = ClientRegistration::fromArray(array("id" => $id, "secret" => $secret, "type" => $type, "redirect_uri" => $redirectUri, "name" => $name, "allowed_scope" => $allowedScope, "icon" => $icon, "description" => $description, "contact_email" => $contactEmail));
         $this->assertEquals($id, $c->getId());
         $this->assertEquals($secret, $c->getSecret());
         $this->assertEquals($type, $c->getType());
@@ -124,7 +124,7 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
     public function testInvalidFromArray($id, $secret, $type, $redirectUri, $name, $allowedScope, $icon, $description, $contactEmail, $exceptionMessage)
     {
         try {
-            $c = ClientRegistration::fromArray(array("id" => $id, "secret" => $secret, "type" => $type, "redirect_uri" => $redirectUri, "name" =>$name, "allowed_scope" => $allowedScope, "icon" => $icon, "description" => $description, "contact_email" => $contactEmail));
+            $c = ClientRegistration::fromArray(array("id" => $id, "secret" => $secret, "type" => $type, "redirect_uri" => $redirectUri, "name" => $name, "allowed_scope" => $allowedScope, "icon" => $icon, "description" => $description, "contact_email" => $contactEmail));
             $this->assertTrue(false);
         } catch (ClientRegistrationException $e) {
             $this->assertEquals($exceptionMessage, $e->getMessage());
@@ -140,5 +140,4 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals("not a valid client, 'id' not set", $e->getMessage());
         }
     }
-
 }

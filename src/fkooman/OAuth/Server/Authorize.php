@@ -45,7 +45,7 @@ class Authorize
     {
         $this->config = $c;
 
-        $authMech = 'fkooman\\OAuth\\Server\\' . $this->config->getValue('authenticationMechanism');
+        $authMech = 'fkooman\\OAuth\\Server\\'.$this->config->getValue('authenticationMechanism');
         $this->resourceOwner = new $authMech($this->config);
         $this->storage = new PdoStorage($this->config);
     }
@@ -66,7 +66,7 @@ class Authorize
                     $result = $this->handleAuthorize($this->resourceOwner, $request->getQueryParameters());
                     if (AuthorizeResult::ASK_APPROVAL === $result->getAction()) {
                         $loader = new Twig_Loader_Filesystem(
-                            dirname(dirname(dirname(dirname(__DIR__)))) . "/views"
+                            dirname(dirname(dirname(dirname(__DIR__))))."/views"
                         );
                         $twig = new Twig_Environment($loader);
 
@@ -88,7 +88,7 @@ class Authorize
                                 'clientId' => $result->getClient()->getId(),
                                 'clientDescription' => $result->getClient()->getDescription(),
                                 'clientIcon' => $result->getClient()->getIcon(),
-                                'redirectUri' => $redirectUri->getUri()
+                                'redirectUri' => $redirectUri->getUri(),
                             )
                         );
                         $response->setContent($output);
@@ -143,12 +143,12 @@ class Authorize
                 $parameters['state'] = $e->getState();
             }
             $response->setStatusCode(302);
-            $response->setHeader("Location", $client['redirect_uri'] . $separator . http_build_query($parameters));
+            $response->setHeader("Location", $client['redirect_uri'].$separator.http_build_query($parameters));
         } catch (ResourceOwnerException $e) {
             // tell resource owner about the error (through browser)
             $response->setStatusCode(400);
             $loader = new Twig_Loader_Filesystem(
-                dirname(dirname(dirname(dirname(__DIR__)))) . "/views"
+                dirname(dirname(dirname(dirname(__DIR__))))."/views"
             );
             $twig = new Twig_Environment($loader);
             $output = $twig->render(
@@ -156,7 +156,7 @@ class Authorize
                 array(
                     "statusCode" => $response->getStatusCode(),
                     "statusReason" => $response->getStatusReason(),
-                    "errorMessage" => $e->getMessage()
+                    "errorMessage" => $e->getMessage(),
                 )
             );
             $response->setContent($output);
@@ -215,7 +215,7 @@ class Authorize
                             'type' => 'user_agent_based_application',
                             'redirect_uri' => $redirectUri,
                             'name' => $clientId,
-                            'allowed_scope' => $scope->toString()
+                            'allowed_scope' => $scope->toString(),
                         )
                     );
                     $this->storage->addClient($clientRegistration->getClientAsArray());
@@ -236,15 +236,15 @@ class Authorize
             // we need to make sure the client can only request the grant types belonging to its profile
             $allowedClientProfiles = array(
                 "web_application" => array(
-                    "code"
+                    "code",
                 ),
                 "native_application" => array(
                     "token",
-                    "code"
+                    "code",
                 ),
                 "user_agent_based_application" => array(
-                    "token"
-                )
+                    "token",
+                ),
             );
 
             if (!in_array($responseType, $allowedClientProfiles[$client['type']])) {
@@ -290,7 +290,7 @@ class Authorize
                     $token = array(
                         "access_token" => $accessToken,
                         "expires_in" => $this->config->getValue('accessTokenExpiry'),
-                        "token_type" => "bearer"
+                        "token_type" => "bearer",
                     );
                     $s = $scope->getScope();
                     if (!empty($s)) {
@@ -300,7 +300,7 @@ class Authorize
                         $token += array ("state" => $state);
                     }
                     $ar = new AuthorizeResult(AuthorizeResult::REDIRECT);
-                    $ar->setRedirectUri(new Uri($client['redirect_uri'] . "#" . http_build_query($token)));
+                    $ar->setRedirectUri(new Uri($client['redirect_uri']."#".http_build_query($token)));
 
                     return $ar;
                 } else {
@@ -320,7 +320,7 @@ class Authorize
                     }
                     $ar = new AuthorizeResult(AuthorizeResult::REDIRECT);
                     $separator = (false === strpos($client['redirect_uri'], "?")) ? "?" : "&";
-                    $ar->setRedirectUri(new Uri($client['redirect_uri'] . $separator . http_build_query($token)));
+                    $ar->setRedirectUri(new Uri($client['redirect_uri'].$separator.http_build_query($token)));
 
                     return $ar;
                 }

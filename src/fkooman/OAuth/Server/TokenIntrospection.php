@@ -56,7 +56,7 @@ class TokenIntrospection
             $response->setContent(
                 array(
                     "error" => $e->getMessage(),
-                    "error_description" => $e->getDescription()
+                    "error_description" => $e->getDescription(),
                 )
             );
             if ("method_not_allowed" === $e->getMessage()) {

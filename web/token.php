@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(__DIR__) . "/vendor/autoload.php";
+require_once dirname(__DIR__)."/vendor/autoload.php";
 
 use fkooman\Config\Config;
 use fkooman\OAuth\Server\Token;
@@ -25,7 +25,7 @@ use fkooman\Http\IncomingRequest;
 
 try {
     $config = Config::fromIniFile(
-        dirname(__DIR__) . "/config/oauth.ini"
+        dirname(__DIR__)."/config/oauth.ini"
     );
     $token = new Token($config);
     $request = Request::fromIncomingRequest(new IncomingRequest());
@@ -35,7 +35,7 @@ try {
     $response = new JsonResponse(500);
     $response->setContent(
         array(
-            "error" => $e->getMessage()
+            "error" => $e->getMessage(),
         )
     );
     $response->sendResponse();

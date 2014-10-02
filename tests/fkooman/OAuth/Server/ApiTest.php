@@ -20,7 +20,6 @@ namespace fkooman\OAuth\Server;
 require_once 'OAuthHelper.php';
 
 use fkooman\Json\Json;
-
 use fkooman\Http\Request as HttpRequest;
 
 class ApiTest extends OAuthHelper
@@ -41,7 +40,7 @@ class ApiTest extends OAuthHelper
         $resourceOwner = array(
             "id" => "fkooman",
             "entitlement" => array(),
-            "ext" => array()
+            "ext" => array(),
         );
         $storage->updateResourceOwner(new MockResourceOwner($resourceOwner));
 
@@ -119,5 +118,4 @@ class ApiTest extends OAuthHelper
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($this->j->decode('{"ok":true}'), $response->getContent());
     }
-
 }

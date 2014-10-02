@@ -281,7 +281,7 @@ class Api
             $response->setContent(
                 array(
                     "error" => $e->getMessage(),
-                    "error_description" => $e->getDescription()
+                    "error_description" => $e->getDescription(),
                 )
             );
 
@@ -291,7 +291,7 @@ class Api
             $response->setContent(
                 array(
                     "error" => $e->getMessage(),
-                    "error_description" => $e->getDescription()
+                    "error_description" => $e->getDescription(),
                 )
             );
 

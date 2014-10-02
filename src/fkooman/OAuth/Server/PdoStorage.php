@@ -418,7 +418,7 @@ class PdoStorage
                 patch_number INTEGER NOT NULL,
                 description TEXT NOT NULL,
                 PRIMARY KEY (patch_number)
-            )"
+            )",
         );
 
         foreach ($queries as $query) {
@@ -433,5 +433,4 @@ class PdoStorage
         $this->pdo->query("DELETE FROM authorization_codes");
         $this->pdo->query("DELETE FROM db_changelog");
     }
-
 }

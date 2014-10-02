@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(__DIR__) . "/vendor/autoload.php";
+require_once dirname(__DIR__)."/vendor/autoload.php";
 
 use fkooman\Config\Config;
 use fkooman\OAuth\Server\Api;
@@ -26,7 +26,7 @@ use fkooman\OAuth\Server\PdoStorage;
 
 try {
     $config = Config::fromIniFile(
-        dirname(__DIR__) . "/config/oauth.ini"
+        dirname(__DIR__)."/config/oauth.ini"
     );
     $api = new Api(new PdoStorage($config));
     $request = Request::fromIncomingRequest(new IncomingRequest());
@@ -37,7 +37,7 @@ try {
     $response->setContent(
         array(
             "error" => "internal_server_error",
-            "error_description" => $e->getMessage()
+            "error_description" => $e->getMessage(),
         )
     );
     $response->sendResponse();

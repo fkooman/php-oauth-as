@@ -36,12 +36,12 @@ class TokenIntrospectionTest extends OAuthHelper
         $resourceOwnerOne = array(
             "id" => "fkooman",
             "entitlement" => array ("urn:x-foo:service:access", "urn:x-bar:privilege:admin"),
-            "ext" => array()
+            "ext" => array(),
         );
         $resourceOwnerTwo = array(
             "id" => "frko",
             "entitlement" => array (),
-            "ext" => array()
+            "ext" => array(),
         );
 
         $storage->updateResourceOwner(new MockResourceOwner($resourceOwnerOne));

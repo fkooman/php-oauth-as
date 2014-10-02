@@ -32,7 +32,7 @@ class SspResourceOwner implements IResourceOwner
     public function __construct(Config $c)
     {
         $this->config = $c;
-        $sspPath = $this->config->s('SspResourceOwner')->l('sspPath') . '/lib/_autoload.php';
+        $sspPath = $this->config->s('SspResourceOwner')->l('sspPath').'/lib/_autoload.php';
         if (!file_exists($sspPath) || !is_file($sspPath) || !is_readable($sspPath)) {
             throw new SspResourceOwnerException("invalid path to simpleSAMLphp");
         }
@@ -101,7 +101,7 @@ class SspResourceOwner implements IResourceOwner
         if (null === $resourceOwnerIdAttribute) {
             $this->ssp->requireAuth(
                 array(
-                    "saml:NameIDPolicy" => "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
+                    "saml:NameIDPolicy" => "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
                 )
             );
         } else {
