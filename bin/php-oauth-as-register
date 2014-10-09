@@ -1,19 +1,18 @@
 #!/usr/bin/php
 <?php
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use fkooman\Config\Config;
 use fkooman\Json\Json;
-
 use fkooman\OAuth\Server\PdoStorage;
 use fkooman\OAuth\Server\ClientRegistration;
 
 try {
-    $config = Config::fromIniFile(dirname(__DIR__) . "/config/oauth.ini");
+    $config = Config::fromIniFile(dirname(__DIR__)."/config/oauth.ini");
     $storage = new PdoStorage($config);
 
     if ($argc !== 2) {
-            throw new Exception("ERROR: please specify file with client registration information");
+        throw new Exception("ERROR: please specify file with client registration information");
     }
 
     $json = new Json();
@@ -24,11 +23,11 @@ try {
         $cr = ClientRegistration::fromArray($r);
         if (false === $storage->getClient($cr->getId())) {
             // does not exist yet, install
-            echo "Adding '" . $cr->getName() . "'..." . PHP_EOL;
+            echo "Adding '".$cr->getName()."'...".PHP_EOL;
             $storage->addClient($cr->getClientAsArray());
         }
     }
 } catch (Exception $e) {
-    echo $e->getMessage() . PHP_EOL;
+    echo $e->getMessage().PHP_EOL;
     exit(1);
 }
