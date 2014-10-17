@@ -53,12 +53,11 @@ class Api
             $storage = $this->storage; // FIXME: can this be avoided??
             $rs = $this->resourceServer; // FIXME: can this be avoided??
 
-            $service = new Service($request);
+            $service = new Service();
 
-            $service->match(
-                "POST",
+            $service->post(
                 "/authorizations/",
-                function () use ($request, $storage, $rs) {
+                function (Request $request) use ($storage, $rs) {
                     $rs->requireScope("http://php-oauth.net/scope/authorize");
                     $j = new Json();
                     $data = $j->decode($request->getContent());
@@ -100,10 +99,9 @@ class Api
                 }
             );
 
-            $service->match(
-                "GET",
+            $service->get(
                 "/authorizations/:id",
-                function ($id) use ($request, $storage, $rs) {
+                function (Request $request, $id) use ($storage, $rs) {
                     $rs->requireScope("http://php-oauth.net/scope/authorize");
                     $data = $storage->getApprovalByResourceOwnerId($id, $rs->getResourceOwnerId());
                     if (false === $data) {
@@ -116,10 +114,9 @@ class Api
                 }
             );
 
-            $service->match(
-                "DELETE",
+            $service->delete(
                 "/authorizations/:id",
-                function ($id) use ($request, $storage, $rs) {
+                function (Request $request, $id) use ($storage, $rs) {
                     $rs->requireScope("http://php-oauth.net/scope/authorize");
                     if (false === $storage->deleteApproval($id, $rs->getResourceOwnerId())) {
                         throw new ApiException("not_found", "the resource you are trying to delete does not exist");
@@ -131,10 +128,9 @@ class Api
                 }
             );
 
-            $service->match(
-                "GET",
+            $service->get(
                 "/authorizations/",
-                function () use ($request, $storage, $rs) {
+                function (Request $request) use ($storage, $rs) {
                     $rs->requireScope("http://php-oauth.net/scope/authorize");
                     $data = $storage->getApprovals($rs->getResourceOwnerId());
 
@@ -145,10 +141,9 @@ class Api
                 }
             );
 
-            $service->match(
-                "GET",
+            $service->get(
                 "/applications/",
-                function () use ($request, $storage, $rs) {
+                function (Request $request) use ($storage, $rs) {
                     $rs->requireScope("http://php-oauth.net/scope/manage");
                     // $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     // do not require entitlement to list clients...
@@ -160,10 +155,9 @@ class Api
                 }
             );
 
-            $service->match(
-                "DELETE",
+            $service->delete(
                 "/applications/:id",
-                function ($id) use ($request, $storage, $rs) {
+                function (Request $request, $id) use ($storage, $rs) {
                     $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     if (false === $storage->deleteClient($id)) {
@@ -176,10 +170,9 @@ class Api
                 }
             );
 
-            $service->match(
-                "GET",
+            $service->get(
                 "/applications/:id",
-                function ($id) use ($request, $storage, $rs) {
+                function (Request $request, $id) use ($storage, $rs) {
                     $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     $data = $storage->getClient($id);
@@ -193,10 +186,9 @@ class Api
                 }
             );
 
-            $service->match(
-                "POST",
+            $service->post(
                 "/applications/",
-                function () use ($request, $storage, $rs) {
+                function (Request $request) use ($storage, $rs) {
                     $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     try {
@@ -222,10 +214,9 @@ class Api
                 }
             );
 
-            $service->match(
-                "PUT",
+            $service->put(
                 "/applications/:id",
-                function ($id) use ($request, $storage, $rs) {
+                function (Request $request, $id) use ($storage, $rs) {
                     $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     try {
@@ -248,10 +239,9 @@ class Api
                 }
             );
 
-            $service->match(
-                "GET",
+            $service->get(
                 "/stats/",
-                function () use ($request, $storage, $rs) {
+                function (Request $request) use ($storage, $rs) {
                     $rs->requireScope("http://php-oauth.net/scope/manage");
                     $rs->requireEntitlement("http://php-oauth.net/entitlement/manage");
                     $data = $storage->getStats();
@@ -263,7 +253,7 @@ class Api
                 }
             );
 
-            return $service->run();
+            return $service->run($request);
         } catch (ResourceServerException $e) {
             $response = new JsonResponse($e->getResponseCode());
             if ("no_token" === $e->getMessage()) {

@@ -19,7 +19,7 @@
         "fkooman/config": "~0.3.3",
         "fkooman/json": "~0.5.1",
         "fkooman/oauth-common": "~0.5.0",
-        "fkooman/rest": "~0.4.9",
+        "fkooman/rest": "~0.5.3",
         "php": ">=5.3.3",
         "rhumsaa/uuid": "~2.7",
         "twig/twig": "~1.15"

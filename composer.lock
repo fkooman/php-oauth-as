@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b63e08aece442aed32d66b4bf6400bab",
+    "hash": "929f076f931f3a7c17bcd2c4fbc4c6d2",
     "packages": [
         {
             "name": "fkooman/config",
@@ -121,27 +121,28 @@
         },
         {
             "name": "fkooman/rest",
-            "version": "0.4.9",
+            "version": "0.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "b065e541f72ba1cde3b4b8cf9255dd6a97cd99bb"
+                "reference": "8c25129cfe127e3f079a0eb817abd9f09e760b74"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/b065e541f72ba1cde3b4b8cf9255dd6a97cd99bb",
-                "reference": "b065e541f72ba1cde3b4b8cf9255dd6a97cd99bb",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/8c25129cfe127e3f079a0eb817abd9f09e760b74",
+                "reference": "8c25129cfe127e3f079a0eb817abd9f09e760b74",
                 "shasum": ""
             },
             "require": {
                 "fkooman/json": "~0.5.1",
+                "ircmaxell/password-compat": "~1.0",
                 "php": ">=5.3.3"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "fkooman\\Http\\": "src/",
-                    "fkooman\\Rest\\": "src/"
+                    "fkooman\\Http": "src/",
+                    "fkooman\\Rest": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -156,7 +157,46 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2014-09-30 13:33:20"
+            "time": "2014-10-17 13:05:11"
+        },
+        {
+            "name": "ircmaxell/password-compat",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ircmaxell/password_compat.git",
+                "reference": "1fc1521b5e9794ea77e4eca30717be9635f1d4f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ircmaxell/password_compat/zipball/1fc1521b5e9794ea77e4eca30717be9635f1d4f4",
+                "reference": "1fc1521b5e9794ea77e4eca30717be9635f1d4f4",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/password.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anthony Ferrara",
+                    "email": "ircmaxell@ircmaxell.com",
+                    "homepage": "http://blog.ircmaxell.com"
+                }
+            ],
+            "description": "A compatibility library for the proposed simplified password hashing algorithm: https://wiki.php.net/rfc/password_hash",
+            "homepage": "https://github.com/ircmaxell/password_compat",
+            "keywords": [
+                "hashing",
+                "password"
+            ],
+            "time": "2013-04-30 19:58:08"
         },
         {
             "name": "rhumsaa/uuid",
@@ -273,16 +313,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.16.0",
+            "version": "v1.16.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Twig.git",
-                "reference": "8ce37115802e257a984a82d38254884085060024"
+                "reference": "42f758d9fe2146d1f0470604fc05ee43580873fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Twig/zipball/8ce37115802e257a984a82d38254884085060024",
-                "reference": "8ce37115802e257a984a82d38254884085060024",
+                "url": "https://api.github.com/repos/fabpot/Twig/zipball/42f758d9fe2146d1f0470604fc05ee43580873fc",
+                "reference": "42f758d9fe2146d1f0470604fc05ee43580873fc",
                 "shasum": ""
             },
             "require": {
@@ -326,7 +366,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2014-07-05 12:19:05"
+            "time": "2014-10-17 12:53:44"
         }
     ],
     "packages-dev": [],
