@@ -18,7 +18,7 @@
 namespace fkooman\OAuth\Server;
 
 use fkooman\OAuth\Common\Scope;
-use fkooman\OAuth\Common\Exception\ScopeException;
+use InvalidArgumentException;
 use fkooman\OAuth\Server\Exception\ClientRegistrationException;
 
 // FIXME: enforce maximum length of fields, match with database!
@@ -165,7 +165,7 @@ class ClientRegistration
     {
         try {
             $s = Scope::fromString($a);
-        } catch (ScopeException $e) {
+        } catch (InvalidArgumentException $e) {
             throw new ClientRegistrationException("scope is invalid");
         }
         $this->client['allowed_scope'] = empty($a) ? null : $a;

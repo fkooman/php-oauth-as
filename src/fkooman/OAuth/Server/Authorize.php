@@ -19,7 +19,7 @@ namespace fkooman\OAuth\Server;
 
 use fkooman\Config\Config;
 use fkooman\OAuth\Common\Scope;
-use fkooman\OAuth\Common\Exception\ScopeException;
+use InvalidArgumentException;
 use fkooman\Http\Request;
 use fkooman\Http\Response;
 use fkooman\Http\Uri;
@@ -325,7 +325,8 @@ class Authorize
                     return $ar;
                 }
             }
-        } catch (ScopeException $e) {
+        } catch (InvalidArgumentException $e) {
+            // FIXME: really weird place to handle scope exceptions?
             throw new ClientException("invalid_scope", "malformed scope", $client, $state);
         }
     }
@@ -362,7 +363,8 @@ class Authorize
             } else {
                 throw new ClientException("access_denied", "not authorized by resource owner", $client, $state);
             }
-        } catch (ScopeException $e) {
+        } catch (InvalidArgumentException $e) {
+            // FIXME: really weird place to handle scope exceptions?
             throw new ClientException("invalid_scope", "malformed scope", $client, $state);
         }
     }

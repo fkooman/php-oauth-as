@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "929f076f931f3a7c17bcd2c4fbc4c6d2",
+    "hash": "df5143a3fcf6f916ac355d2518d923b0",
     "packages": [
         {
             "name": "fkooman/config",
@@ -84,16 +84,16 @@
         },
         {
             "name": "fkooman/oauth-common",
-            "version": "0.5.0",
+            "version": "0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-oauth-lib-common.git",
-                "reference": "43f92e264b2facf1065feb5af671b96a53366132"
+                "reference": "ee9ba0014e5e99bd2a08dcf3eeb531492386b010"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-oauth-lib-common/zipball/43f92e264b2facf1065feb5af671b96a53366132",
-                "reference": "43f92e264b2facf1065feb5af671b96a53366132",
+                "url": "https://api.github.com/repos/fkooman/php-oauth-lib-common/zipball/ee9ba0014e5e99bd2a08dcf3eeb531492386b010",
+                "reference": "ee9ba0014e5e99bd2a08dcf3eeb531492386b010",
                 "shasum": ""
             },
             "require": {
@@ -117,24 +117,26 @@
                 }
             ],
             "description": "PHP library for common OAuth classes.",
-            "time": "2014-08-16 09:22:31"
+            "time": "2014-10-20 16:25:30"
         },
         {
             "name": "fkooman/rest",
-            "version": "0.5.3",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "8c25129cfe127e3f079a0eb817abd9f09e760b74"
+                "reference": "0f0071cde15b79ef07fe07edbf03eca931568098"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/8c25129cfe127e3f079a0eb817abd9f09e760b74",
-                "reference": "8c25129cfe127e3f079a0eb817abd9f09e760b74",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/0f0071cde15b79ef07fe07edbf03eca931568098",
+                "reference": "0f0071cde15b79ef07fe07edbf03eca931568098",
                 "shasum": ""
             },
             "require": {
                 "fkooman/json": "~0.5.1",
+                "fkooman/oauth-common": "~0.6.0",
+                "guzzlehttp/guzzle": "4.*",
                 "ircmaxell/password-compat": "~1.0",
                 "php": ">=5.3.3"
             },
@@ -157,7 +159,125 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2014-10-17 13:05:11"
+            "time": "2014-10-20 17:38:30"
+        },
+        {
+            "name": "guzzlehttp/guzzle",
+            "version": "4.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/guzzle.git",
+                "reference": "66fd916e9f9130bc22c51450476823391cb2f67c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/66fd916e9f9130bc22c51450476823391cb2f67c",
+                "reference": "66fd916e9f9130bc22c51450476823391cb2f67c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/streams": "~2.1",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "phpunit/phpunit": "~4.0",
+                "psr/log": "~1.0"
+            },
+            "suggest": {
+                "ext-curl": "Guzzle will use specific adapters if cURL is present"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Guzzle is a PHP HTTP client library and framework for building RESTful web service clients",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "client",
+                "curl",
+                "framework",
+                "http",
+                "http client",
+                "rest",
+                "web service"
+            ],
+            "time": "2014-10-05 19:29:14"
+        },
+        {
+            "name": "guzzlehttp/streams",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/streams.git",
+                "reference": "f91b721d73f0e561410903b3b3c90a5d0e40b534"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/streams/zipball/f91b721d73f0e561410903b3b3c90a5d0e40b534",
+                "reference": "f91b721d73f0e561410903b3b3c90a5d0e40b534",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Stream\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Provides a simple abstraction over streams of data (Guzzle 4+)",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "Guzzle",
+                "stream"
+            ],
+            "time": "2014-08-17 21:15:53"
         },
         {
             "name": "ircmaxell/password-compat",
@@ -372,7 +492,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "fkooman/rest": 20
+    },
     "prefer-stable": false,
     "platform": {
         "ext-openssl": "*",
