@@ -15,24 +15,32 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(__DIR__)."/vendor/autoload.php";
+require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use fkooman\Config\Config;
-use fkooman\OAuth\Server\Api;
-use fkooman\Http\Request;
-use fkooman\Http\IncomingRequest;
+use fkooman\OAuth\Server\ApiService;
 use fkooman\OAuth\Server\PdoStorage;
 use fkooman\Http\Exception\HttpException;
 use fkooman\Http\Exception\InternalServerErrorException;
+use fkooman\Rest\Plugin\Bearer\BearerAuthentication;
 
 try {
     $config = Config::fromIniFile(
-        dirname(__DIR__)."/config/oauth.ini"
+        dirname(__DIR__).'/config/oauth.ini'
     );
-    $api = new Api(new PdoStorage($config), 'http://localhost/php-oauth-as/introspect.php');
-    $request = Request::fromIncomingRequest(new IncomingRequest());
-    $response = $api->run($request);
-    $response->sendResponse();
+
+    $apiService = new ApiService(
+        new PdoStorage($config)
+    );
+
+    $apiService->registerBeforeEachMatchPlugin(
+        new BearerAuthentication(
+            'http://localhost/php-oauth-as/introspect.php',
+            'OAuth Management API'
+        )
+    );
+
+    $apiService->run()->sendResponse();
 } catch (Exception $e) {
     if ($e instanceof HttpException) {
         $response = $e->getJsonResponse();
