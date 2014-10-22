@@ -16,10 +16,12 @@
     "name": "fkooman/php-oauth-as",
     "require": {
         "ext-openssl": "*",
-        "fkooman/config": "~0.3.3",
-        "fkooman/json": "~0.5.1",
+        "fkooman/config": "~0.3.4",
+        "fkooman/json": "~0.6.0",
         "fkooman/oauth-common": "~0.6.0",
-        "fkooman/rest": "dev-master",
+        "fkooman/rest": "~0.6.1",
+        "fkooman/rest-plugin-basic": "~0.2.1",
+        "fkooman/rest-plugin-bearer": "~0.1.0",
         "php": ">=5.3.3",
         "rhumsaa/uuid": "~2.7",
         "twig/twig": "~1.15"

@@ -2,6 +2,7 @@
 
 ## 0.1.8
 - update `fkooman/rest` to new version
+- depend on `fkooman/rest-plugin-basic` and `fkooman/rest-plugin-bearer`
 
 ## 0.1.7
 - fix small bug in remoteStorage client dynamic registation

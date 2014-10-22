@@ -4,24 +4,24 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "df5143a3fcf6f916ac355d2518d923b0",
+    "hash": "65802fa1d0505a9fd716a93a4026fd01",
     "packages": [
         {
             "name": "fkooman/config",
-            "version": "0.3.3",
+            "version": "0.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-config.git",
-                "reference": "f2d34bc367f19c3315c41193d8029588c2d68538"
+                "reference": "19e7d3c95ce3932813596da081a8362bc3018f1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-config/zipball/f2d34bc367f19c3315c41193d8029588c2d68538",
-                "reference": "f2d34bc367f19c3315c41193d8029588c2d68538",
+                "url": "https://api.github.com/repos/fkooman/php-lib-config/zipball/19e7d3c95ce3932813596da081a8362bc3018f1f",
+                "reference": "19e7d3c95ce3932813596da081a8362bc3018f1f",
                 "shasum": ""
             },
             "require": {
-                "fkooman/json": "~0.5.1",
+                "fkooman/json": "~0.6.0",
                 "php": ">=5.3.3",
                 "symfony/yaml": "~2.3"
             },
@@ -43,20 +43,20 @@
                 }
             ],
             "description": "PHP library to handle YAML, INI and JSON configuration files",
-            "time": "2014-09-16 11:21:12"
+            "time": "2014-10-22 13:05:07"
         },
         {
             "name": "fkooman/json",
-            "version": "0.5.1",
+            "version": "0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-json.git",
-                "reference": "b07e3e4166e14ff41ac23f917285fb4061c21ad3"
+                "reference": "556209cf34cdf55f90eefffd778f93a3e9d5bb2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-json/zipball/b07e3e4166e14ff41ac23f917285fb4061c21ad3",
-                "reference": "b07e3e4166e14ff41ac23f917285fb4061c21ad3",
+                "url": "https://api.github.com/repos/fkooman/php-lib-json/zipball/556209cf34cdf55f90eefffd778f93a3e9d5bb2d",
+                "reference": "556209cf34cdf55f90eefffd778f93a3e9d5bb2d",
                 "shasum": ""
             },
             "require": {
@@ -65,7 +65,7 @@
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "fkooman\\Json\\": "src/"
+                    "fkooman\\Json": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -80,7 +80,7 @@
                 }
             ],
             "description": "PHP library to encode and decode JSON",
-            "time": "2014-09-16 11:16:29"
+            "time": "2014-10-22 12:49:20"
         },
         {
             "name": "fkooman/oauth-common",
@@ -121,24 +121,26 @@
         },
         {
             "name": "fkooman/rest",
-            "version": "dev-master",
+            "version": "0.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "41b862ab209227fc978746cfaf3414bfad0da2c0"
+                "reference": "3a3464df5d01bda08a3dff1f87f3cb4b82418431"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/41b862ab209227fc978746cfaf3414bfad0da2c0",
-                "reference": "41b862ab209227fc978746cfaf3414bfad0da2c0",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/3a3464df5d01bda08a3dff1f87f3cb4b82418431",
+                "reference": "3a3464df5d01bda08a3dff1f87f3cb4b82418431",
                 "shasum": ""
             },
             "require": {
-                "fkooman/json": "~0.5.1",
-                "fkooman/oauth-common": "~0.6.0",
-                "guzzlehttp/guzzle": "4.*",
-                "ircmaxell/password-compat": "~1.0",
+                "fkooman/json": "~0.6.0",
                 "php": ">=5.3.3"
+            },
+            "suggest": {
+                "fkooman/rest-plugin-basic": "Basic Authentication plugin",
+                "fkooman/rest-plugin-bearer": "Bearer (OAuth) Authentication plugin",
+                "fkooman/rest-plugin-mellon": "Mellon (SAML) Authentication plugin"
             },
             "type": "library",
             "autoload": {
@@ -159,7 +161,86 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2014-10-20 19:11:15"
+            "time": "2014-10-22 12:56:41"
+        },
+        {
+            "name": "fkooman/rest-plugin-basic",
+            "version": "0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fkooman/php-lib-rest-plugin-basic.git",
+                "reference": "3c6570012596c6a7677226527fa5c08cd8b58eaa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-basic/zipball/3c6570012596c6a7677226527fa5c08cd8b58eaa",
+                "reference": "3c6570012596c6a7677226527fa5c08cd8b58eaa",
+                "shasum": ""
+            },
+            "require": {
+                "fkooman/rest": "~0.6.0",
+                "ircmaxell/password-compat": "~1.0",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "fkooman\\Rest\\Plugin\\Basic": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "François Kooman",
+                    "email": "fkooman@tuxed.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Basic Authentication plugin for fkooman/rest",
+            "time": "2014-10-21 16:33:32"
+        },
+        {
+            "name": "fkooman/rest-plugin-bearer",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fkooman/php-lib-rest-plugin-bearer.git",
+                "reference": "06ca5643332df01d9f98f822f7ff8b8a1f503253"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/06ca5643332df01d9f98f822f7ff8b8a1f503253",
+                "reference": "06ca5643332df01d9f98f822f7ff8b8a1f503253",
+                "shasum": ""
+            },
+            "require": {
+                "fkooman/oauth-common": "~0.6.0",
+                "fkooman/rest": "~0.6.1",
+                "guzzlehttp/guzzle": "4.*",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "fkooman\\Rest\\Plugin\\Bearer": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "François Kooman",
+                    "email": "fkooman@tuxed.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Bearer (OAuth) Authentication plugin for fkooman/rest",
+            "time": "2014-10-22 15:22:21"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -492,9 +573,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "fkooman/rest": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "platform": {
         "ext-openssl": "*",
