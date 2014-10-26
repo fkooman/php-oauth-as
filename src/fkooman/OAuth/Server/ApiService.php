@@ -130,7 +130,7 @@ class ApiService extends Service
             '/applications/',
             function (TokenIntrospection $rs, Request $request) use ($storage) {
                 $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
-                // $rs->requireEntitlement('http://php-oauth.net/entitlement/manage');
+                $this->requireEntitlement($rs->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
                 // do not require entitlement to list clients...
                 $data = $storage->getClients();
                 $response = new JsonResponse(200);
@@ -143,8 +143,8 @@ class ApiService extends Service
         $this->delete(
             '/applications/:id',
             function (TokenIntrospection $rs, Request $request, $id) use ($storage) {
-               $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
-                // FIXME: ??? $rs->requireEntitlement('http://php-oauth.net/entitlement/manage');
+                $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
+                $this->requireEntitlement($rs->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
                 if (false === $storage->deleteClient($id)) {
                     throw new NotFoundException('application not found');
                 }
@@ -158,7 +158,7 @@ class ApiService extends Service
             '/applications/:id',
             function (TokenIntrospection $rs, Request $request, $id) use ($storage) {
                 $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
-                // FIXME: ??? $rs->requireEntitlement('http://php-oauth.net/entitlement/manage');
+                $this->requireEntitlement($rs->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
                 $data = $storage->getClient($id);
                 if (false === $data) {
                     throw new NotFoundException('application not found');
@@ -174,7 +174,7 @@ class ApiService extends Service
             '/applications/',
             function (TokenIntrospection $rs, Request $request) use ($storage) {
                 $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
-                // FIXME: ??? $rs->requireEntitlement('http://php-oauth.net/entitlement/manage');
+                $this->requireEntitlement($rs->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
                 try {
                     $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
                     $data = $client->getClientAsArray();
@@ -199,7 +199,7 @@ class ApiService extends Service
             '/applications/:id',
             function (TokenIntrospection $rs, Request $request, $id) use ($storage) {
                 $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
-                // FIXME: ??? $rs->requireEntitlement('http://php-oauth.net/entitlement/manage');
+                $this->requireEntitlement($rs->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
                 try {
                     $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
                     $data = $client->getClientAsArray();
@@ -222,7 +222,7 @@ class ApiService extends Service
             '/stats/',
             function (TokenIntrospection $rs, Request $request) use ($storage) {
                 $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
-                // FIXME: ??? $rs->requireEntitlement('http://php-oauth.net/entitlement/manage');
+                $this->requireEntitlement($rs->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
                 $data = $storage->getStats();
 
                 $response = new JsonResponse(200);
@@ -237,6 +237,13 @@ class ApiService extends Service
     {
         if (!$scope->hasScope(Scope::fromString($scopeValue))) {
             throw new ForbiddenException('insufficient_scope');
+        }
+    }
+
+    private function requireEntitlement(Entitlement $entitlement, $entitlementValue)
+    {
+        if (!$entitlement->hasEntitlement(Entitlement::fromString($entitlementValue))) {
+            throw new ForbiddenException('insufficient_entitlement');
         }
     }
 }
