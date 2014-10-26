@@ -21,7 +21,7 @@ require_once 'OAuthHelper.php';
 
 use fkooman\Json\Json;
 use fkooman\Http\Request;
-use fkooman\OAuth\Common\TokenIntrospection;
+use fkooman\Rest\Plugin\Bearer\TokenIntrospection;
 
 class ApiServiceTest extends OAuthHelper
 {
@@ -125,29 +125,6 @@ class ApiServiceTest extends OAuthHelper
                 array(
                     'client_id' => 'nonexistingclient',
                     'scope' => 'read',
-                )
-            )
-        );
-        $api->run($h);
-    }
-
-    /**
-     * @expectedException fkooman\Http\Exception\BadRequestException
-     * @expectedExceptionMessage invalid scope for this client
-     */
-    public function testAddAuthorizationsUnsupportedScope()
-    {
-        $api = new ApiService($this->storage);
-        $api->registerBeforeEachMatchPlugin($this->bearerAuthenticationStub);
-
-        $h = new Request('http://www.example.org/api.php');
-        $h->setRequestMethod('POST');
-        $h->setPathInfo('/authorizations/');
-        $h->setContent(
-            Json::encode(
-                array(
-                    'client_id' => 'testcodeclient',
-                    'scope' => 'UNSUPPORTED SCOPE',
                 )
             )
         );

@@ -22,13 +22,14 @@ use fkooman\Http\Request;
 use fkooman\Rest\Service;
 use fkooman\Http\JsonResponse;
 use fkooman\Http\Response;
-use fkooman\OAuth\Common\TokenIntrospection;
 use fkooman\Http\Exception\BadRequestException;
 use fkooman\Http\Exception\InternalServerErrorException;
 use fkooman\Http\Exception\NotFoundException;
 use fkooman\Http\Exception\ForbiddenException;
 use fkooman\Rest\Plugin\Bearer\BearerAuthentication;
-use fkooman\OAuth\Common\Scope;
+use fkooman\Rest\Plugin\Bearer\TokenIntrospection;
+use fkooman\Rest\Plugin\Bearer\Scope;
+use fkooman\Rest\Plugin\Bearer\Entitlement;
 
 class ApiService extends Service
 {
@@ -60,12 +61,6 @@ class ApiService extends Service
                     throw new NotFoundException('client is not registered');
                 }
 
-                // scope should be part of 'allowed_scope' of client registration
-                $clientAllowedScope = Scope::fromString($client['allowed_scope']);
-                $requestedScope = Scope::fromString($data['scope']);
-                if (!$requestedScope->isSubSetOf($clientAllowedScope)) {
-                    throw new BadRequestException('invalid scope for this client');
-                }
                 $refreshToken = (array_key_exists('refresh_token', $data) && $data['refresh_token']) ? Utils::randomHex(16) : null;
 
                 // check to see if an authorization for this client/resource_owner already exists
@@ -235,14 +230,14 @@ class ApiService extends Service
 
     private function requireScope(Scope $scope, $scopeValue)
     {
-        if (!$scope->hasScope(Scope::fromString($scopeValue))) {
+        if (!$scope->hasScope($scopeValue)) {
             throw new ForbiddenException('insufficient_scope');
         }
     }
 
     private function requireEntitlement(Entitlement $entitlement, $entitlementValue)
     {
-        if (!$entitlement->hasEntitlement(Entitlement::fromString($entitlementValue))) {
+        if (!$entitlement->hasEntitlement($entitlementValue)) {
             throw new ForbiddenException('insufficient_entitlement');
         }
     }
