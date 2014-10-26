@@ -82,7 +82,7 @@ class Authorize
                                 'resourceOwnerId' => $this->resourceOwner->getId(),
                                 'sslEnabled' => "https" === $request->getRequestUri()->getScheme(),
                                 'contactEmail' => $result->getClient()->getContactEmail(),
-                                'scopes' => $result->getScope()->getScopeAsArray(),
+                                'scopes' => $result->getScope()->toArray(),
                                 'clientDomain' => $redirectUri->getHost(),
                                 'clientName' => $result->getClient()->getName(),
                                 'clientId' => $result->getClient()->getId(),
@@ -133,7 +133,7 @@ class Authorize
             // tell the client about the error
             $client = $e->getClient();
 
-            if ($client['type'] === "user_agent_based_application") {
+            if ("user_agent_based_application" === $client['type']) {
                 $separator = "#";
             } else {
                 $separator = (false === strpos($client['redirect_uri'], "?")) ? "?" : "&";
@@ -284,7 +284,7 @@ class Authorize
                         time(),
                         $clientId,
                         $resourceOwner->getId(),
-                        $scope->getScope(),
+                        $scope->toString(),
                         $this->config->getValue('accessTokenExpiry')
                     );
                     $token = array(
@@ -292,7 +292,7 @@ class Authorize
                         "expires_in" => $this->config->getValue('accessTokenExpiry'),
                         "token_type" => "bearer",
                     );
-                    $s = $scope->getScope();
+                    $s = $scope->toString();
                     if (!empty($s)) {
                         $token += array ("scope" => $s);
                     }
@@ -354,7 +354,7 @@ class Authorize
                 if (false === $approvedScope) {
                     // no approved scope stored yet, new entry
                     $refreshToken = ("code" === $responseType) ? Utils::randomHex(16) : null;
-                    $this->storage->addApproval($clientId, $resourceOwner->getId(), $scope->getScope(), $refreshToken);
+                    $this->storage->addApproval($clientId, $resourceOwner->getId(), $scope->toString(), $refreshToken);
                 } else {
                     $this->storage->updateApproval($clientId, $resourceOwner->getId(), $scope->getScope());
                 }

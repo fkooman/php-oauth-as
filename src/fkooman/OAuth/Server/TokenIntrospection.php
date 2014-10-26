@@ -104,7 +104,7 @@ class TokenIntrospection
                 $j = new Json();
                 $e = $j->decode($resourceOwner['entitlement']);
                 if (0 !== count($e)) {
-                    $r['x-entitlement'] = $e;
+                    $r['x-entitlement'] = implode(" ", $e);
                 }
             }
 

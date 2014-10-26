@@ -204,7 +204,7 @@ class Token
                     $authorizedScope = Scope::fromString($result['scope']);
                     if ($requestedScope->isSubsetOf($authorizedScope)) {
                         // if it is a subset of the authorized scope we honor that
-                        $token['scope'] = $requestedScope->getScope();
+                        $token['scope'] = $requestedScope->toString();
                     } else {
                         // if not the client gets the authorized scope
                         $token['scope'] = $result['scope'];

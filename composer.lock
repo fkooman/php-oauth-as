@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "65802fa1d0505a9fd716a93a4026fd01",
+    "hash": "3ef21c046191177a2c837af6cba6685a",
     "packages": [
         {
             "name": "fkooman/config",
@@ -84,16 +84,16 @@
         },
         {
             "name": "fkooman/oauth-common",
-            "version": "0.6.0",
+            "version": "0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-oauth-lib-common.git",
-                "reference": "ee9ba0014e5e99bd2a08dcf3eeb531492386b010"
+                "reference": "6d5b60f02c153062cfde0c271451f7a997e28b0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-oauth-lib-common/zipball/ee9ba0014e5e99bd2a08dcf3eeb531492386b010",
-                "reference": "ee9ba0014e5e99bd2a08dcf3eeb531492386b010",
+                "url": "https://api.github.com/repos/fkooman/php-oauth-lib-common/zipball/6d5b60f02c153062cfde0c271451f7a997e28b0c",
+                "reference": "6d5b60f02c153062cfde0c271451f7a997e28b0c",
                 "shasum": ""
             },
             "require": {
@@ -102,7 +102,7 @@
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "fkooman\\OAuth\\Common\\": "src/"
+                    "fkooman\\OAuth\\Common": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -117,20 +117,20 @@
                 }
             ],
             "description": "PHP library for common OAuth classes.",
-            "time": "2014-10-20 16:25:30"
+            "time": "2014-10-26 15:34:10"
         },
         {
             "name": "fkooman/rest",
-            "version": "0.6.1",
+            "version": "0.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "3a3464df5d01bda08a3dff1f87f3cb4b82418431"
+                "reference": "3c1c7ad24476ebd8fa04bd2e2d5567d8b96102df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/3a3464df5d01bda08a3dff1f87f3cb4b82418431",
-                "reference": "3a3464df5d01bda08a3dff1f87f3cb4b82418431",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/3c1c7ad24476ebd8fa04bd2e2d5567d8b96102df",
+                "reference": "3c1c7ad24476ebd8fa04bd2e2d5567d8b96102df",
                 "shasum": ""
             },
             "require": {
@@ -161,26 +161,26 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2014-10-22 12:56:41"
+            "time": "2014-10-26 15:36:09"
         },
         {
             "name": "fkooman/rest-plugin-basic",
-            "version": "0.2.1",
+            "version": "0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest-plugin-basic.git",
-                "reference": "3c6570012596c6a7677226527fa5c08cd8b58eaa"
+                "reference": "0ef9c0174d78701147b02c30e1342f3917a76949"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-basic/zipball/3c6570012596c6a7677226527fa5c08cd8b58eaa",
-                "reference": "3c6570012596c6a7677226527fa5c08cd8b58eaa",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-basic/zipball/0ef9c0174d78701147b02c30e1342f3917a76949",
+                "reference": "0ef9c0174d78701147b02c30e1342f3917a76949",
                 "shasum": ""
             },
             "require": {
-                "fkooman/rest": "~0.6.0",
+                "fkooman/rest": "~0.6.1",
                 "ircmaxell/password-compat": "~1.0",
-                "php": ">=5.4"
+                "php": ">=5.3.3"
             },
             "type": "library",
             "autoload": {
@@ -200,25 +200,25 @@
                 }
             ],
             "description": "Basic Authentication plugin for fkooman/rest",
-            "time": "2014-10-21 16:33:32"
+            "time": "2014-10-23 19:20:41"
         },
         {
             "name": "fkooman/rest-plugin-bearer",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest-plugin-bearer.git",
-                "reference": "06ca5643332df01d9f98f822f7ff8b8a1f503253"
+                "reference": "82f55f6e4b608de86dc6e292986e73dec1efa509"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/06ca5643332df01d9f98f822f7ff8b8a1f503253",
-                "reference": "06ca5643332df01d9f98f822f7ff8b8a1f503253",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/82f55f6e4b608de86dc6e292986e73dec1efa509",
+                "reference": "82f55f6e4b608de86dc6e292986e73dec1efa509",
                 "shasum": ""
             },
             "require": {
-                "fkooman/oauth-common": "~0.6.0",
-                "fkooman/rest": "~0.6.1",
+                "fkooman/oauth-common": "~0.7.0",
+                "fkooman/rest": "~0.6.2",
                 "guzzlehttp/guzzle": "4.*",
                 "php": ">=5.4"
             },
@@ -240,7 +240,7 @@
                 }
             ],
             "description": "Bearer (OAuth) Authentication plugin for fkooman/rest",
-            "time": "2014-10-22 15:22:21"
+            "time": "2014-10-26 15:39:31"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -467,17 +467,17 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.5.5",
+            "version": "v2.5.6",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "b1dbc53593b98c2d694ebf383660ac9134d30b96"
+                "reference": "2d9f527449cabfa8543dd7fa3a466d6ae83d6726"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/b1dbc53593b98c2d694ebf383660ac9134d30b96",
-                "reference": "b1dbc53593b98c2d694ebf383660ac9134d30b96",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/2d9f527449cabfa8543dd7fa3a466d6ae83d6726",
+                "reference": "2d9f527449cabfa8543dd7fa3a466d6ae83d6726",
                 "shasum": ""
             },
             "require": {
@@ -510,7 +510,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2014-09-22 09:14:18"
+            "time": "2014-10-01 05:50:18"
         },
         {
             "name": "twig/twig",
