@@ -26,6 +26,8 @@ Requires:   php-composer(fkooman/config) >= 0.3.4
 Requires:   php-composer(fkooman/config) < 0.4.0
 Requires:   php-composer(fkooman/rest) >= 0.6.2
 Requires:   php-composer(fkooman/rest) < 0.7.0
+Requires:   php-composer(fkooman/rest-plugin-bearer) >= 0.2.0
+Requires:   php-composer(fkooman/rest-plugin-bearer) < 0.3.0
 Requires:   php-composer(fkooman/oauth-common) >= 0.7.0
 Requires:   php-composer(fkooman/oauth-common) < 0.8.0
 Requires:   php-pear(pear.twig-project.org/Twig) >= 1.15
