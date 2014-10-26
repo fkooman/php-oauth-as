@@ -33,9 +33,16 @@ use fkooman\Rest\Plugin\Bearer\Entitlement;
 
 class ApiService extends Service
 {
+    /** @var fkooman\OAuth\Server\PdoSTorage */
+    private $storage;
+
     public function __construct(PdoStorage $storage)
     {
         parent::__construct();
+        $this->storage = $storage;
+
+        // compatibility for PHP 5.3
+        $compatThis = &$this;
 
         $this->options(
             '*',
@@ -47,185 +54,235 @@ class ApiService extends Service
 
         $this->post(
             '/authorizations/',
-            function (TokenIntrospection $rs, Request $request) use ($storage) {
-                $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/authorize');
-                $data = Json::decode($request->getContent());
-                if (null === $data || !is_array($data) || !array_key_exists('client_id', $data) || !array_key_exists('scope', $data)) {
-                    throw new BadRequestException('missing client_id or scope');
-                }
-
-                // client needs to exist
-                $clientId = $data['client_id'];
-                $client = $storage->getClient($clientId);
-                if (false === $client) {
-                    throw new NotFoundException('client is not registered');
-                }
-
-                $refreshToken = (array_key_exists('refresh_token', $data) && $data['refresh_token']) ? Utils::randomHex(16) : null;
-
-                // check to see if an authorization for this client/resource_owner already exists
-                if (false === $storage->getApprovalByResourceOwnerId($clientId, $rs->getSub())) {
-                    if (false === $storage->addApproval($clientId, $rs->getSub(), $data['scope'], $refreshToken)) {
-                        throw new InternalServerErrorException('unable to add authorization');
-                    }
-                } else {
-                    throw new BadRequestException(
-                        'authorization already exists for this client and resource owner'
-                    );
-                }
-
-                $response = new JsonResponse(201);
-
-                return $response;
+            function (Request $request, TokenIntrospection $tokenIntrospection) use ($compatThis) {
+                return $compatThis->postAuthorization($request, $tokenIntrospection);
             }
         );
 
         $this->get(
             '/authorizations/:id',
-            function (TokenIntrospection $rs, Request $request, $id) use ($storage) {
-                $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/authorize');
-                $data = $storage->getApprovalByResourceOwnerId($id, $rs->getSub());
-                if (false === $data) {
-                    throw new NotFoundException('authorization not found');
-                }
-                $response = new JsonResponse(200);
-                $response->setContent($data);
-
-                return $response;
+            function (Request $request, TokenIntrospection $tokenIntrospection, $id) use ($compatThis) {
+                return $compatThis->getAuthorization($request, $tokenIntrospection, $id);
             }
         );
 
         $this->delete(
             '/authorizations/:id',
-            function (TokenIntrospection $rs, Request $request, $id) use ($storage) {
-               $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/authorize');
-                if (false === $storage->deleteApproval($id, $rs->getSub())) {
-                    throw new NotFoundException('authorization not found');
-                }
-                $response = new JsonResponse(200);
-
-                return $response;
+            function (Request $request, TokenIntrospection $tokenIntrospection, $id) use ($compatThis) {
+                return $compatThis->deleteAuthorization($request, $tokenIntrospection, $id);
             }
         );
 
         $this->get(
             '/authorizations/',
-            function (TokenIntrospection $rs, Request $request) use ($storage) {
-                $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/authorize');
-                $data = $storage->getApprovals($rs->getSub());
-
-                $response = new JsonResponse(200);
-                $response->setContent($data);
-
-                return $response;
+            function (Request $request, TokenIntrospection $tokenIntrospection) use ($compatThis) {
+                return $compatThis->getAuthorizations($request, $tokenIntrospection);
             }
         );
 
         $this->get(
             '/applications/',
-            function (TokenIntrospection $rs, Request $request) use ($storage) {
-                $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
-                $this->requireEntitlement($rs->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
-                // do not require entitlement to list clients...
-                $data = $storage->getClients();
-                $response = new JsonResponse(200);
-                $response->setContent($data);
-
-                return $response;
+            function (Request $request, TokenIntrospection $tokenIntrospection) use ($compatThis) {
+                return $compatThis->getApplications($request, $tokenIntrospection);
             }
         );
 
         $this->delete(
             '/applications/:id',
-            function (TokenIntrospection $rs, Request $request, $id) use ($storage) {
-                $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
-                $this->requireEntitlement($rs->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
-                if (false === $storage->deleteClient($id)) {
-                    throw new NotFoundException('application not found');
-                }
-                $response = new JsonResponse(200);
-
-                return $response;
+            function (Request $request, TokenIntrospection $tokenIntrospection, $id) use ($compatThis) {
+                return $compatThis->deleteApplication($request, $tokenIntrospection, $id);
             }
         );
 
         $this->get(
             '/applications/:id',
-            function (TokenIntrospection $rs, Request $request, $id) use ($storage) {
-                $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
-                $this->requireEntitlement($rs->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
-                $data = $storage->getClient($id);
-                if (false === $data) {
-                    throw new NotFoundException('application not found');
-                }
-                $response = new JsonResponse(200);
-                $response->setContent($data);
-
-                return $response;
+            function (Request $request, TokenIntrospection $tokenIntrospection, $id) use ($compatThis) {
+                return $compatThis->getApplication($request, $tokenIntrospection, $id);
             }
         );
 
         $this->post(
             '/applications/',
-            function (TokenIntrospection $rs, Request $request) use ($storage) {
-                $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
-                $this->requireEntitlement($rs->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
-                try {
-                    $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
-                    $data = $client->getClientAsArray();
-                    // check to see if an application with this id already exists
-                    if (false === $storage->getClient($data['id'])) {
-                        if (false === $storage->addClient($data)) {
-                            throw new InternalServerErrorException('unable to add application');
-                        }
-                    } else {
-                        throw new BadRequestException('application already exists');
-                    }
-                    $response = new JsonResponse(201);
-
-                    return $response;
-                } catch (ClientRegistrationException $e) {
-                    throw new BadRequestException('invalid client data', $e->getMessage());
-                }
+            function (Request $request, TokenIntrospection $tokenIntrospection) use ($compatThis) {
+                return $compatThis->postApplication($request, $tokenIntrospection);
             }
         );
 
         $this->put(
             '/applications/:id',
-            function (TokenIntrospection $rs, Request $request, $id) use ($storage) {
-                $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
-                $this->requireEntitlement($rs->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
-                try {
-                    $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
-                    $data = $client->getClientAsArray();
-                    if ($data['id'] !== $id) {
-                        throw new BadRequestException('resource does not match client id value');
-                    }
-                    if (false === $storage->updateClient($id, $data)) {
-                        throw new InternalServerErrorException('unable to update application');
-                    }
-                } catch (ClientRegistrationException $e) {
-                    throw new BadRequestException('invalid client data', $e->getMessage());
-                }
-                $response = new JsonResponse(200);
-
-                return $response;
+            function (Request $request, TokenIntrospection $tokenIntrospection, $id) use ($compatThis) {
+                return $compatThis->putApplication($request, $tokenIntrospection, $id);
             }
         );
 
         $this->get(
             '/stats/',
-            function (TokenIntrospection $rs, Request $request) use ($storage) {
-                $this->requireScope($rs->getScope(), 'http://php-oauth.net/scope/manage');
-                $this->requireEntitlement($rs->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
-                $data = $storage->getStats();
-
-                $response = new JsonResponse(200);
-                $response->setContent($data);
-
-                return $response;
+            function (Request $request, TokenIntrospection $tokenIntrospection) use ($compatThis) {
+                return $compatThis->getStats($request, $tokenIntrospection);
             }
         );
+    }
+
+    public function postAuthorization(Request $request, TokenIntrospection $tokenIntrospection)
+    {
+        $this->requireScope($tokenIntrospection->getScope(), 'http://php-oauth.net/scope/authorize');
+        $data = Json::decode($request->getContent());
+        if (null === $data || !is_array($data) || !array_key_exists('client_id', $data) || !array_key_exists('scope', $data)) {
+            throw new BadRequestException('missing client_id or scope');
+        }
+
+        // client needs to exist
+        $clientId = $data['client_id'];
+        $client = $this->storage->getClient($clientId);
+        if (false === $client) {
+            throw new NotFoundException('client is not registered');
+        }
+
+        $refreshToken = (array_key_exists('refresh_token', $data) && $data['refresh_token']) ? Utils::randomHex(16) : null;
+
+        // check to see if an authorization for this client/resource_owner already exists
+        if (false === $this->storage->getApprovalByResourceOwnerId($clientId, $tokenIntrospection->getSub())) {
+            if (false === $this->storage->addApproval($clientId, $tokenIntrospection->getSub(), $data['scope'], $refreshToken)) {
+                throw new InternalServerErrorException('unable to add authorization');
+            }
+        } else {
+            throw new BadRequestException(
+                'authorization already exists for this client and resource owner'
+            );
+        }
+
+        $response = new JsonResponse(201);
+
+        return $response;
+    }
+
+    public function getAuthorization(Request $request, TokenIntrospection $tokenIntrospection, $id)
+    {
+        $this->requireScope($tokenIntrospection->getScope(), 'http://php-oauth.net/scope/authorize');
+        $data = $this->storage->getApprovalByResourceOwnerId($id, $tokenIntrospection->getSub());
+        if (false === $data) {
+            throw new NotFoundException('authorization not found');
+        }
+        $response = new JsonResponse(200);
+        $response->setContent($data);
+
+        return $response;
+    }
+
+    public function deleteAuthorization(Request $request, TokenIntrospection $tokenIntrospection, $id)
+    {
+        $this->requireScope($tokenIntrospection->getScope(), 'http://php-oauth.net/scope/authorize');
+        if (false === $this->storage->deleteApproval($id, $tokenIntrospection->getSub())) {
+            throw new NotFoundException('authorization not found');
+        }
+        $response = new JsonResponse(200);
+
+        return $response;
+    }
+
+    public function getAuthorizations(Request $request, TokenIntrospection $tokenIntrospection)
+    {
+        $this->requireScope($tokenIntrospection->getScope(), 'http://php-oauth.net/scope/authorize');
+        $data = $this->storage->getApprovals($tokenIntrospection->getSub());
+
+        $response = new JsonResponse(200);
+        $response->setContent($data);
+
+        return $response;
+    }
+
+    public function getApplications(Request $request, TokenIntrospection $tokenIntrospection)
+    {
+        $this->requireScope($tokenIntrospection->getScope(), 'http://php-oauth.net/scope/manage');
+        $this->requireEntitlement($tokenIntrospection->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
+        // do not require entitlement to list clients...
+        $data = $this->storage->getClients();
+        $response = new JsonResponse(200);
+        $response->setContent($data);
+
+        return $response;
+    }
+
+    public function deleteApplication(Request $request, TokenIntrospection $tokenIntrospection, $id)
+    {
+        $this->requireScope($tokenIntrospection->getScope(), 'http://php-oauth.net/scope/manage');
+        $this->requireEntitlement($tokenIntrospection->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
+        if (false === $this->storage->deleteClient($id)) {
+            throw new NotFoundException('application not found');
+        }
+        $response = new JsonResponse(200);
+
+        return $response;
+    }
+
+    public function getApplication(Request $request, TokenIntrospection $tokenIntrospection, $id)
+    {
+        $this->requireScope($tokenIntrospection->getScope(), 'http://php-oauth.net/scope/manage');
+        $this->requireEntitlement($tokenIntrospection->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
+        $data = $this->storage->getClient($id);
+        if (false === $data) {
+            throw new NotFoundException('application not found');
+        }
+        $response = new JsonResponse(200);
+        $response->setContent($data);
+
+        return $response;
+    }
+
+    public function postApplication(Request $request, TokenIntrospection $tokenIntrospection)
+    {
+        $this->requireScope($tokenIntrospection->getScope(), 'http://php-oauth.net/scope/manage');
+        $this->requireEntitlement($tokenIntrospection->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
+        try {
+            $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
+            $data = $client->getClientAsArray();
+            // check to see if an application with this id already exists
+            if (false === $this->storage->getClient($data['id'])) {
+                if (false === $this->storage->addClient($data)) {
+                    throw new InternalServerErrorException('unable to add application');
+                }
+            } else {
+                throw new BadRequestException('application already exists');
+            }
+            $response = new JsonResponse(201);
+
+            return $response;
+        } catch (ClientRegistrationException $e) {
+            throw new BadRequestException('invalid client data', $e->getMessage());
+        }
+    }
+
+    public function putApplication(Request $request, TokenIntrospection $tokenIntrospection, $id)
+    {
+        $this->requireScope($tokenIntrospection->getScope(), 'http://php-oauth.net/scope/manage');
+        $this->requireEntitlement($tokenIntrospection->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
+        try {
+            $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
+            $data = $client->getClientAsArray();
+            if ($data['id'] !== $id) {
+                throw new BadRequestException('resource does not match client id value');
+            }
+            if (false === $this->storage->updateClient($id, $data)) {
+                throw new InternalServerErrorException('unable to update application');
+            }
+        } catch (ClientRegistrationException $e) {
+            throw new BadRequestException('invalid client data', $e->getMessage());
+        }
+        $response = new JsonResponse(200);
+
+        return $response;
+    }
+
+    public function getStats(Request $request, TokenIntrospection $tokenIntrospection)
+    {
+        $this->requireScope($tokenIntrospection->getScope(), 'http://php-oauth.net/scope/manage');
+        $this->requireEntitlement($tokenIntrospection->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
+        $data = $this->storage->getStats();
+
+        $response = new JsonResponse(200);
+        $response->setContent($data);
+
+        return $response;
     }
 
     private function requireScope(Scope $scope, $scopeValue)
