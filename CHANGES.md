@@ -1,8 +1,10 @@
 # Changelog
 
 ## 0.1.8
+- move to `fkooman/ini` from `fkooman/config`
 - update `fkooman/rest` to new version
 - depend on `fkooman/rest-plugin-basic` and `fkooman/rest-plugin-bearer`
+- update API substantially
 
 ## 0.1.7
 - fix small bug in remoteStorage client dynamic registation

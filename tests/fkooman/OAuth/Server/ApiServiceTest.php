@@ -51,7 +51,8 @@ class ApiServiceTest extends OAuthHelper
                 array(
                     'active' => true,
                     'sub' => 'fkooman',
-                    'scope' => 'http://php-oauth.net/scope/authorize',
+                    'scope' => 'http://php-oauth.net/scope/authorize http://php-oauth.net/scope/manage',
+                    'x-entitlement' => 'http://php-oauth.net/entitlement/manage',
                 )
             )
         );
@@ -166,5 +167,28 @@ class ApiServiceTest extends OAuthHelper
         // FIXME: test with non existing client_id!
         $response = $api->run($h);
         $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testAddApplication()
+    {
+        $api = new ApiService($this->storage);
+        $api->registerBeforeEachMatchPlugin($this->bearerAuthenticationStub);
+
+        $h = new Request('http://www.example.org/api.php');
+        $h->setRequestMethod('POST');
+        $h->setPathInfo('/applications/');
+        $h->setContent(
+            Json::encode(
+                array(
+                    'id' => 'foo',
+                    'scope' => 'read write',
+                    'type' => 'user_agent_based_application',
+                    'secret' => null,
+                    'redirect_uri' => 'http://www.example.org/redirect',
+                    'name' => 'Foo',
+                )
+            )
+        );
+        $api->run($h);
     }
 }
