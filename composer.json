@@ -8,7 +8,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "fkooman\\OAuth\\Server\\": "src/"
+            "fkooman\\OAuth\\Server": "src/"
         }
     },
     "description": "PHP OAuth 2.0 Authorization Server",
