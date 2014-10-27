@@ -17,28 +17,28 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Config\Config;
+use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\Exception\SspResourceOwnerException;
 use SimpleSAML_Auth_Simple;
 
 class SspResourceOwner implements IResourceOwner
 {
-    /** @var fkooman\Config\Config */
-    private $config;
+    /** @var fkooman\Ini\IniReader */
+    private $iniReader;
 
     /** @var SimpleSAML_Auth_Simple */
     private $ssp;
 
-    public function __construct(Config $c)
+    public function __construct(IniReader $c)
     {
-        $this->config = $c;
-        $sspPath = $this->config->s('SspResourceOwner')->l('sspPath').'/lib/_autoload.php';
+        $this->iniReader = $c;
+        $sspPath = $this->iniReader->v('SspResourceOwner', 'sspPath').'/lib/_autoload.php';
         if (!file_exists($sspPath) || !is_file($sspPath) || !is_readable($sspPath)) {
             throw new SspResourceOwnerException("invalid path to simpleSAMLphp");
         }
         require_once $sspPath;
 
-        $this->ssp = new SimpleSAML_Auth_Simple($this->config->s('SspResourceOwner')->l('authSource'));
+        $this->ssp = new SimpleSAML_Auth_Simple($this->iniReader->v('SspResourceOwner', 'authSource'));
     }
 
     public function setResourceOwnerHint($resourceOwnerHint)
@@ -50,7 +50,7 @@ class SspResourceOwner implements IResourceOwner
     {
         $this->authenticateUser();
 
-        $resourceOwnerIdAttribute = $this->config->s('SspResourceOwner')->l('resourceOwnerIdAttribute', false);
+        $resourceOwnerIdAttribute = $this->iniReader->v('SspResourceOwner', 'resourceOwnerIdAttribute', false);
         if (null === $resourceOwnerIdAttribute) {
             $nameId = $this->ssp->getAuthData("saml:sp:NameID");
             if ("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" !== $nameId['Format']) {
@@ -97,7 +97,7 @@ class SspResourceOwner implements IResourceOwner
 
     private function authenticateUser()
     {
-        $resourceOwnerIdAttribute = $this->config->s('SspResourceOwner')->l('resourceOwnerIdAttribute', false);
+        $resourceOwnerIdAttribute = $this->iniReader->v('SspResourceOwner', 'resourceOwnerIdAttribute', false);
         if (null === $resourceOwnerIdAttribute) {
             $this->ssp->requireAuth(
                 array(

@@ -17,17 +17,17 @@
 
 require_once dirname(__DIR__)."/vendor/autoload.php";
 
-use fkooman\Config\Config;
+use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\Token;
 use fkooman\Http\Request;
 use fkooman\Http\JsonResponse;
 use fkooman\Http\IncomingRequest;
 
 try {
-    $config = Config::fromIniFile(
+    $iniReader = IniReader::fromFile(
         dirname(__DIR__)."/config/oauth.ini"
     );
-    $token = new Token($config);
+    $token = new Token($iniReader);
     $request = Request::fromIncomingRequest(new IncomingRequest());
     $response = $token->handleRequest($request);
     $response->sendResponse();

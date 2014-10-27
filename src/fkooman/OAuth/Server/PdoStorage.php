@@ -17,7 +17,7 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Config\Config;
+use fkooman\Ini\IniReader;
 use fkooman\Json\Json;
 use PDO;
 
@@ -26,24 +26,24 @@ use PDO;
  */
 class PdoStorage
 {
-    /** @var fkooman\Config\Config */
-    private $config;
+    /** @var fkooman\Ini\IniReader */
+    private $iniReader;
 
     /** @var PDO */
     private $pdo;
 
-    public function __construct(Config $c)
+    public function __construct(IniReader $c)
     {
-        $this->config = $c;
+        $this->iniReader = $c;
 
         $driverOptions = array();
-        if ($this->config->s('PdoStorage')->l('persistentConnection')) {
+        if ($this->iniReader->v('PdoStorage', 'persistentConnection', false, false)) {
             $driverOptions[PDO::ATTR_PERSISTENT] = true;
         }
 
-        $this->pdo = new PDO($this->config->s('PdoStorage')->l('dsn'), $this->config->s('PdoStorage')->l('username', false), $this->config->s('PdoStorage')->l('password', false), $driverOptions);
+        $this->pdo = new PDO($this->iniReader->v('PdoStorage', 'dsn'), $this->iniReader->v('PdoStorage', 'username', false), $this->iniReader->v('PdoStorage', 'password', false), $driverOptions);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        if (0 === strpos($this->config->s('PdoStorage')->l('dsn'), "sqlite:")) {
+        if (0 === strpos($this->iniReader->v('PdoStorage', 'dsn'), "sqlite:")) {
             // only for SQlite
             $this->pdo->exec("PRAGMA foreign_keys = ON");
         }

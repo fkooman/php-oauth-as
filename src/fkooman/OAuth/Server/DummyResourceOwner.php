@@ -17,19 +17,19 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Config\Config;
+use fkooman\Ini\IniReader;
 use fkooman\Json\Json;
 use fkooman\Json\Exception\JsonException;
 use RuntimeException;
 
 class DummyResourceOwner implements IResourceOwner
 {
-    /** @var fkooman\Config\Config */
-    private $config;
+    /** @var fkooman\Ini\IniReader */
+    private $iniReader;
 
-    public function __construct(Config $c)
+    public function __construct(IniReader $c)
     {
-        $this->config = $c;
+        $this->iniReader = $c;
     }
 
     public function setResourceOwnerHint($resourceOwnerHint)
@@ -39,7 +39,7 @@ class DummyResourceOwner implements IResourceOwner
 
     public function getId()
     {
-        return $this->config->s('DummyResourceOwner')->l('uid');
+        return $this->iniReader->v('DummyResourceOwner', 'uid');
     }
 
     public function getEntitlement()
@@ -47,7 +47,7 @@ class DummyResourceOwner implements IResourceOwner
         $entitlement = array();
         try {
             $j = new Json();
-            $entitlement = $j->decodeFile($this->config->l('entitlementsFile'));
+            $entitlement = $j->decodeFile($this->iniReader->v('entitlementsFile'));
         } catch (RuntimeException $e) {
             // problem with reading the entitlement file
             return array();

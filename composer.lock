@@ -4,31 +4,29 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "842980baec799340eccf9b3679d18dbc",
+    "hash": "1e877ec7cb7e91f4f4e6a3bd04039825",
     "packages": [
         {
-            "name": "fkooman/config",
-            "version": "0.3.4",
+            "name": "fkooman/ini",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/fkooman/php-lib-config.git",
-                "reference": "19e7d3c95ce3932813596da081a8362bc3018f1f"
+                "url": "https://github.com/fkooman/php-lib-ini.git",
+                "reference": "53bef8aaa28862b68b553f742ee3ecf54394f121"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-config/zipball/19e7d3c95ce3932813596da081a8362bc3018f1f",
-                "reference": "19e7d3c95ce3932813596da081a8362bc3018f1f",
+                "url": "https://api.github.com/repos/fkooman/php-lib-ini/zipball/53bef8aaa28862b68b553f742ee3ecf54394f121",
+                "reference": "53bef8aaa28862b68b553f742ee3ecf54394f121",
                 "shasum": ""
             },
             "require": {
-                "fkooman/json": "~0.6.0",
-                "php": ">=5.3.3",
-                "symfony/yaml": "~2.3"
+                "php": ">=5.3.3"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "fkooman\\Config\\": "src/"
+                    "fkooman\\Ini": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -42,8 +40,8 @@
                     "role": "Developer"
                 }
             ],
-            "description": "PHP library to handle YAML, INI and JSON configuration files",
-            "time": "2014-10-22 13:05:07"
+            "description": "Handle INI configuration files",
+            "time": "2014-10-23 15:33:28"
         },
         {
             "name": "fkooman/json",
@@ -204,16 +202,16 @@
         },
         {
             "name": "fkooman/rest-plugin-bearer",
-            "version": "0.2.0",
+            "version": "0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest-plugin-bearer.git",
-                "reference": "8b461bf3ba064a39d3f1d28848531ea62cd5ba0a"
+                "reference": "acb33ed1bdf2c61fd655e147e545e6493364b8a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/8b461bf3ba064a39d3f1d28848531ea62cd5ba0a",
-                "reference": "8b461bf3ba064a39d3f1d28848531ea62cd5ba0a",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/acb33ed1bdf2c61fd655e147e545e6493364b8a6",
+                "reference": "acb33ed1bdf2c61fd655e147e545e6493364b8a6",
                 "shasum": ""
             },
             "require": {
@@ -239,7 +237,7 @@
                 }
             ],
             "description": "Bearer (OAuth) Authentication plugin for fkooman/rest",
-            "time": "2014-10-26 17:11:53"
+            "time": "2014-10-27 13:14:37"
         },
         {
             "name": "guzzle/guzzle",
@@ -494,53 +492,6 @@
             "description": "Symfony EventDispatcher Component",
             "homepage": "http://symfony.com",
             "time": "2014-10-01 15:43:05"
-        },
-        {
-            "name": "symfony/yaml",
-            "version": "v2.5.6",
-            "target-dir": "Symfony/Component/Yaml",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/Yaml.git",
-                "reference": "2d9f527449cabfa8543dd7fa3a466d6ae83d6726"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/2d9f527449cabfa8543dd7fa3a466d6ae83d6726",
-                "reference": "2d9f527449cabfa8543dd7fa3a466d6ae83d6726",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.5-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Symfony\\Component\\Yaml\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                },
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                }
-            ],
-            "description": "Symfony Yaml Component",
-            "homepage": "http://symfony.com",
-            "time": "2014-10-01 05:50:18"
         },
         {
             "name": "twig/twig",

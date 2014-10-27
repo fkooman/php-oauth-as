@@ -17,14 +17,14 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Config\Config;
+use fkooman\Ini\IniReader;
 
 class OAuthHelper extends \PHPUnit_Framework_TestCase
 {
     protected $_tmpDb;
 
-    /** @var fkooman\Config\Config */
-    protected $config;
+    /** @var fkooman\Ini\IniReader */
+    protected $iniReader;
 
     public function setUp()
     {
@@ -47,10 +47,10 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
                 'dsn' => $dsn,
             ),
         );
-        $this->config = new Config($configArray);
+        $this->iniReader = new IniReader($configArray);
 
         // intialize storage
-        $storage = new PdoStorage($this->config);
+        $storage = new PdoStorage($this->iniReader);
         $storage->initDatabase();
 
         // add some clients

@@ -17,7 +17,7 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Config\Config;
+use fkooman\Ini\IniReader;
 use fkooman\Json\Json;
 use fkooman\Http\Request;
 use fkooman\Http\JsonResponse;
@@ -25,16 +25,16 @@ use fkooman\OAuth\Server\Exception\TokenIntrospectionException;
 
 class TokenIntrospection
 {
-    /** @var fkooman\Config\Config */
-    private $config;
+    /** @var fkooman\Ini\IniReader */
+    private $iniReader;
 
     /** @var fkooman\OAuth\Server\PdoStorage */
     private $storage;
 
-    public function __construct(Config $c)
+    public function __construct(IniReader $c)
     {
-        $this->config = $c;
-        $this->storage = new PdoStorage($this->config);
+        $this->iniReader = $c;
+        $this->storage = new PdoStorage($this->iniReader);
     }
 
     public function handleRequest(Request $request)

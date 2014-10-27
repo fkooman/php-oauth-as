@@ -17,7 +17,7 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Config\Config;
+use fkooman\Ini\IniReader;
 use fkooman\OAuth\Common\Scope;
 use fkooman\Http\Request;
 use fkooman\Http\JsonResponse;
@@ -25,16 +25,16 @@ use fkooman\OAuth\Server\Exception\TokenException;
 
 class Token
 {
-    /** @var fkooman\Config\Config */
-    private $config;
+    /** @var fkooman\Ini\IniReader */
+    private $iniReader;
 
     /** @var fkooman\OAuth\Server\PdoStorage */
     private $storage;
 
-    public function __construct(Config $c)
+    public function __construct(IniReader $c)
     {
-        $this->config = $c;
-        $this->storage = new PdoStorage($this->config);
+        $this->iniReader = $c;
+        $this->storage = new PdoStorage($this->iniReader);
 
         // occasionally delete expired access tokens and authorization codes
         if (3 === rand(0, 5)) {
@@ -170,7 +170,7 @@ class Token
 
                 $token = array();
                 $token['access_token'] = Utils::randomHex(16);
-                $token['expires_in'] = intval($this->config->getValue('accessTokenExpiry'));
+                $token['expires_in'] = intval($this->iniReader->v('accessTokenExpiry'));
                 // we always grant the scope the user authorized, no further restrictions here...
                 // FIXME: the merging of authorized scopes in the authorize function is a bit of a mess!
                 // we should deal with that there and come up with a good solution...
@@ -197,7 +197,7 @@ class Token
 
                 $token = array();
                 $token['access_token'] = Utils::randomHex(16);
-                $token['expires_in'] = intval($this->config->getValue('accessTokenExpiry'));
+                $token['expires_in'] = intval($this->iniReader->v('accessTokenExpiry'));
                 if (null !== $scope) {
                     // the client wants to obtain a specific scope
                     $requestedScope = Scope::fromString($scope);

@@ -2,14 +2,14 @@
 <?php
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
-use fkooman\Config\Config;
+use fkooman\Ini\IniReader;
 use fkooman\Json\Json;
 use fkooman\OAuth\Server\PdoStorage;
 use fkooman\OAuth\Server\ClientRegistration;
 
 try {
-    $config = Config::fromIniFile(dirname(__DIR__)."/config/oauth.ini");
-    $storage = new PdoStorage($config);
+    $iniReader = IniReader::fromFile(dirname(__DIR__)."/config/oauth.ini");
+    $storage = new PdoStorage($iniReader);
 
     if ($argc !== 2) {
         throw new Exception("ERROR: please specify file with client registration information");

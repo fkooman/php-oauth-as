@@ -17,7 +17,7 @@
 
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
-use fkooman\Config\Config;
+use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\ApiService;
 use fkooman\OAuth\Server\PdoStorage;
 use fkooman\Http\Exception\HttpException;
@@ -25,12 +25,12 @@ use fkooman\Http\Exception\InternalServerErrorException;
 use fkooman\Rest\Plugin\Bearer\BearerAuthentication;
 
 try {
-    $config = Config::fromIniFile(
+    $iniReader = IniReader::fromFile(
         dirname(__DIR__).'/config/oauth.ini'
     );
 
     $apiService = new ApiService(
-        new PdoStorage($config)
+        new PdoStorage($iniReader)
     );
 
     $apiService->registerBeforeEachMatchPlugin(

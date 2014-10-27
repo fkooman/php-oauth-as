@@ -31,7 +31,7 @@ class TokenIntrospectionTest extends OAuthHelper
     {
         parent::setUp();
 
-        $storage = new PdoStorage($this->config);
+        $storage = new PdoStorage($this->iniReader);
 
         $resourceOwnerOne = array(
             "id" => "fkooman",
@@ -56,7 +56,7 @@ class TokenIntrospectionTest extends OAuthHelper
     public function testGetTokenIntrospection()
     {
         $h = new Request("https://auth.example.org/introspect?token=foo", "GET");
-        $t = new TokenIntrospection($this->config, null);
+        $t = new TokenIntrospection($this->iniReader, null);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin"}|', $this->j->encode($response->getContent()));
@@ -66,7 +66,7 @@ class TokenIntrospectionTest extends OAuthHelper
     {
         $h = new Request("https://auth.example.org/introspect", "POST");
         $h->setPostParameters(array("token" => "foo"));
-        $t = new TokenIntrospection($this->config, null);
+        $t = new TokenIntrospection($this->iniReader, null);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"foo bar","client_id":"testclient","sub":"fkooman","token_type":"bearer","x-entitlement":"urn:x-foo:service:access urn:x-bar:privilege:admin"}', $this->j->encode($response->getContent()));
@@ -76,7 +76,7 @@ class TokenIntrospectionTest extends OAuthHelper
     {
         $h = new Request("https://auth.example.org/introspect", "POST");
         $h->setPostParameters(array("token" => "bar"));
-        $t = new TokenIntrospection($this->config, null);
+        $t = new TokenIntrospection($this->iniReader, null);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|{"active":true,"exp":[0-9]+,"iat":[0-9]+,"scope":"a b c","client_id":"testclient","sub":"frko","token_type":"bearer"}|', $this->j->encode($response->getContent()));
@@ -85,7 +85,7 @@ class TokenIntrospectionTest extends OAuthHelper
     public function testMissingGetTokenIntrospection()
     {
         $h = new Request("https://auth.example.org/introspect?token=foobar", "GET");
-        $t = new TokenIntrospection($this->config, null);
+        $t = new TokenIntrospection($this->iniReader, null);
         $response = $t->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{"active":false}', $this->j->encode($response->getContent()));
@@ -94,7 +94,7 @@ class TokenIntrospectionTest extends OAuthHelper
     public function testUnsupportedMethod()
     {
         $h = new Request("https://auth.example.org/introspect?token=foobar", "DELETE");
-        $t = new TokenIntrospection($this->config, null);
+        $t = new TokenIntrospection($this->iniReader, null);
         $response = $t->handleRequest($h);
         $this->assertEquals(405, $response->getStatusCode());
         $this->assertEquals('{"error":"method_not_allowed","error_description":"invalid request method"}', $this->j->encode($response->getContent()));

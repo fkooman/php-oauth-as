@@ -17,7 +17,7 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Config\Config;
+use fkooman\Ini\IniReader;
 use fkooman\OAuth\Common\Scope;
 use InvalidArgumentException;
 use fkooman\Http\Request;
@@ -32,8 +32,8 @@ use Twig_Environment;
 
 class Authorize
 {
-    /** @var fkooman\Config\Config */
-    private $config;
+    /** @var fkooman\Ini\IniReader */
+    private $iniReader;
 
     /** @var fkooman\OAuth\Server\PdoStorage */
     private $storage;
@@ -41,13 +41,13 @@ class Authorize
     /** @var fkooman\OAuth\Server\IResourceOwner */
     private $resourceOwner;
 
-    public function __construct(Config $c)
+    public function __construct(IniReader $c)
     {
-        $this->config = $c;
+        $this->iniReader = $c;
 
-        $authMech = 'fkooman\\OAuth\\Server\\'.$this->config->getValue('authenticationMechanism');
-        $this->resourceOwner = new $authMech($this->config);
-        $this->storage = new PdoStorage($this->config);
+        $authMech = 'fkooman\\OAuth\\Server\\'.$this->iniReader->v('authenticationMechanism');
+        $this->resourceOwner = new $authMech($this->iniReader);
+        $this->storage = new PdoStorage($this->iniReader);
     }
 
     public function handleRequest(Request $request)
@@ -75,10 +75,10 @@ class Authorize
                         $output = $twig->render(
                             "askAuthorization.twig",
                             array(
-                                'serviceName' => $this->config->getValue('serviceName'),
-                                'serviceLogoUri' => $this->config->getValue('serviceLogoUri', false),
-                                'serviceLogoWidth' => $this->config->getValue('serviceLogoWidth', false),
-                                'serviceLogoHeight' => $this->config->getValue('serviceLogoHeight', false),
+                                'serviceName' => $this->iniReader->v('serviceName', false),
+                                'serviceLogoUri' => $this->iniReader->v('serviceLogoUri', false),
+                                'serviceLogoWidth' => $this->iniReader->v('serviceLogoWidth', false),
+                                'serviceLogoHeight' => $this->iniReader->v('serviceLogoHeight', false),
                                 'resourceOwnerId' => $this->resourceOwner->getId(),
                                 'sslEnabled' => "https" === $request->getRequestUri()->getScheme(),
                                 'contactEmail' => $result->getClient()->getContactEmail(),
@@ -185,7 +185,7 @@ class Authorize
 
             $client = $this->storage->getClient($clientId);
             if (false === $client) {
-                if ($this->config->getValue('allowRemoteStorageClients', false, false)) {
+                if ($this->iniReader->v('allowRemoteStorageClients', false, false)) {
                     // first we need to figure out of the authorize request is
                     // coming from remoteStorage client, this is hard... if the
                     // client_id and the redirect_uri are both set and both a
@@ -285,11 +285,11 @@ class Authorize
                         $clientId,
                         $resourceOwner->getId(),
                         $scope->toString(),
-                        $this->config->getValue('accessTokenExpiry')
+                        $this->iniReader->v('accessTokenExpiry')
                     );
                     $token = array(
                         "access_token" => $accessToken,
-                        "expires_in" => $this->config->getValue('accessTokenExpiry'),
+                        "expires_in" => $this->iniReader->v('accessTokenExpiry'),
                         "token_type" => "bearer",
                     );
                     $s = $scope->toString();

@@ -17,7 +17,7 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Config\Config;
+use fkooman\Ini\IniReader;
 use fkooman\Json\Json;
 use fkooman\Json\Exception\JsonException;
 use RuntimeException;
@@ -26,17 +26,17 @@ use fkooman\OAuth\Server\Exception\SimpleAuthResourceOwnerException;
 
 class SimpleAuthResourceOwner implements IResourceOwner
 {
-    /** @var fkooman\Config\Config */
-    private $config;
+    /** @var fkooman\Ini\IniReader */
+    private $iniReader;
 
     private $simpleAuth;
     private $resourceOwnerHint;
 
-    public function __construct(Config $config)
+    public function __construct(IniReader $config)
     {
-        $this->config = $config;
+        $this->iniReader = $config;
 
-        $bPath = $this->config->s('SimpleAuthResourceOwner')->l('simpleAuthPath').'/vendor/autoload.php';
+        $bPath = $this->iniReader->v('SimpleAuthResourceOwner', 'simpleAuthPath').'/vendor/autoload.php';
         if (!file_exists($bPath) || !is_file($bPath) || !is_readable($bPath)) {
             throw new SimpleAuthResourceOwnerException("invalid path to php-simple-auth");
         }
@@ -60,7 +60,7 @@ class SimpleAuthResourceOwner implements IResourceOwner
         $entitlement = array();
         try {
             $j = new Json();
-            $entitlement = $j->decodeFile($this->config->l('entitlementsFile'));
+            $entitlement = $j->decodeFile($this->iniReader->v('entitlementsFile'));
         } catch (RuntimeException $e) {
             // problem with reading the entitlement file
             return array();

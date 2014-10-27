@@ -2,12 +2,12 @@
 <?php
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
-use fkooman\Config\Config;
+use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\PdoStorage;
 
 try {
-    $config = Config::fromIniFile(dirname(__DIR__)."/config/oauth.ini");
-    $storage = new PdoStorage($config);
+    $iniReader = IniReader::fromFile(dirname(__DIR__)."/config/oauth.ini");
+    $storage = new PdoStorage($iniReader);
     $storage->initDatabase();
 } catch (Exception $e) {
     echo $e->getMessage().PHP_EOL;

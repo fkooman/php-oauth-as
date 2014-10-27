@@ -31,7 +31,7 @@ class ApiServiceTest extends OAuthHelper
     {
         parent::setUp();
 
-        $storage = new PdoStorage($this->config);
+        $storage = new PdoStorage($this->iniReader);
         $resourceOwner = array(
             'id' => 'fkooman',
             'entitlement' => array(),
