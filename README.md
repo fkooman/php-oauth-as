@@ -33,8 +33,12 @@ This is a screenshot of the consent dialog:
 # Installation
 Please use the RPM packages for actually running it on a server. The RPM 
 packages can for now be found in the 
-[repository](https://repos.fedorapeople.org/repos/fkooman/php-oauth/). For 
+[repository](https://copr.fedoraproject.org/coprs/fkooman/php-oauth/). For 
 setting up a development environment, see below.
+
+Currently the documentation for getting started with the packages still needs
+to be written...
+
 
 # Development Requirements
 On Fedora/CentOS:
