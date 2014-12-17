@@ -19,11 +19,11 @@
         "fkooman/ini": "~0.2.0",
         "fkooman/json": "~0.6.0",
         "fkooman/oauth-common": "~0.7.0",
-        "fkooman/rest": "~0.6.2",
+        "fkooman/rest": "~0.6.3",
         "fkooman/rest-plugin-basic": "~0.2.2",
         "fkooman/rest-plugin-bearer": "~0.2.1",
         "php": ">=5.3.3",
-        "rhumsaa/uuid": "~2.7",
+        "rhumsaa/uuid": "~2.8",
         "twig/twig": "~1.15"
     }
 }
