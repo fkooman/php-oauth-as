@@ -3,6 +3,8 @@ MAINTAINER François Kooman <fkooman@tuxed.net>
 
 RUN yum -y update; yum clean all
 RUN yum install -y mod_ssl yum-plugin-copr; yum clean all 
+
+RUN yum copr enable -y fkooman/php-base
 RUN yum copr enable -y fkooman/php-oauth
 
 RUN yum install -y php-oauth-as php-simple-auth; yum clean all
