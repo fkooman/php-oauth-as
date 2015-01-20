@@ -2,3 +2,4 @@
 /config/*.ini
 /config/*.json
 /vendor/
+/.php_cs.cache
