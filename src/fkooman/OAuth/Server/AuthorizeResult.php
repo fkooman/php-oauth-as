@@ -33,7 +33,7 @@ class AuthorizeResult
 
     public function __construct($action)
     {
-        if (!in_array($action, array (self::REDIRECT, self::ASK_APPROVAL))) {
+        if (!in_array($action, array(self::REDIRECT, self::ASK_APPROVAL))) {
             throw new AuthorizeResultException("invalid action");
         }
         $this->action = $action;

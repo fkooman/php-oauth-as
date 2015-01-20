@@ -45,7 +45,7 @@ class ClientRegistration
 
     public static function fromArray(array $a)
     {
-        $requiredFields = array ("id", "secret", "type", "redirect_uri", "name");
+        $requiredFields = array("id", "secret", "type", "redirect_uri", "name");
         foreach ($requiredFields as $r) {
             if (!array_key_exists($r, $a)) {
                 throw new ClientRegistrationException("not a valid client, '".$r."' not set");
@@ -136,7 +136,7 @@ class ClientRegistration
 
     public function setType($t)
     {
-        if (!in_array($t, array ("user_agent_based_application", "web_application", "native_application"))) {
+        if (!in_array($t, array("user_agent_based_application", "web_application", "native_application"))) {
             throw new ClientRegistrationException("type not supported");
         }
         if ("web_application" === $t) {

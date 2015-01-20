@@ -294,10 +294,10 @@ class Authorize
                     );
                     $s = $scope->toString();
                     if (!empty($s)) {
-                        $token += array ("scope" => $s);
+                        $token += array("scope" => $s);
                     }
                     if (null !== $state) {
-                        $token += array ("state" => $state);
+                        $token += array("state" => $state);
                     }
                     $ar = new AuthorizeResult(AuthorizeResult::REDIRECT);
                     $ar->setRedirectUri(new Uri($client['redirect_uri']."#".http_build_query($token)));
@@ -316,7 +316,7 @@ class Authorize
                     );
                     $token = array("code" => $authorizationCode);
                     if (null !== $state) {
-                        $token += array ("state" => $state);
+                        $token += array("state" => $state);
                     }
                     $ar = new AuthorizeResult(AuthorizeResult::REDIRECT);
                     $separator = (false === strpos($client['redirect_uri'], "?")) ? "?" : "&";

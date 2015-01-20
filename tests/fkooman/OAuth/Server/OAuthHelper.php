@@ -29,14 +29,14 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->_tmpDb = tempnam(sys_get_temp_dir(), "oauth_");
-        if (FALSE === $this->_tmpDb) {
+        if (false === $this->_tmpDb) {
             throw new Exception("unable to generate temporary file for database");
         }
         $dsn = "sqlite:".$this->_tmpDb;
 
-        $configArray = array (
+        $configArray = array(
             'authenticationMechanism' => 'DummyResourceOwner',
-            'DummyResourceOwner' => array (
+            'DummyResourceOwner' => array(
                 'uid' => "fkooman",
                 'entitlement' => array(
                     "http://php-oauth.net/entitlement/manage",
@@ -57,29 +57,29 @@ class OAuthHelper extends \PHPUnit_Framework_TestCase
         $uaba = array("id" => "testclient",
                   "name" => "Simple Test Client",
                   "description" => "Client for unit testing",
-                  "secret" => NULL,
-                  "icon" => NULL,
+                  "secret" => null,
+                  "icon" => null,
                   "allowed_scope" => "read",
                   "contact_email" => "foo@example.org",
                   "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
                   "type" => "user_agent_based_application", );
 
-        $wa = array ("id" => "testcodeclient",
+        $wa = array("id" => "testcodeclient",
                   "name" => "Simple Test Client for Authorization Code Profile",
                   "description" => "Client for unit testing",
                   "secret" => "abcdef",
-                  "icon" => NULL,
+                  "icon" => null,
                   "allowed_scope" => "read write foo bar foobar",
-                  "contact_email" => NULL,
+                  "contact_email" => null,
                   "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
                   "type" => "web_application", );
-        $na = array ("id" => "testnativeclient",
+        $na = array("id" => "testnativeclient",
                   "name" => "Simple Test Client for Authorization Code Native Profile",
                   "description" => "Client for unit testing",
-                  "secret" => NULL,
-                  "icon" => NULL,
+                  "secret" => null,
+                  "icon" => null,
                   "allowed_scope" => "read",
-                  "contact_email" => NULL,
+                  "contact_email" => null,
                   "redirect_uri" => "oauth://callback",
                   "type" => "native_application", );
 
