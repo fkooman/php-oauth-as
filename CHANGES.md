@@ -2,6 +2,8 @@
 
 ## 0.1.9
 - update `fkooman/rest-plugin-basic`
+- support `indie_auth_url` as resource owner hint for the authentication
+  backend
 
 ## 0.1.8
 - move to `fkooman/ini` from `fkooman/config`
