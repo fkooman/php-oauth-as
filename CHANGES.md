@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.9
+- update `fkooman/rest-plugin-basic`
+
 ## 0.1.8
 - move to `fkooman/ini` from `fkooman/config`
 - update `fkooman/rest` to new version
