@@ -34,6 +34,7 @@ class ClientRegistration
         $this->client = array();
         $this->setId($id);
         $this->setSecret($secret);
+        $this->setUserConsent(true);
         $this->setType($type);
         $this->setRedirectUri($redirect_uri);
         $this->setName($name);
@@ -55,6 +56,9 @@ class ClientRegistration
 
         if (array_key_exists("allowed_scope", $a)) {
             $c->setAllowedScope($a['allowed_scope']);
+        }
+        if (array_key_exists('user_consent', $a)) {
+            $c->setUserConsent($a['user_consent']);
         }
         if (array_key_exists("icon", $a)) {
             $c->setIcon($a['icon']);
@@ -115,6 +119,16 @@ class ClientRegistration
     public function getSecret()
     {
         return $this->client['secret'];
+    }
+
+    public function setUserConsent($userConsent)
+    {
+        $this->client['user_consent'] = (bool) $userConsent;
+    }
+
+    public function getUserConsent()
+    {
+        return $this->client['user_consent'];
     }
 
     public function setRedirectUri($r)

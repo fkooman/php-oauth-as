@@ -2,6 +2,7 @@
 
 ## 0.1.9
 - update `fkooman/rest-plugin-basic`
+- include support to allow clients to be automatically approved (issue #24)
 
 ## 0.1.8
 - move to `fkooman/ini` from `fkooman/config`
