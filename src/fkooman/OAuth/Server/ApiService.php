@@ -152,6 +152,7 @@ class ApiService extends Service
         }
 
         $response = new JsonResponse(201);
+        $response->setContent(array('status' => 'ok'));
 
         return $response;
     }
@@ -176,6 +177,7 @@ class ApiService extends Service
             throw new NotFoundException('authorization not found');
         }
         $response = new JsonResponse(200);
+        $response->setContent(array('status' => 'ok'));
 
         return $response;
     }
@@ -211,6 +213,7 @@ class ApiService extends Service
             throw new NotFoundException('application not found');
         }
         $response = new JsonResponse(200);
+        $response->setContent(array('status' => 'ok'));
 
         return $response;
     }
@@ -245,6 +248,7 @@ class ApiService extends Service
                 throw new BadRequestException('application already exists');
             }
             $response = new JsonResponse(201);
+            $response->setContent(array('status' => 'ok'));
 
             return $response;
         } catch (ClientRegistrationException $e) {
@@ -269,6 +273,7 @@ class ApiService extends Service
             throw new BadRequestException('invalid client data', $e->getMessage());
         }
         $response = new JsonResponse(200);
+        $response->setContent(array('status' => 'ok'));
 
         return $response;
     }
