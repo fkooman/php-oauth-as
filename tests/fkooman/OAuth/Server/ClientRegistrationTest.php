@@ -114,9 +114,9 @@ class ClientRegistrationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($allowedScope, $c->getAllowedScope());
         $this->assertEquals($icon, $c->getIcon());
         $this->assertEquals($description, $c->getDescription());
-        $this->assertTrue($c->getUserConsent());
+        $this->assertFalse($c->getDisableUserConsent());
         $this->assertEquals($contactEmail, $c->getContactEmail());
-        $this->assertEquals(array("id" => $id, "secret" => $secret, "type" => $type, "redirect_uri" => $redirectUri, "user_consent" => true, "name" => $name, "allowed_scope" => $allowedScope, "icon" => $icon, "description" => $description, "contact_email" => $contactEmail), $c->getClientAsArray());
+        $this->assertEquals(array("id" => $id, "secret" => $secret, "type" => $type, "redirect_uri" => $redirectUri, "disable_user_consent" => false, "name" => $name, "allowed_scope" => $allowedScope, "icon" => $icon, "description" => $description, "contact_email" => $contactEmail), $c->getClientAsArray());
     }
 
    /**

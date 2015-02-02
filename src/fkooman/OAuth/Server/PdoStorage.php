@@ -51,7 +51,7 @@ class PdoStorage
 
     public function getClients()
     {
-        $stmt = $this->pdo->prepare("SELECT id, name, description, redirect_uri, user_consent, type, icon, allowed_scope FROM clients");
+        $stmt = $this->pdo->prepare("SELECT id, name, description, redirect_uri, disable_user_consent, type, icon, allowed_scope FROM clients");
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -63,17 +63,23 @@ class PdoStorage
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        // convert disable_user_consent to boolean
+        if (false !== $data && array_key_exists('disable_user_consent', $data)) {
+            $data['disable_user_consent'] = (bool) $data['disable_user_consent'];
+        }
+
+        return $data;
     }
 
     public function updateClient($clientId, $data)
     {
-        $stmt = $this->pdo->prepare("UPDATE clients SET name = :name, description = :description, secret = :secret, user_consent = :user_consent, redirect_uri = :redirect_uri, type = :type, icon = :icon, allowed_scope = :allowed_scope, contact_email = :contact_email WHERE id = :client_id");
+        $stmt = $this->pdo->prepare("UPDATE clients SET name = :name, description = :description, secret = :secret, disable_user_consent = :disable_user_consent, redirect_uri = :redirect_uri, type = :type, icon = :icon, allowed_scope = :allowed_scope, contact_email = :contact_email WHERE id = :client_id");
         $stmt->bindValue(":name", $data['name'], PDO::PARAM_STR);
         $stmt->bindValue(":description", $data['description'], PDO::PARAM_STR);
         $stmt->bindValue(":secret", $data['secret'], PDO::PARAM_STR);
         $stmt->bindValue(":redirect_uri", $data['redirect_uri'], PDO::PARAM_STR);
-        $stmt->bindValue(":user_consent", $data['user_consent'], PDO::PARAM_BOOL);
+        $stmt->bindValue(":disable_user_consent", $data['disable_user_consent'], PDO::PARAM_BOOL);
         $stmt->bindValue(":type", $data['type'], PDO::PARAM_STR);
         $stmt->bindValue(":icon", $data['icon'], PDO::PARAM_STR);
         $stmt->bindValue(":allowed_scope", $data['allowed_scope'], PDO::PARAM_STR);
@@ -86,12 +92,12 @@ class PdoStorage
 
     public function addClient($data)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO clients (id, name, description, secret, user_consent, redirect_uri, type, icon, allowed_scope, contact_email) VALUES(:client_id, :name, :description, :secret, :user_consent, :redirect_uri, :type, :icon, :allowed_scope, :contact_email)");
+        $stmt = $this->pdo->prepare("INSERT INTO clients (id, name, description, secret, disable_user_consent, redirect_uri, type, icon, allowed_scope, contact_email) VALUES(:client_id, :name, :description, :secret, :disable_user_consent, :redirect_uri, :type, :icon, :allowed_scope, :contact_email)");
         $stmt->bindValue(":client_id", $data['id'], PDO::PARAM_STR);
         $stmt->bindValue(":name", $data['name'], PDO::PARAM_STR);
         $stmt->bindValue(":description", $data['description'], PDO::PARAM_STR);
         $stmt->bindValue(":secret", $data['secret'], PDO::PARAM_STR);
-        $stmt->bindValue(":user_consent", $data['user_consent'], PDO::PARAM_BOOL);
+        $stmt->bindValue(":disable_user_consent", $data['disable_user_consent'], PDO::PARAM_BOOL);
         $stmt->bindValue(":redirect_uri", $data['redirect_uri'], PDO::PARAM_STR);
         $stmt->bindValue(":type", $data['type'], PDO::PARAM_STR);
         $stmt->bindValue(":icon", $data['icon'], PDO::PARAM_STR);
@@ -363,7 +369,7 @@ class PdoStorage
                 description TEXT DEFAULT NULL,
                 secret TEXT DEFAULT NULL,
                 redirect_uri TEXT NOT NULL,
-                user_consent BOOLEAN DEFAULT 1,
+                disable_user_consent BOOLEAN DEFAULT 0,
                 type TEXT NOT NULL,
                 icon TEXT DEFAULT NULL,
                 allowed_scope TEXT DEFAULT NULL,

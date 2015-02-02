@@ -61,7 +61,7 @@ class OAuthHelper extends PHPUnit_Framework_TestCase
                   "secret" => null,
                   "icon" => null,
                   "allowed_scope" => "read",
-                  "user_consent" => true,
+                  "disable_user_consent" => false,
                   "contact_email" => "foo@example.org",
                   "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
                   "type" => "user_agent_based_application", );
@@ -72,7 +72,7 @@ class OAuthHelper extends PHPUnit_Framework_TestCase
                   "secret" => "abcdef",
                   "icon" => null,
                   "allowed_scope" => "read write foo bar foobar",
-                  "user_consent" => true,
+                  "disable_user_consent" => false,
                   "contact_email" => null,
                   "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
                   "type" => "web_application", );
@@ -83,7 +83,7 @@ class OAuthHelper extends PHPUnit_Framework_TestCase
                   "icon" => null,
                   "allowed_scope" => "read",
                   "contact_email" => null,
-                  "user_consent" => true,
+                  "disable_user_consent" => false,
                   "redirect_uri" => "oauth://callback",
                   "type" => "native_application", );
 

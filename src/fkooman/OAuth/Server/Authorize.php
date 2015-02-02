@@ -267,11 +267,11 @@ class Authorize
 
             $this->storage->updateResourceOwner($resourceOwner);
         
-            if ($client['user_consent']) {
-                $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $resourceOwner->getId());
-            } else {
+            if ($client['disable_user_consent']) {
                 // we do not require approval by the user
                 $approvedScope = array('scope' => $scope->toString());
+            } else {
+                $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $resourceOwner->getId());
             }
             if (false === $approvedScope || false === $scope->isSubsetOf(Scope::fromString($approvedScope['scope']))) {
                 $ar = new AuthorizeResult(AuthorizeResult::ASK_APPROVAL);
