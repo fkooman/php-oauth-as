@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3e6e1322b892b22084b9287f2750216d",
+    "hash": "574c839b000faf54f5f36a4bdd7f7d51",
     "packages": [
         {
             "name": "fkooman/ini",
@@ -119,16 +119,16 @@
         },
         {
             "name": "fkooman/rest",
-            "version": "0.6.3",
+            "version": "0.6.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "7b9384b92b23a6ed7ebebb1b69f9f578426112a8"
+                "reference": "86f903380b5525d2b997f09c77150379d37b6c4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/7b9384b92b23a6ed7ebebb1b69f9f578426112a8",
-                "reference": "7b9384b92b23a6ed7ebebb1b69f9f578426112a8",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/86f903380b5525d2b997f09c77150379d37b6c4b",
+                "reference": "86f903380b5525d2b997f09c77150379d37b6c4b",
                 "shasum": ""
             },
             "require": {
@@ -159,7 +159,7 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2014-10-27 18:15:14"
+            "time": "2015-01-28 12:36:46"
         },
         {
             "name": "fkooman/rest-plugin-basic",
@@ -499,16 +499,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.17.0",
+            "version": "v1.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "2493970fa4d587eca73f77e6d8bd48a8bdd4c608"
+                "reference": "4cf7464348e7f9893a93f7096a90b73722be99cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/2493970fa4d587eca73f77e6d8bd48a8bdd4c608",
-                "reference": "2493970fa4d587eca73f77e6d8bd48a8bdd4c608",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/4cf7464348e7f9893a93f7096a90b73722be99cf",
+                "reference": "4cf7464348e7f9893a93f7096a90b73722be99cf",
                 "shasum": ""
             },
             "require": {
@@ -517,7 +517,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.17-dev"
+                    "dev-master": "1.18-dev"
                 }
             },
             "autoload": {
@@ -552,7 +552,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-01-14 10:15:49"
+            "time": "2015-01-25 17:32:08"
         }
     ],
     "packages-dev": [],

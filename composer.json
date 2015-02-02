@@ -19,7 +19,7 @@
         "fkooman/ini": "~0.2.0",
         "fkooman/json": "~0.6.0",
         "fkooman/oauth-common": "~0.7.0",
-        "fkooman/rest": "~0.6.3",
+        "fkooman/rest": "~0.6.5",
         "fkooman/rest-plugin-basic": "~0.3.1",
         "fkooman/rest-plugin-bearer": "~0.2.1",
         "php": ">=5.3.3",
