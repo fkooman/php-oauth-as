@@ -1,11 +1,5 @@
 ; This is the OAuth Authorization Server configuration
 
-; name of service
-serviceName = "My Protected API"
-;serviceLogoUri = "https://example.org/logo.png"
-;serviceLogoWidth = 64;
-;serviceLogoHeight = 64;
-
 authenticationMechanism = "SimpleAuthResourceOwner"
 ;authenticationMechanism = "SspResourceOwner"
 

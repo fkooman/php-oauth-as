@@ -10,11 +10,8 @@
 
 <body>
     <div id="wrapper">
-      {% if serviceLogoUri %}
-        <img id="headerLogo" src="{{ serviceLogoUri|e }}" width="{{ serviceLogoWidth|e }}" height="{{ serviceLogoHeight|e }}" />
-      {% endif %}
       <div id="header">
-        <h1>{{ serviceName|e }}</h1>
+        <h1>My Protected API</h1>
         <span id="userInfo">Logged in as <strong>{{ resourceOwnerId|e }}</strong></span>
       </div>
       <div id="container">

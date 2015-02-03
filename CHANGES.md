@@ -9,6 +9,11 @@
   to use the object instead of object to array conversion
 - allow for using limited regexp as redirect_uri, they still should match 
   valid URI checks (issue #34)
+- actually use the matching `redirect_uri` instead of the registered 
+  `redirect_uri`
+- remove template customizations from config file and implement template
+  override by allowing templates to be placed in `config/views` from 
+  `views`
 
 ## 0.1.8
 - move to `fkooman/ini` from `fkooman/config`

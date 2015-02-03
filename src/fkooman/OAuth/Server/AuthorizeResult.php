@@ -49,18 +49,11 @@ class AuthorizeResult
 
     public function setRedirectUri(Uri $u)
     {
-        if (self::REDIRECT !== $this->action) {
-            throw new AuthorizeResultException("cannot set url for this action");
-        }
         $this->redirectUri = $u;
     }
 
     public function getRedirectUri()
     {
-        if (self::REDIRECT !== $this->action) {
-            throw new AuthorizeResultException("cannot get url for this action");
-        }
-
         return $this->redirectUri;
     }
 

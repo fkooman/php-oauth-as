@@ -65,20 +65,11 @@ class Authorize
                 case "GET":
                     $result = $this->handleAuthorize($this->resourceOwner, $request->getQueryParameters());
                     if (AuthorizeResult::ASK_APPROVAL === $result->getAction()) {
-                        $loader = new Twig_Loader_Filesystem(
-                            dirname(dirname(dirname(dirname(__DIR__))))."/views"
-                        );
-                        $twig = new Twig_Environment($loader);
-
-                        $redirectUri = new Uri($result->getClient()->getRedirectUri());
-
+                        $redirectUri = $result->getRedirectUri();
+                        $twig = $this->getTwig();
                         $output = $twig->render(
                             "askAuthorization.twig",
                             array(
-                                'serviceName' => $this->iniReader->v('serviceName', false),
-                                'serviceLogoUri' => $this->iniReader->v('serviceLogoUri', false),
-                                'serviceLogoWidth' => $this->iniReader->v('serviceLogoWidth', false),
-                                'serviceLogoHeight' => $this->iniReader->v('serviceLogoHeight', false),
                                 'resourceOwnerId' => $this->resourceOwner->getId(),
                                 'sslEnabled' => "https" === $request->getRequestUri()->getScheme(),
                                 'contactEmail' => $result->getClient()->getContactEmail(),
@@ -225,7 +216,9 @@ class Authorize
                 }
             }
 
-            if (null !== $redirectUri) {
+            if (null === $redirectUri) {
+                $redirectUri = $client->getRedirectUri();
+            } else {
                 if (!$client->verifyRedirectUri($redirectUri, true)) {
                     throw new ResourceOwnerException(
                         'specified redirect_uri not the same as registered redirect_uri'
@@ -276,6 +269,7 @@ class Authorize
             if (false === $approvedScope || false === $scope->isSubsetOf(Scope::fromString($approvedScope['scope']))) {
                 $ar = new AuthorizeResult(AuthorizeResult::ASK_APPROVAL);
                 $ar->setClient($client);
+                $ar->setRedirectUri(new Uri($redirectUri));
                 $ar->setScope($scope);
 
                 return $ar;
@@ -305,7 +299,7 @@ class Authorize
                         $token += array("state" => $state);
                     }
                     $ar = new AuthorizeResult(AuthorizeResult::REDIRECT);
-                    $ar->setRedirectUri(new Uri($client->getRedirectUri()."#".http_build_query($token)));
+                    $ar->setRedirectUri(new Uri($redirectUri."#".http_build_query($token)));
 
                     return $ar;
                 } else {
@@ -324,8 +318,8 @@ class Authorize
                         $token += array("state" => $state);
                     }
                     $ar = new AuthorizeResult(AuthorizeResult::REDIRECT);
-                    $separator = (false === strpos($client->getRedirectUri(), "?")) ? "?" : "&";
-                    $ar->setRedirectUri(new Uri($client->getRedirectUri().$separator.http_build_query($token)));
+                    $separator = (false === strpos($redirectUri, "?")) ? "?" : "&";
+                    $ar->setRedirectUri(new Uri($redirectUri.$separator.http_build_query($token)));
 
                     return $ar;
                 }
@@ -372,5 +366,25 @@ class Authorize
             // FIXME: really weird place to handle scope exceptions?
             throw new ClientException("invalid_scope", "malformed scope", $client, $state);
         }
+    }
+
+    private function getTwig()
+    {
+        $configTemplateDir = dirname(dirname(dirname(dirname(__DIR__)))).'/config/views';
+        $defaultTemplateDir = dirname(dirname(dirname(dirname(__DIR__)))).'/views';
+
+        $templateDirs = array();
+
+        // the template directory actually needs to exist, otherwise the
+        // Twig_Loader_Filesystem class will throw an exception when loading
+        // templates, the actual template does not need to exist though...
+        if (false !== is_dir($configTemplateDir)) {
+            $templateDirs[] = $configTemplateDir;
+        }
+        $templateDirs[] = $defaultTemplateDir;
+
+        $loader = new Twig_Loader_Filesystem($templateDirs);
+
+        return new Twig_Environment($loader);
     }
 }
