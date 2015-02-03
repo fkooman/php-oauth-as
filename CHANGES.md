@@ -5,6 +5,8 @@
 - include support to allow clients to be automatically approved (issue #24)
 - API calls now always return JSON, also on successful calls to not give
   problems in browser JS parsing
+- rename `ClientRegistration` class to `ClientData` and refactor all code 
+  to use the object instead of object to array conversion
 
 ## 0.1.8
 - move to `fkooman/ini` from `fkooman/config`

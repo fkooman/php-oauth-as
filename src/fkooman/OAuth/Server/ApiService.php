@@ -30,6 +30,7 @@ use fkooman\Rest\Plugin\Bearer\BearerAuthentication;
 use fkooman\Rest\Plugin\Bearer\TokenIntrospection;
 use fkooman\Rest\Plugin\Bearer\Scope;
 use fkooman\Rest\Plugin\Bearer\Entitlement;
+use InvalidArgumentException;
 
 class ApiService extends Service
 {
@@ -236,42 +237,46 @@ class ApiService extends Service
     {
         $this->requireScope($tokenIntrospection->getScope(), 'http://php-oauth.net/scope/manage');
         $this->requireEntitlement($tokenIntrospection->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
-        try {
-            $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
-            $data = $client->getClientAsArray();
-            // check to see if an application with this id already exists
-            if (false === $this->storage->getClient($data['id'])) {
-                if (false === $this->storage->addClient($data)) {
-                    throw new InternalServerErrorException('unable to add application');
-                }
-            } else {
-                throw new BadRequestException('application already exists');
-            }
-            $response = new JsonResponse(201);
-            $response->setContent(array('status' => 'ok'));
 
-            return $response;
-        } catch (ClientRegistrationException $e) {
+        $clientData = null;
+        try {
+            $clientData = new ClientData(Json::decode($request->getContent()));
+        } catch (InvalidArgumentException $e) {
             throw new BadRequestException('invalid client data', $e->getMessage());
         }
+
+        // check to see if an application with this id already exists
+        if (false === $this->storage->getClient($clientData->getId())) {
+            if (false === $this->storage->addClient($clientData)) {
+                throw new InternalServerErrorException('unable to add application');
+            }
+        } else {
+            throw new BadRequestException('application already exists');
+        }
+        $response = new JsonResponse(201);
+        $response->setContent(array('status' => 'ok'));
+
+        return $response;
     }
 
     public function putApplication(Request $request, TokenIntrospection $tokenIntrospection, $id)
     {
         $this->requireScope($tokenIntrospection->getScope(), 'http://php-oauth.net/scope/manage');
         $this->requireEntitlement($tokenIntrospection->getEntitlement(), 'http://php-oauth.net/entitlement/manage');
+
+        $clientData = null;
         try {
-            $client = ClientRegistration::fromArray(Json::decode($request->getContent()));
-            $data = $client->getClientAsArray();
-            if ($data['id'] !== $id) {
-                throw new BadRequestException('resource does not match client id value');
-            }
-            if (false === $this->storage->updateClient($id, $data)) {
-                throw new InternalServerErrorException('unable to update application');
-            }
-        } catch (ClientRegistrationException $e) {
+            $clientData = new ClientData(Json::decode($request->getContent()));
+        } catch (InvalidArgumentException $e) {
             throw new BadRequestException('invalid client data', $e->getMessage());
         }
+        if ($clientData->getId() !== $id) {
+            throw new BadRequestException('resource does not match client id value');
+        }
+        if (false === $this->storage->updateClient($id, $clientData)) {
+            throw new InternalServerErrorException('unable to update application');
+        }
+
         $response = new JsonResponse(200);
         $response->setContent(array('status' => 'ok'));
 

@@ -68,41 +68,40 @@ class PdoStorage
         if (false !== $data && array_key_exists('disable_user_consent', $data)) {
             $data['disable_user_consent'] = (bool) $data['disable_user_consent'];
         }
-
-        return $data;
+        return false !== $data ? new ClientData($data) : false;
     }
 
-    public function updateClient($clientId, $data)
+    public function updateClient($clientId, ClientData $clientData)
     {
         $stmt = $this->pdo->prepare("UPDATE clients SET name = :name, description = :description, secret = :secret, disable_user_consent = :disable_user_consent, redirect_uri = :redirect_uri, type = :type, icon = :icon, allowed_scope = :allowed_scope, contact_email = :contact_email WHERE id = :client_id");
-        $stmt->bindValue(":name", $data['name'], PDO::PARAM_STR);
-        $stmt->bindValue(":description", $data['description'], PDO::PARAM_STR);
-        $stmt->bindValue(":secret", $data['secret'], PDO::PARAM_STR);
-        $stmt->bindValue(":redirect_uri", $data['redirect_uri'], PDO::PARAM_STR);
-        $stmt->bindValue(":disable_user_consent", $data['disable_user_consent'], PDO::PARAM_BOOL);
-        $stmt->bindValue(":type", $data['type'], PDO::PARAM_STR);
-        $stmt->bindValue(":icon", $data['icon'], PDO::PARAM_STR);
-        $stmt->bindValue(":allowed_scope", $data['allowed_scope'], PDO::PARAM_STR);
-        $stmt->bindValue(":contact_email", $data['contact_email'], PDO::PARAM_STR);
+        $stmt->bindValue(":name", $clientData->getName(), PDO::PARAM_STR);
+        $stmt->bindValue(":description", $clientData->getDescription(), PDO::PARAM_STR);
+        $stmt->bindValue(":secret", $clientData->getSecret(), PDO::PARAM_STR);
+        $stmt->bindValue(":redirect_uri", $clientData->getRedirectUri(), PDO::PARAM_STR);
+        $stmt->bindValue(":disable_user_consent", $clientData->getDisableUserConsent(), PDO::PARAM_BOOL);
+        $stmt->bindValue(":type", $clientData->getType(), PDO::PARAM_STR);
+        $stmt->bindValue(":icon", $clientData->getIcon(), PDO::PARAM_STR);
+        $stmt->bindValue(":allowed_scope", $clientData->getAllowedScope(), PDO::PARAM_STR);
+        $stmt->bindValue(":contact_email", $clientData->getContactEmail(), PDO::PARAM_STR);
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->execute();
 
         return 1 === $stmt->rowCount();
     }
 
-    public function addClient($data)
+    public function addClient(ClientData $clientData)
     {
         $stmt = $this->pdo->prepare("INSERT INTO clients (id, name, description, secret, disable_user_consent, redirect_uri, type, icon, allowed_scope, contact_email) VALUES(:client_id, :name, :description, :secret, :disable_user_consent, :redirect_uri, :type, :icon, :allowed_scope, :contact_email)");
-        $stmt->bindValue(":client_id", $data['id'], PDO::PARAM_STR);
-        $stmt->bindValue(":name", $data['name'], PDO::PARAM_STR);
-        $stmt->bindValue(":description", $data['description'], PDO::PARAM_STR);
-        $stmt->bindValue(":secret", $data['secret'], PDO::PARAM_STR);
-        $stmt->bindValue(":disable_user_consent", $data['disable_user_consent'], PDO::PARAM_BOOL);
-        $stmt->bindValue(":redirect_uri", $data['redirect_uri'], PDO::PARAM_STR);
-        $stmt->bindValue(":type", $data['type'], PDO::PARAM_STR);
-        $stmt->bindValue(":icon", $data['icon'], PDO::PARAM_STR);
-        $stmt->bindValue(":allowed_scope", $data['allowed_scope'], PDO::PARAM_STR);
-        $stmt->bindValue(":contact_email", $data['contact_email'], PDO::PARAM_STR);
+        $stmt->bindValue(":client_id", $clientData->getId(), PDO::PARAM_STR);
+        $stmt->bindValue(":name", $clientData->getName(), PDO::PARAM_STR);
+        $stmt->bindValue(":description", $clientData->getDescription(), PDO::PARAM_STR);
+        $stmt->bindValue(":secret", $clientData->getSecret(), PDO::PARAM_STR);
+        $stmt->bindValue(":redirect_uri", $clientData->getRedirectUri(), PDO::PARAM_STR);
+        $stmt->bindValue(":disable_user_consent", $clientData->getDisableUserConsent(), PDO::PARAM_BOOL);
+        $stmt->bindValue(":type", $clientData->getType(), PDO::PARAM_STR);
+        $stmt->bindValue(":icon", $clientData->getIcon(), PDO::PARAM_STR);
+        $stmt->bindValue(":allowed_scope", $clientData->getAllowedScope(), PDO::PARAM_STR);
+        $stmt->bindValue(":contact_email", $clientData->getContactEmail(), PDO::PARAM_STR);
         $stmt->execute();
 
         return 1 === $stmt->rowCount();

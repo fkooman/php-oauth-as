@@ -133,17 +133,17 @@ class Authorize
             // tell the client about the error
             $client = $e->getClient();
 
-            if ("user_agent_based_application" === $client['type']) {
+            if ("user_agent_based_application" === $client->getType()) {
                 $separator = "#";
             } else {
-                $separator = (false === strpos($client['redirect_uri'], "?")) ? "?" : "&";
+                $separator = (false === strpos($client->getRedirectUri(), "?")) ? "?" : "&";
             }
             $parameters = array("error" => $e->getMessage(), "error_description" => $e->getDescription());
             if (null !== $e->getState()) {
                 $parameters['state'] = $e->getState();
             }
             $response->setStatusCode(302);
-            $response->setHeader("Location", $client['redirect_uri'].$separator.http_build_query($parameters));
+            $response->setHeader("Location", $client->getRedirectUri().$separator.http_build_query($parameters));
         } catch (ResourceOwnerException $e) {
             // tell resource owner about the error (through browser)
             $response->setStatusCode(400);
@@ -208,7 +208,7 @@ class Authorize
                         throw new ResourceOwnerException('client not registered');
                     }
 
-                    $clientRegistration = ClientRegistration::fromArray(
+                    $clientData = new ClientData(
                         array(
                             'id' => $clientId,
                             'secret' => null,
@@ -218,7 +218,7 @@ class Authorize
                             'allowed_scope' => $scope->toString(),
                         )
                     );
-                    $this->storage->addClient($clientRegistration->getClientAsArray());
+                    $this->storage->addClient($clientData);
                     $client = $this->storage->getClient($clientId);
                 } else {
                     throw new ResourceOwnerException('client not registered');
@@ -226,7 +226,7 @@ class Authorize
             }
 
             if (null !== $redirectUri) {
-                if ($client['redirect_uri'] !== $redirectUri) {
+                if ($client->getRedirectUri() !== $redirectUri) {
                     throw new ResourceOwnerException(
                         'specified redirect_uri not the same as registered redirect_uri'
                     );
@@ -247,7 +247,7 @@ class Authorize
                 ),
             );
 
-            if (!in_array($responseType, $allowedClientProfiles[$client['type']])) {
+            if (!in_array($responseType, $allowedClientProfiles[$client->getType()])) {
                 throw new ClientException(
                     "unsupported_response_type",
                     "response_type not supported by client profile",
@@ -256,7 +256,7 @@ class Authorize
                 );
             }
 
-            if (!$scope->isSubsetOf(Scope::fromString($client['allowed_scope']))) {
+            if (!$scope->isSubsetOf(Scope::fromString($client->getAllowedScope()))) {
                 throw new ClientException(
                     "invalid_scope",
                     "not authorized to request this scope",
@@ -267,7 +267,7 @@ class Authorize
 
             $this->storage->updateResourceOwner($resourceOwner);
         
-            if ($client['disable_user_consent']) {
+            if ($client->getDisableUserConsent()) {
                 // we do not require approval by the user
                 $approvedScope = array('scope' => $scope->toString());
             } else {
@@ -275,7 +275,7 @@ class Authorize
             }
             if (false === $approvedScope || false === $scope->isSubsetOf(Scope::fromString($approvedScope['scope']))) {
                 $ar = new AuthorizeResult(AuthorizeResult::ASK_APPROVAL);
-                $ar->setClient(ClientRegistration::fromArray($client));
+                $ar->setClient($client);
                 $ar->setScope($scope);
 
                 return $ar;
@@ -305,7 +305,7 @@ class Authorize
                         $token += array("state" => $state);
                     }
                     $ar = new AuthorizeResult(AuthorizeResult::REDIRECT);
-                    $ar->setRedirectUri(new Uri($client['redirect_uri']."#".http_build_query($token)));
+                    $ar->setRedirectUri(new Uri($client->getRedirectUri()."#".http_build_query($token)));
 
                     return $ar;
                 } else {
@@ -324,8 +324,8 @@ class Authorize
                         $token += array("state" => $state);
                     }
                     $ar = new AuthorizeResult(AuthorizeResult::REDIRECT);
-                    $separator = (false === strpos($client['redirect_uri'], "?")) ? "?" : "&";
-                    $ar->setRedirectUri(new Uri($client['redirect_uri'].$separator.http_build_query($token)));
+                    $separator = (false === strpos($client->getRedirectUri(), "?")) ? "?" : "&";
+                    $ar->setRedirectUri(new Uri($client->getRedirectUri().$separator.http_build_query($token)));
 
                     return $ar;
                 }

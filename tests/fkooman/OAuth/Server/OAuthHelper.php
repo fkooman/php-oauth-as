@@ -55,41 +55,48 @@ class OAuthHelper extends PHPUnit_Framework_TestCase
         $storage->initDatabase();
 
         // add some clients
-        $uaba = array("id" => "testclient",
-                  "name" => "Simple Test Client",
-                  "description" => "Client for unit testing",
-                  "secret" => null,
-                  "icon" => null,
-                  "allowed_scope" => "read",
-                  "disable_user_consent" => false,
-                  "contact_email" => "foo@example.org",
-                  "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
-                  "type" => "user_agent_based_application", );
+        $uaba = array(
+            "id" => "testclient",
+            "name" => "Simple Test Client",
+            "description" => "Client for unit testing",
+            "secret" => null,
+            "icon" => null,
+            "allowed_scope" => "read",
+            "disable_user_consent" => false,
+            "contact_email" => "foo@example.org",
+            "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
+            "type" => "user_agent_based_application"
+        );
 
-        $wa = array("id" => "testcodeclient",
-                  "name" => "Simple Test Client for Authorization Code Profile",
-                  "description" => "Client for unit testing",
-                  "secret" => "abcdef",
-                  "icon" => null,
-                  "allowed_scope" => "read write foo bar foobar",
-                  "disable_user_consent" => false,
-                  "contact_email" => null,
-                  "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
-                  "type" => "web_application", );
-        $na = array("id" => "testnativeclient",
-                  "name" => "Simple Test Client for Authorization Code Native Profile",
-                  "description" => "Client for unit testing",
-                  "secret" => null,
-                  "icon" => null,
-                  "allowed_scope" => "read",
-                  "contact_email" => null,
-                  "disable_user_consent" => false,
-                  "redirect_uri" => "oauth://callback",
-                  "type" => "native_application", );
+        $wa = array(
+            "id" => "testcodeclient",
+            "name" => "Simple Test Client for Authorization Code Profile",
+            "description" => "Client for unit testing",
+            "secret" => "abcdef",
+            "icon" => null,
+            "allowed_scope" => "read write foo bar foobar",
+            "disable_user_consent" => false,
+            "contact_email" => null,
+            "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
+            "type" => "web_application"
+        );
 
-        $storage->addClient($uaba);
-        $storage->addClient($wa);
-        $storage->addClient($na);
+        $na = array(
+            "id" => "testnativeclient",
+            "name" => "Simple Test Client for Authorization Code Native Profile",
+            "description" => "Client for unit testing",
+            "secret" => null,
+            "icon" => null,
+            "allowed_scope" => "read",
+            "contact_email" => null,
+            "disable_user_consent" => false,
+            "redirect_uri" => "oauth://callback",
+            "type" => "native_application"
+        );
+
+        $storage->addClient(new ClientData($uaba));
+        $storage->addClient(new ClientData($wa));
+        $storage->addClient(new ClientData($na));
     }
 
     public function tearDown()

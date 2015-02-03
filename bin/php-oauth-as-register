@@ -5,7 +5,7 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 use fkooman\Ini\IniReader;
 use fkooman\Json\Json;
 use fkooman\OAuth\Server\PdoStorage;
-use fkooman\OAuth\Server\ClientRegistration;
+use fkooman\OAuth\Server\ClientData;
 
 try {
     $iniReader = IniReader::fromFile(dirname(__DIR__)."/config/oauth.ini");
@@ -19,12 +19,11 @@ try {
     $registration = $json->decodeFile($argv[1]);
 
     foreach ($registration as $r) {
-        // first load it in ClientRegistration object to check it...
-        $cr = ClientRegistration::fromArray($r);
+        $cr = new ClientData($r);
         if (false === $storage->getClient($cr->getId())) {
             // does not exist yet, install
             echo "Adding '".$cr->getName()."'...".PHP_EOL;
-            $storage->addClient($cr->getClientAsArray());
+            $storage->addClient($cr);
         }
     }
 } catch (Exception $e) {

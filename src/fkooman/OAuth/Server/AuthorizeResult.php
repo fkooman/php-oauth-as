@@ -64,7 +64,7 @@ class AuthorizeResult
         return $this->redirectUri;
     }
 
-    public function setClient(ClientRegistration $c)
+    public function setClient(ClientData $c)
     {
         if (self::ASK_APPROVAL !== $this->action) {
             throw new AuthorizeResultException("cannot set client for this action");

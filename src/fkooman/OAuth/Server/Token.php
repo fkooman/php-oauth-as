@@ -100,7 +100,7 @@ class Token
             }
 
             // check pass
-            if ($pass !== $client['secret']) {
+            if ($pass !== $client->getSecret()) {
                 throw new TokenException("invalid_client", "client authentication failed");
             }
 
@@ -128,14 +128,14 @@ class Token
             $hasAuthenticated = false;
         }
 
-        if ("user_agent_based_application" === $client['type']) {
+        if ("user_agent_based_application" === $client->getType()) {
             throw new TokenException(
                 "unauthorized_client",
                 "this client type is not allowed to use the token endpoint"
             );
         }
 
-        if ("web_application" === $client['type'] && !$hasAuthenticated) {
+        if ("web_application" === $client->getType() && !$hasAuthenticated) {
             // web_application type MUST have authenticated
             throw new TokenException("invalid_client", "client authentication failed");
         }
@@ -152,7 +152,7 @@ class Token
                 // If the redirect_uri was present in the authorize request, it MUST also be there
                 // in the token request. If it was not there in authorize request, it MUST NOT be
                 // there in the token request (this is not explicit in the spec!)
-                $result = $this->storage->getAuthorizationCode($client['id'], $code, $redirectUri);
+                $result = $this->storage->getAuthorizationCode($client->getId(), $code, $redirectUri);
                 if (false === $result) {
                     throw new TokenException("invalid_grant", "the authorization code was not found");
                 }
@@ -161,12 +161,12 @@ class Token
                 }
 
                 // we MUST be able to delete the authorization code, otherwise it was used before
-                if (false === $this->storage->deleteAuthorizationCode($client['id'], $code, $redirectUri)) {
+                if (false === $this->storage->deleteAuthorizationCode($client->getId(), $code, $redirectUri)) {
                     // check to prevent deletion race condition
                     throw new TokenException("invalid_grant", "this authorization code grant was already used");
                 }
 
-                $approval = $this->storage->getApprovalByResourceOwnerId($client['id'], $result['resource_owner_id']);
+                $approval = $this->storage->getApprovalByResourceOwnerId($client->getId(), $result['resource_owner_id']);
 
                 $token = array();
                 $token['access_token'] = Utils::randomHex(16);
@@ -180,7 +180,7 @@ class Token
                 $this->storage->storeAccessToken(
                     $token['access_token'],
                     time(),
-                    $client['id'],
+                    $client->getId(),
                     $result['resource_owner_id'],
                     $token['scope'],
                     $token['expires_in']
@@ -190,7 +190,7 @@ class Token
                 if (null === $refreshToken) {
                     throw new TokenException("invalid_request", "the refresh_token parameter is missing");
                 }
-                $result = $this->storage->getApprovalByRefreshToken($client['id'], $refreshToken);
+                $result = $this->storage->getApprovalByRefreshToken($client->getId(), $refreshToken);
                 if (false === $result) {
                     throw new TokenException("invalid_grant", "the refresh_token was not found");
                 }
@@ -217,7 +217,7 @@ class Token
                 $this->storage->storeAccessToken(
                     $token['access_token'],
                     time(),
-                    $client['id'],
+                    $client->getId(),
                     $result['resource_owner_id'],
                     $token['scope'],
                     $token['expires_in']
