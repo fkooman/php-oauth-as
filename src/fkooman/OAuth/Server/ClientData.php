@@ -117,19 +117,32 @@ class ClientData
         $this->checkString($redirectUri, 'redirect_uri');
 
         if (false === filter_var($redirectUri, FILTER_VALIDATE_URL)) {
-            throw new InvalidArgumentException('redirect_uri should be a valid URL');
+            throw new InvalidArgumentException('redirect_uri MUST be a valid URL');
         }
         // not allowed to have a fragment (#) in it
-        if (null !== parse_url($redirectUri, PHP_URL_FRAGMENT)) {
-            throw new InvalidArgumentException('redirect_uri cannot contain a fragment');
+        if (false !== strpos($redirectUri, '#')) {
+            throw new InvalidArgumentException('redirect_uri MUST NOT contain a fragment');
         }
         $this->redirectUri = $redirectUri;
+    }
+
+    public function verifyRedirectUri($redirectUri, $allowRegExpMatch = false)
+    {
+        if ($this->redirectUri === $redirectUri) {
+            return true;
+        }
+        if ($allowRegExpMatch) {
+            if (1 === @preg_match(sprintf('|^%s$|', $this->redirectUri), $redirectUri)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function setName($name)
     {
         $this->checkString($name, 'name');
-
         $this->name = $name;
     }
 

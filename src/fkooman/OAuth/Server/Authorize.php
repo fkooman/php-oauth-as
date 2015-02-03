@@ -226,7 +226,7 @@ class Authorize
             }
 
             if (null !== $redirectUri) {
-                if ($client->getRedirectUri() !== $redirectUri) {
+                if (!$client->verifyRedirectUri($redirectUri, true)) {
                     throw new ResourceOwnerException(
                         'specified redirect_uri not the same as registered redirect_uri'
                     );

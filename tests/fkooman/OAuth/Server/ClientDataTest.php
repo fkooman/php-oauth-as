@@ -76,4 +76,49 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
     {
         new ClientData(array("foo" => "bar"));
     }
+
+    public function testVerifyRedirectUriNoRegExp()
+    {
+        $clientData = new ClientData(
+            array(
+                'id' => 'foo',
+                'redirect_uri' => 'https://www.example.org/callback',
+                'name' => 'Foo',
+                'type' => 'web_application'
+            )
+        );
+
+        $this->assertTrue($clientData->verifyRedirectUri('https://www.example.org/callback'));
+        $this->assertFalse($clientData->verifyRedirectUri('https://www.example.org/callback0'));
+    }
+
+    public function testVerifyRedirectUriRegExp()
+    {
+        $clientData = new ClientData(
+            array(
+                'id' => 'foo',
+                'redirect_uri' => 'https://www.example.org/callback/[0-9]+',
+                'name' => 'Foo',
+                'type' => 'web_application'
+            )
+        );
+
+        $this->assertTrue(
+            $clientData->verifyRedirectUri(
+                'https://www.example.org/callback/[0-9]+'
+            )
+        );
+        $this->assertTrue(
+            $clientData->verifyRedirectUri(
+                'https://www.example.org/callback/55',
+                 true
+            )
+        );
+        $this->assertFalse(
+            $clientData->verifyRedirectUri(
+                'https://www.example.org/callback/a5',
+                 true
+            )
+        );
+    }
 }

@@ -7,6 +7,8 @@
   problems in browser JS parsing
 - rename `ClientRegistration` class to `ClientData` and refactor all code 
   to use the object instead of object to array conversion
+- allow for using limited regexp as redirect_uri, they still should match 
+  valid URI checks (issue #34)
 
 ## 0.1.8
 - move to `fkooman/ini` from `fkooman/config`
