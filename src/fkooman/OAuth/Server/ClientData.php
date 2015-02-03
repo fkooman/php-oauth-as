@@ -262,4 +262,20 @@ class ClientData
     {
         return $this->contactEmail;
     }
+
+    public function toArray()
+    {
+        return array(
+            'id' => $this->getId(),
+            'redirect_uri' => $this->getRedirectUri(),
+            'name' => $this->getName(),
+            'allowed_scope' => $this->getAllowedScope(),
+            'secret' => $this->getSecret(),
+            'type' => $this->getType(),
+            'description' => $this->getDescription(),
+            'disable_user_consent' => $this->getDisableUserConsent(),
+            'icon' => $this->getIcon(),
+            'contact_email' => $this->getContactEmail()
+        );
+    }
 }

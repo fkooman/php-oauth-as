@@ -228,7 +228,7 @@ class ApiService extends Service
             throw new NotFoundException('application not found');
         }
         $response = new JsonResponse(200);
-        $response->setContent($data);
+        $response->setContent($data->toArray());
 
         return $response;
     }
