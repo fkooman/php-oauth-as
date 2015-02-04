@@ -219,7 +219,8 @@ class Authorize
             if (null === $redirectUri) {
                 $redirectUri = $client->getRedirectUri();
             } else {
-                if (!$client->verifyRedirectUri($redirectUri, true)) {
+                $allowRegExpRedirectUriMatch = $this->iniReader->v('allowRegExpRedirectUriMatch', false, false);
+                if (!$client->verifyRedirectUri($redirectUri, $allowRegExpRedirectUriMatch)) {
                     throw new ResourceOwnerException(
                         'specified redirect_uri not the same as registered redirect_uri'
                     );

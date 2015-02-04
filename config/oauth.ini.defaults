@@ -16,6 +16,11 @@ entitlementsFile = "/etc/php-oauth-as/entitlements.json"
 ; connect without registration
 allowRemoteStorageClients = false 
 
+; Allow redirect_uri to be a regular expression in the client configuration
+; THIS IS NOT RECOMMENDED! PLEASE REGISTER THE FULL REDIRECT URI IN THE CLIENT
+; CONFIGURATION AND USE THE STATE PARAMETER TO KEEP LOCAL STATE
+allowRegExpRedirectUriMatch = false
+
 [PdoStorage]
 dsn = "sqlite:/var/lib/php-oauth-as/db.sqlite"
 ;dsn = "mysql:host=localhost;dbname=oauth"

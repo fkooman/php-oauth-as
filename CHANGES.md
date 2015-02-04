@@ -11,6 +11,8 @@
   valid URI checks (issue #34)
 - actually use the matching `redirect_uri` instead of the registered 
   `redirect_uri`
+- allow regexp redirect_uris only by setting the explicit configuration 
+  option
 - remove template customizations from config file and implement template
   override by allowing templates to be placed in `config/views` from 
   `views`
