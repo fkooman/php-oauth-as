@@ -25,7 +25,6 @@ Alias /php-oauth-as /usr/share/php-oauth-as/web
 
     <FilesMatch "introspect.php">
         Header set Access-Control-Allow-Origin "*"
-        Header set Access-Control-Allow-Headers "Authorization"
         Header set Access-Control-Allow-Methods "GET, OPTIONS"
     </FilesMatch>
 

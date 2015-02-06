@@ -18,11 +18,10 @@
 require_once dirname(__DIR__)."/vendor/autoload.php";
 
 use fkooman\Ini\IniReader;
+use fkooman\OAuth\Server\TokenIntrospectionService;
 use fkooman\OAuth\Server\PdoStorage;
-use fkooman\OAuth\Server\TokenIntrospection;
-use fkooman\Http\Request;
-use fkooman\Http\JsonResponse;
-use fkooman\Http\IncomingRequest;
+use fkooman\Http\Exception\HttpException;
+use fkooman\Http\Exception\InternalServerErrorException;
 
 set_error_handler(
     function ($errno, $errstr, $errfile, $errline) {
@@ -41,18 +40,18 @@ try {
         $iniReader->v('PdoStorage', 'password', false)
     );
 
-    $tokenIntrospection = new TokenIntrospection(
+    $tokenIntrospectionService = new TokenIntrospectionService(
         new PdoStorage($db)
     );
-    $request = Request::fromIncomingRequest(new IncomingRequest());
-    $response = $tokenIntrospection->handleRequest($request);
-    $response->sendResponse();
+    $tokenIntrospectionService->run()->sendResponse();
 } catch (Exception $e) {
-    $response = new JsonResponse(500);
-    $response->setContent(
-        array(
-            "error" => $e->getMessage(),
-        )
-    );
+    if ($e instanceof HttpException) {
+        $response = $e->getJsonResponse();
+    } else {
+        // we catch all other (unexpected) exceptions and return a 500
+        error_log($e->getTraceAsString());
+        $e = new InternalServerErrorException($e->getMessage());
+        $response = $e->getJsonResponse();
+    }
     $response->sendResponse();
 }

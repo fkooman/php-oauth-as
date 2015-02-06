@@ -124,7 +124,6 @@ This is the Apache configuration you use for development. Place it in
 
         <FilesMatch "introspect.php">
             Header set Access-Control-Allow-Origin "*"
-            Header set Access-Control-Allow-Headers "Authorization"
             Header set Access-Control-Allow-Methods "GET, OPTIONS"
         </FilesMatch>
 
