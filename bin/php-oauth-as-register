@@ -8,15 +8,23 @@ use fkooman\OAuth\Server\PdoStorage;
 use fkooman\OAuth\Server\ClientData;
 
 try {
-    $iniReader = IniReader::fromFile(dirname(__DIR__)."/config/oauth.ini");
-    $storage = new PdoStorage($iniReader);
+    $iniReader = IniReader::fromFile(
+        dirname(__DIR__).'/config/oauth.ini'
+    );
+
+    $db = new PDO(
+        $iniReader->v('PdoStorage', 'dsn'),
+        $iniReader->v('PdoStorage', 'username', false),
+        $iniReader->v('PdoStorage', 'password', false)
+    );
+
+    $storage = new PdoStorage($db);
 
     if ($argc !== 2) {
         throw new Exception("ERROR: please specify file with client registration information");
     }
 
-    $json = new Json();
-    $registration = $json->decodeFile($argv[1]);
+    $registration = Json::decodeFile($argv[1]);
 
     foreach ($registration as $r) {
         $cr = new ClientData($r);

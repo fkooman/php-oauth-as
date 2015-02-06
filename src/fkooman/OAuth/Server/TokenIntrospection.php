@@ -17,7 +17,6 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Ini\IniReader;
 use fkooman\Json\Json;
 use fkooman\Http\Request;
 use fkooman\Http\JsonResponse;
@@ -25,16 +24,12 @@ use fkooman\OAuth\Server\Exception\TokenIntrospectionException;
 
 class TokenIntrospection
 {
-    /** @var fkooman\Ini\IniReader */
-    private $iniReader;
-
     /** @var fkooman\OAuth\Server\PdoStorage */
     private $storage;
 
-    public function __construct(IniReader $c)
+    public function __construct(PdoStorage $storage)
     {
-        $this->iniReader = $c;
-        $this->storage = new PdoStorage($this->iniReader);
+        $this->storage = $storage;
     }
 
     public function handleRequest(Request $request)
@@ -101,8 +96,7 @@ class TokenIntrospection
             // add proprietary "x-entitlement"
             $resourceOwner = $this->storage->getResourceOwner($accessToken['resource_owner_id']);
             if (isset($resourceOwner['entitlement'])) {
-                $j = new Json();
-                $e = $j->decode($resourceOwner['entitlement']);
+                $e = Json::decode($resourceOwner['entitlement']);
                 if (0 !== count($e)) {
                     $r['x-entitlement'] = implode(" ", $e);
                 }
@@ -110,8 +104,7 @@ class TokenIntrospection
 
             // add proprietary "x-ext"
             if (isset($resourceOwner['ext'])) {
-                $j = new Json();
-                $e = $j->decode($resourceOwner['ext']);
+                $e = Json::decode($resourceOwner['ext']);
                 if (0 !== count($e)) {
                     $r['x-ext'] = $e;
                 }

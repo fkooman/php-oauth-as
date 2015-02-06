@@ -17,42 +17,24 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Ini\IniReader;
 use PHPUnit_Framework_TestCase;
+use PDO;
 
 class OAuthHelper extends PHPUnit_Framework_TestCase
 {
-    protected $_tmpDb;
-
-    /** @var fkooman\Ini\IniReader */
-    protected $iniReader;
+    /** @var fkooman\OAuth\Server\PdoStorage */
+    protected $storage;
 
     public function setUp()
     {
-        $this->_tmpDb = tempnam(sys_get_temp_dir(), "oauth_");
-        if (false === $this->_tmpDb) {
-            throw new Exception("unable to generate temporary file for database");
-        }
-        $dsn = "sqlite:".$this->_tmpDb;
-
-        $configArray = array(
-            'authenticationMechanism' => 'DummyResourceOwner',
-            'DummyResourceOwner' => array(
-                'uid' => "fkooman",
-                'entitlement' => array(
-                    "http://php-oauth.net/entitlement/manage",
-                ),
-            ),
-            'accessTokenExpiry' => 5,
-            'PdoStorage' => array(
-                'dsn' => $dsn,
-            ),
+        $this->storage = new PdoStorage(
+            new PDO(
+                $GLOBALS['DB_DSN'],
+                $GLOBALS['DB_USER'],
+                $GLOBALS['DB_PASSWD']
+            )
         );
-        $this->iniReader = new IniReader($configArray);
-
-        // intialize storage
-        $storage = new PdoStorage($this->iniReader);
-        $storage->initDatabase();
+        $this->storage->initDatabase();
 
         // add some clients
         $uaba = array(
@@ -94,18 +76,8 @@ class OAuthHelper extends PHPUnit_Framework_TestCase
             "type" => "code"
         );
 
-        $storage->addClient(new ClientData($uaba));
-        $storage->addClient(new ClientData($wa));
-        $storage->addClient(new ClientData($na));
-    }
-
-    public function tearDown()
-    {
-        unlink($this->_tmpDb);
-    }
-
-    public function testNop()
-    {
-        $this->assertTrue(true);
+        $this->storage->addClient(new ClientData($uaba));
+        $this->storage->addClient(new ClientData($wa));
+        $this->storage->addClient(new ClientData($na));
     }
 }

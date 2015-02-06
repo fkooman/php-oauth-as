@@ -6,8 +6,17 @@ use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\PdoStorage;
 
 try {
-    $iniReader = IniReader::fromFile(dirname(__DIR__)."/config/oauth.ini");
-    $storage = new PdoStorage($iniReader);
+    $iniReader = IniReader::fromFile(
+        dirname(__DIR__).'/config/oauth.ini'
+    );
+
+    $db = new PDO(
+        $iniReader->v('PdoStorage', 'dsn'),
+        $iniReader->v('PdoStorage', 'username', false),
+        $iniReader->v('PdoStorage', 'password', false)
+    );
+
+    $storage = new PdoStorage($db);
     $storage->initDatabase();
 } catch (Exception $e) {
     echo $e->getMessage().PHP_EOL;

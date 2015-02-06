@@ -19,15 +19,37 @@ require_once dirname(__DIR__)."/vendor/autoload.php";
 
 use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\Authorize;
+use fkooman\OAuth\Server\PdoStorage;
 use fkooman\Http\Request;
 use fkooman\Http\Response;
 use fkooman\Http\IncomingRequest;
+use fkooman\OAuth\Server\SimpleAuthResourceOwner;
+
+set_error_handler(
+    function ($errno, $errstr, $errfile, $errline) {
+        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    }
+);
 
 try {
     $iniReader = IniReader::fromFile(
         dirname(__DIR__)."/config/oauth.ini"
     );
-    $authorize = new Authorize($iniReader);
+
+    $db = new PDO(
+        $iniReader->v('PdoStorage', 'dsn'),
+        $iniReader->v('PdoStorage', 'username', false),
+        $iniReader->v('PdoStorage', 'password', false)
+    );
+
+    $ro = new SimpleAuthResourceOwner($iniReader);
+
+    $authorize = new Authorize(
+        new PdoStorage($db),
+        $ro,
+        $iniReader->v('accessTokenExpiry')
+    );
+
     $request = Request::fromIncomingRequest(new IncomingRequest());
     $response = $authorize->handleRequest($request);
     $response->sendResponse();

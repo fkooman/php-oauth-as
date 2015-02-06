@@ -24,13 +24,25 @@ use fkooman\Http\Exception\HttpException;
 use fkooman\Http\Exception\InternalServerErrorException;
 use fkooman\Rest\Plugin\Bearer\BearerAuthentication;
 
+set_error_handler(
+    function ($errno, $errstr, $errfile, $errline) {
+        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    }
+);
+
 try {
     $iniReader = IniReader::fromFile(
         dirname(__DIR__).'/config/oauth.ini'
     );
 
+    $db = new PDO(
+        $iniReader->v('PdoStorage', 'dsn'),
+        $iniReader->v('PdoStorage', 'username', false),
+        $iniReader->v('PdoStorage', 'password', false)
+    );
+
     $apiService = new ApiService(
-        new PdoStorage($iniReader)
+        new PdoStorage($db)
     );
 
     $apiService->registerBeforeEachMatchPlugin(

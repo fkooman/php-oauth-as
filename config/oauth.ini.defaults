@@ -24,10 +24,6 @@ dsn = "sqlite:/var/lib/php-oauth-as/db.sqlite"
 ;password = "s3cr3t"
 ;dsn = "pgsql:host=localhost;port=5432;dbname=XYZ;user=ABC;password=DEF"
 
-; use a persistent DB connection, make sure to ENABLE this for PRODUCTION 
-; systems
-persistentConnection = false
-
 ; SimpleAuth configuration
 [SimpleAuthResourceOwner]
 simpleAuthPath = "/usr/share/php-simple-auth"

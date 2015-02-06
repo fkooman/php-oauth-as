@@ -25,23 +25,19 @@ use fkooman\Rest\Plugin\Bearer\TokenIntrospection;
 
 class ApiServiceTest extends OAuthHelper
 {
-    private $storage;
-
     public function setUp()
     {
         parent::setUp();
 
-        $storage = new PdoStorage($this->iniReader);
         $resourceOwner = array(
             'id' => 'fkooman',
             'entitlement' => array(),
             'ext' => array(),
         );
-        $storage->updateResourceOwner(new MockResourceOwner($resourceOwner));
+        $this->storage->updateResourceOwner(new MockResourceOwner($resourceOwner));
 
-        $storage->addApproval('testclient', 'fkooman', 'read', null);
-        $storage->storeAccessToken('12345abc', time(), 'testcodeclient', 'fkooman', 'http://php-oauth.net/scope/authorize', 3600);
-        $this->storage = $storage;
+        $this->storage->addApproval('testclient', 'fkooman', 'read', null);
+        $this->storage->storeAccessToken('12345abc', time(), 'testcodeclient', 'fkooman', 'http://php-oauth.net/scope/authorize', 3600);
 
         $stub = $this->getMockBuilder('fkooman\Rest\Plugin\Bearer\BearerAuthentication')
                      ->disableOriginalConstructor()

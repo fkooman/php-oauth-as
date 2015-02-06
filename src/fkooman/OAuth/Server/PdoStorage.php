@@ -17,7 +17,6 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Ini\IniReader;
 use fkooman\Json\Json;
 use PDO;
 
@@ -26,32 +25,19 @@ use PDO;
  */
 class PdoStorage
 {
-    /** @var fkooman\Ini\IniReader */
-    private $iniReader;
-
     /** @var PDO */
-    private $pdo;
+    private $db;
 
-    public function __construct(IniReader $c)
+    public function __construct(PDO $db, $prefix = '')
     {
-        $this->iniReader = $c;
-
-        $driverOptions = array();
-        if ($this->iniReader->v('PdoStorage', 'persistentConnection', false, false)) {
-            $driverOptions[PDO::ATTR_PERSISTENT] = true;
-        }
-
-        $this->pdo = new PDO($this->iniReader->v('PdoStorage', 'dsn'), $this->iniReader->v('PdoStorage', 'username', false), $this->iniReader->v('PdoStorage', 'password', false), $driverOptions);
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        if (0 === strpos($this->iniReader->v('PdoStorage', 'dsn'), "sqlite:")) {
-            // only for SQlite
-            $this->pdo->exec("PRAGMA foreign_keys = ON");
-        }
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->db = $db;
+        $this->prefix = $prefix;
     }
 
     public function getClients()
     {
-        $stmt = $this->pdo->prepare("SELECT id, name, description, redirect_uri, disable_user_consent, type, icon, allowed_scope FROM clients");
+        $stmt = $this->db->prepare("SELECT id, name, description, redirect_uri, disable_user_consent, type, icon, allowed_scope FROM clients");
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -59,7 +45,7 @@ class PdoStorage
 
     public function getClient($clientId)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM clients WHERE id = :client_id");
+        $stmt = $this->db->prepare("SELECT * FROM clients WHERE id = :client_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -73,7 +59,7 @@ class PdoStorage
 
     public function updateClient($clientId, ClientData $clientData)
     {
-        $stmt = $this->pdo->prepare("UPDATE clients SET name = :name, description = :description, secret = :secret, disable_user_consent = :disable_user_consent, redirect_uri = :redirect_uri, type = :type, icon = :icon, allowed_scope = :allowed_scope, contact_email = :contact_email WHERE id = :client_id");
+        $stmt = $this->db->prepare("UPDATE clients SET name = :name, description = :description, secret = :secret, disable_user_consent = :disable_user_consent, redirect_uri = :redirect_uri, type = :type, icon = :icon, allowed_scope = :allowed_scope, contact_email = :contact_email WHERE id = :client_id");
         $stmt->bindValue(":name", $clientData->getName(), PDO::PARAM_STR);
         $stmt->bindValue(":description", $clientData->getDescription(), PDO::PARAM_STR);
         $stmt->bindValue(":secret", $clientData->getSecret(), PDO::PARAM_STR);
@@ -91,7 +77,7 @@ class PdoStorage
 
     public function addClient(ClientData $clientData)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO clients (id, name, description, secret, disable_user_consent, redirect_uri, type, icon, allowed_scope, contact_email) VALUES(:client_id, :name, :description, :secret, :disable_user_consent, :redirect_uri, :type, :icon, :allowed_scope, :contact_email)");
+        $stmt = $this->db->prepare("INSERT INTO clients (id, name, description, secret, disable_user_consent, redirect_uri, type, icon, allowed_scope, contact_email) VALUES(:client_id, :name, :description, :secret, :disable_user_consent, :redirect_uri, :type, :icon, :allowed_scope, :contact_email)");
         $stmt->bindValue(":client_id", $clientData->getId(), PDO::PARAM_STR);
         $stmt->bindValue(":name", $clientData->getName(), PDO::PARAM_STR);
         $stmt->bindValue(":description", $clientData->getDescription(), PDO::PARAM_STR);
@@ -110,7 +96,7 @@ class PdoStorage
     public function deleteClient($clientId)
     {
         // cascading in foreign keys takes care of deleting all tokens
-        $stmt = $this->pdo->prepare("DELETE FROM clients WHERE id = :client_id");
+        $stmt = $this->db->prepare("DELETE FROM clients WHERE id = :client_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -119,7 +105,7 @@ class PdoStorage
 
     public function addApproval($clientId, $resourceOwnerId, $scope, $refreshToken)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO approvals (client_id, resource_owner_id, scope, refresh_token) VALUES(:client_id, :resource_owner_id, :scope, :refresh_token)");
+        $stmt = $this->db->prepare("INSERT INTO approvals (client_id, resource_owner_id, scope, refresh_token) VALUES(:client_id, :resource_owner_id, :scope, :refresh_token)");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->bindValue(":scope", $scope, PDO::PARAM_STR);
@@ -132,7 +118,7 @@ class PdoStorage
     public function updateApproval($clientId, $resourceOwnerId, $scope)
     {
         // FIXME: should we regenerate the refresh_token?
-        $stmt = $this->pdo->prepare("UPDATE approvals SET scope = :scope WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
+        $stmt = $this->db->prepare("UPDATE approvals SET scope = :scope WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->bindValue(":scope", $scope, PDO::PARAM_STR);
@@ -143,7 +129,7 @@ class PdoStorage
 
     public function getApprovalByResourceOwnerId($clientId, $resourceOwnerId)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM approvals WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
+        $stmt = $this->db->prepare("SELECT * FROM approvals WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
@@ -153,7 +139,7 @@ class PdoStorage
 
     public function getApprovalByRefreshToken($clientId, $refreshToken)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM approvals WHERE client_id = :client_id AND refresh_token = :refresh_token");
+        $stmt = $this->db->prepare("SELECT * FROM approvals WHERE client_id = :client_id AND refresh_token = :refresh_token");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":refresh_token", $refreshToken, PDO::PARAM_STR);
         $stmt->execute();
@@ -163,7 +149,7 @@ class PdoStorage
 
     public function storeAccessToken($accessToken, $issueTime, $clientId, $resourceOwnerId, $scope, $expiry)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO access_tokens (client_id, resource_owner_id, issue_time, expires_in, scope, access_token) VALUES(:client_id, :resource_owner_id, :issue_time, :expires_in, :scope, :access_token)");
+        $stmt = $this->db->prepare("INSERT INTO access_tokens (client_id, resource_owner_id, issue_time, expires_in, scope, access_token) VALUES(:client_id, :resource_owner_id, :issue_time, :expires_in, :scope, :access_token)");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->bindValue(":issue_time", time(), PDO::PARAM_INT);
@@ -178,7 +164,7 @@ class PdoStorage
     public function deleteExpiredAccessTokens()
     {
         // delete access tokens that expired 8 hours or longer ago
-        $stmt = $this->pdo->prepare("DELETE FROM access_tokens WHERE issue_time + expires_in < :time");
+        $stmt = $this->db->prepare("DELETE FROM access_tokens WHERE issue_time + expires_in < :time");
         $stmt->bindValue(":time", time() - 28800, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -188,7 +174,7 @@ class PdoStorage
     public function deleteExpiredAuthorizationCodes()
     {
         // delete authorization codes that expired 8 hours or longer ago
-        $stmt = $this->pdo->prepare("DELETE FROM authorization_codes WHERE issue_time + 600 < :time");
+        $stmt = $this->db->prepare("DELETE FROM authorization_codes WHERE issue_time + 600 < :time");
         $stmt->bindValue(":time", time() - 28800, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -197,7 +183,7 @@ class PdoStorage
 
     public function storeAuthorizationCode($authorizationCode, $resourceOwnerId, $issueTime, $clientId, $redirectUri, $scope)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO authorization_codes (client_id, resource_owner_id, authorization_code, redirect_uri, issue_time, scope) VALUES(:client_id, :resource_owner_id, :authorization_code, :redirect_uri, :issue_time, :scope)");
+        $stmt = $this->db->prepare("INSERT INTO authorization_codes (client_id, resource_owner_id, authorization_code, redirect_uri, issue_time, scope) VALUES(:client_id, :resource_owner_id, :authorization_code, :redirect_uri, :issue_time, :scope)");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
@@ -212,10 +198,10 @@ class PdoStorage
     public function getAuthorizationCode($clientId, $authorizationCode, $redirectUri)
     {
         if (null !== $redirectUri) {
-            $stmt = $this->pdo->prepare("SELECT * FROM authorization_codes WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri = :redirect_uri");
+            $stmt = $this->db->prepare("SELECT * FROM authorization_codes WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri = :redirect_uri");
             $stmt->bindValue(":redirect_uri", $redirectUri, PDO::PARAM_STR);
         } else {
-            $stmt = $this->pdo->prepare("SELECT * FROM authorization_codes WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri IS NULL");
+            $stmt = $this->db->prepare("SELECT * FROM authorization_codes WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri IS NULL");
         }
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
@@ -227,10 +213,10 @@ class PdoStorage
     public function deleteAuthorizationCode($clientId, $authorizationCode, $redirectUri)
     {
         if (null !== $redirectUri) {
-            $stmt = $this->pdo->prepare("DELETE FROM authorization_codes WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri = :redirect_uri");
+            $stmt = $this->db->prepare("DELETE FROM authorization_codes WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri = :redirect_uri");
             $stmt->bindValue(":redirect_uri", $redirectUri, PDO::PARAM_STR);
         } else {
-            $stmt = $this->pdo->prepare("DELETE FROM authorization_codes WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri IS NULL");
+            $stmt = $this->db->prepare("DELETE FROM authorization_codes WHERE client_id = :client_id AND authorization_code = :authorization_code AND redirect_uri IS NULL");
         }
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":authorization_code", $authorizationCode, PDO::PARAM_STR);
@@ -241,7 +227,7 @@ class PdoStorage
 
     public function getAccessToken($accessToken)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM access_tokens WHERE access_token = :access_token");
+        $stmt = $this->db->prepare("SELECT * FROM access_tokens WHERE access_token = :access_token");
         $stmt->bindValue(":access_token", $accessToken, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -250,7 +236,7 @@ class PdoStorage
 
     public function getApprovals($resourceOwnerId)
     {
-        $stmt = $this->pdo->prepare("SELECT a.scope, c.id, c.name, c.description, c.redirect_uri, c.type, c.icon, c.allowed_scope FROM approvals a, clients c WHERE resource_owner_id = :resource_owner_id AND a.client_id = c.id");
+        $stmt = $this->db->prepare("SELECT a.scope, c.id, c.name, c.description, c.redirect_uri, c.type, c.icon, c.allowed_scope FROM approvals a, clients c WHERE resource_owner_id = :resource_owner_id AND a.client_id = c.id");
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -260,13 +246,13 @@ class PdoStorage
     public function deleteApproval($clientId, $resourceOwnerId)
     {
         // remove access token
-        $stmt = $this->pdo->prepare("DELETE FROM access_tokens WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
+        $stmt = $this->db->prepare("DELETE FROM access_tokens WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
 
         // remove approval
-        $stmt = $this->pdo->prepare("DELETE FROM approvals WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
+        $stmt = $this->db->prepare("DELETE FROM approvals WHERE client_id = :client_id AND resource_owner_id = :resource_owner_id");
         $stmt->bindValue(":client_id", $clientId, PDO::PARAM_STR);
         $stmt->bindValue(":resource_owner_id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
@@ -278,20 +264,18 @@ class PdoStorage
     {
         $result = $this->getResourceOwner($resourceOwner->getId());
         if (false === $result) {
-            $j = new Json();
-            $stmt = $this->pdo->prepare("INSERT INTO resource_owner (id, entitlement, ext) VALUES(:id, :entitlement, :ext)");
+            $stmt = $this->db->prepare("INSERT INTO resource_owner (id, entitlement, ext) VALUES(:id, :entitlement, :ext)");
             $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
-            $stmt->bindValue(":entitlement", $j->encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
-            $stmt->bindValue(":ext", $j->encode($resourceOwner->getExt()), PDO::PARAM_STR);
+            $stmt->bindValue(":entitlement", Json::encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
+            $stmt->bindValue(":ext", Json::encode($resourceOwner->getExt()), PDO::PARAM_STR);
             $stmt->execute();
 
             return 1 === $stmt->rowCount();
         } else {
-            $j = new Json();
-            $stmt = $this->pdo->prepare("UPDATE resource_owner SET entitlement = :entitlement, ext = :ext WHERE id = :id");
+            $stmt = $this->db->prepare("UPDATE resource_owner SET entitlement = :entitlement, ext = :ext WHERE id = :id");
             $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
-            $stmt->bindValue(":entitlement", $j->encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
-            $stmt->bindValue(":ext", $j->encode($resourceOwner->getExt()), PDO::PARAM_STR);
+            $stmt->bindValue(":entitlement", Json::encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
+            $stmt->bindValue(":ext", Json::encode($resourceOwner->getExt()), PDO::PARAM_STR);
             $stmt->execute();
 
             return 1 === $stmt->rowCount();
@@ -300,7 +284,7 @@ class PdoStorage
 
     public function getResourceOwner($resourceOwnerId)
     {
-        $stmt = $this->pdo->prepare("SELECT id, entitlement, ext FROM resource_owner WHERE id = :id");
+        $stmt = $this->db->prepare("SELECT id, entitlement, ext FROM resource_owner WHERE id = :id");
         $stmt->bindValue(":id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -312,7 +296,7 @@ class PdoStorage
         $data = array();
 
         // determine number of valid access tokens per client/user
-        $stmt = $this->pdo->prepare("SELECT client_id, COUNT(resource_owner_id) AS active_tokens FROM access_tokens GROUP BY client_id");
+        $stmt = $this->db->prepare("SELECT client_id, COUNT(resource_owner_id) AS active_tokens FROM access_tokens GROUP BY client_id");
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -321,7 +305,7 @@ class PdoStorage
         }
 
         // determine number of consents per client/user
-        $stmt = $this->pdo->prepare("SELECT client_id, COUNT(resource_owner_id) AS consent_given FROM approvals GROUP BY client_id");
+        $stmt = $this->db->prepare("SELECT client_id, COUNT(resource_owner_id) AS consent_given FROM approvals GROUP BY client_id");
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -334,7 +318,7 @@ class PdoStorage
 
     public function getChangeInfo()
     {
-        $stmt = $this->pdo->prepare("SELECT MAX(patch_number) AS patch_number, description FROM db_changelog WHERE patch_number IS NOT NULL");
+        $stmt = $this->db->prepare("SELECT MAX(patch_number) AS patch_number, description FROM db_changelog WHERE patch_number IS NOT NULL");
         $stmt->execute();
         // ugly hack because query will always return a result, even if there is none...
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -344,7 +328,7 @@ class PdoStorage
 
     public function addChangeInfo($patchNumber, $description)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO db_changelog (patch_number, description) VALUES(:patch_number, :description)");
+        $stmt = $this->db->prepare("INSERT INTO db_changelog (patch_number, description) VALUES(:patch_number, :description)");
         $stmt->bindValue(":patch_number", $patchNumber, PDO::PARAM_INT);
         $stmt->bindValue(":description", $description, PDO::PARAM_STR);
         $stmt->execute();
@@ -430,15 +414,15 @@ class PdoStorage
         );
 
         foreach ($queries as $query) {
-            $this->pdo->query($query);
+            $this->db->query($query);
         }
 
         // make sure the tables are empty
-        $this->pdo->query("DELETE FROM resource_owner");
-        $this->pdo->query("DELETE FROM clients");
-        $this->pdo->query("DELETE FROM access_tokens");
-        $this->pdo->query("DELETE FROM approvals");
-        $this->pdo->query("DELETE FROM authorization_codes");
-        $this->pdo->query("DELETE FROM db_changelog");
+        $this->db->query("DELETE FROM resource_owner");
+        $this->db->query("DELETE FROM clients");
+        $this->db->query("DELETE FROM access_tokens");
+        $this->db->query("DELETE FROM approvals");
+        $this->db->query("DELETE FROM authorization_codes");
+        $this->db->query("DELETE FROM db_changelog");
     }
 }

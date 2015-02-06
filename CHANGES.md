@@ -1,6 +1,10 @@
 # Changelog
 
 ## 0.1.9
+- no longer pass the `IniReader` object down the stack, keep all configuration 
+  handling it in the `web/` scripts
+- refactor DB to accept a `PDO` object in the constructor, no longer provide
+  persistent configuration option
 - remove remoteStorage automatic client registration support
 - no longer support public 'code' clients, i.e. without password so without
   password only `token` type is supported

@@ -18,16 +18,32 @@
 require_once dirname(__DIR__)."/vendor/autoload.php";
 
 use fkooman\Ini\IniReader;
+use fkooman\OAuth\Server\PdoStorage;
 use fkooman\OAuth\Server\TokenIntrospection;
 use fkooman\Http\Request;
 use fkooman\Http\JsonResponse;
 use fkooman\Http\IncomingRequest;
 
+set_error_handler(
+    function ($errno, $errstr, $errfile, $errline) {
+        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    }
+);
+
 try {
     $iniReader = IniReader::fromFile(
         dirname(__DIR__)."/config/oauth.ini"
     );
-    $tokenIntrospection = new TokenIntrospection($iniReader);
+
+    $db = new PDO(
+        $iniReader->v('PdoStorage', 'dsn'),
+        $iniReader->v('PdoStorage', 'username', false),
+        $iniReader->v('PdoStorage', 'password', false)
+    );
+
+    $tokenIntrospection = new TokenIntrospection(
+        new PdoStorage($db)
+    );
     $request = Request::fromIncomingRequest(new IncomingRequest());
     $response = $tokenIntrospection->handleRequest($request);
     $response->sendResponse();

@@ -31,9 +31,9 @@ class SimpleAuthResourceOwner implements IResourceOwner
 
     private $simpleAuth;
 
-    public function __construct(IniReader $config)
+    public function __construct(IniReader $iniReader)
     {
-        $this->iniReader = $config;
+        $this->iniReader = $iniReader;
 
         $bPath = $this->iniReader->v('SimpleAuthResourceOwner', 'simpleAuthPath').'/vendor/autoload.php';
         if (!file_exists($bPath) || !is_file($bPath) || !is_readable($bPath)) {
@@ -53,8 +53,7 @@ class SimpleAuthResourceOwner implements IResourceOwner
     {
         $entitlement = array();
         try {
-            $j = new Json();
-            $entitlement = $j->decodeFile($this->iniReader->v('entitlementsFile'));
+            $entitlement = Json::decodeFile($this->iniReader->v('entitlementsFile'));
         } catch (RuntimeException $e) {
             // problem with reading the entitlement file
             return array();

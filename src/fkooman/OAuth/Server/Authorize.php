@@ -17,7 +17,6 @@
 
 namespace fkooman\OAuth\Server;
 
-use fkooman\Ini\IniReader;
 use fkooman\OAuth\Common\Scope;
 use InvalidArgumentException;
 use fkooman\Http\Request;
@@ -32,22 +31,27 @@ use Twig_Environment;
 
 class Authorize
 {
-    /** @var fkooman\Ini\IniReader */
-    private $iniReader;
-
     /** @var fkooman\OAuth\Server\PdoStorage */
     private $storage;
 
     /** @var fkooman\OAuth\Server\IResourceOwner */
     private $resourceOwner;
 
-    public function __construct(IniReader $c)
-    {
-        $this->iniReader = $c;
+    /** @var int */
+    private $accessTokenExpiry;
 
-        $authMech = 'fkooman\\OAuth\\Server\\'.$this->iniReader->v('authenticationMechanism');
-        $this->resourceOwner = new $authMech($this->iniReader);
-        $this->storage = new PdoStorage($this->iniReader);
+    /** @var bool */
+    private $allowRegExpRedirectUriMatch;
+
+    public function __construct(PdoStorage $storage, IResourceOwner $resourceOwner, $accessTokenExpiry = 3600, $allowRegExpRedirectUriMatch = false)
+    {
+        $this->storage = $storage;
+
+        // FIXME: this must go away!
+        $this->resourceOwner = $resourceOwner;
+
+        $this->accessTokenExpiry = $accessTokenExpiry;
+        $this->allowRegExpRedirectUriMatch = (bool) $allowRegExpRedirectUriMatch;
     }
 
     public function handleRequest(Request $request)
@@ -175,8 +179,7 @@ class Authorize
             if (null === $redirectUri) {
                 $redirectUri = $client->getRedirectUri();
             } else {
-                $allowRegExpRedirectUriMatch = $this->iniReader->v('allowRegExpRedirectUriMatch', false, false);
-                if (!$client->verifyRedirectUri($redirectUri, $allowRegExpRedirectUriMatch)) {
+                if (!$client->verifyRedirectUri($redirectUri, $this->allowRegExpRedirectUriMatch)) {
                     throw new ResourceOwnerException(
                         'specified redirect_uri not the same as registered redirect_uri'
                     );
@@ -227,11 +230,11 @@ class Authorize
                         $clientId,
                         $resourceOwner->getId(),
                         $scope->toString(),
-                        $this->iniReader->v('accessTokenExpiry')
+                        $this->accessTokenExpiry
                     );
                     $token = array(
                         "access_token" => $accessToken,
-                        "expires_in" => $this->iniReader->v('accessTokenExpiry'),
+                        "expires_in" => $this->accessTokenExpiry,
                         "token_type" => "bearer",
                     );
                     $s = $scope->toString();

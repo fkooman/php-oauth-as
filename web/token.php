@@ -23,11 +23,28 @@ use fkooman\Http\Request;
 use fkooman\Http\JsonResponse;
 use fkooman\Http\IncomingRequest;
 
+set_error_handler(
+    function ($errno, $errstr, $errfile, $errline) {
+        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    }
+);
+
 try {
     $iniReader = IniReader::fromFile(
         dirname(__DIR__)."/config/oauth.ini"
     );
-    $token = new Token($iniReader);
+
+    $db = new PDO(
+        $iniReader->v('PdoStorage', 'dsn'),
+        $iniReader->v('PdoStorage', 'username', false),
+        $iniReader->v('PdoStorage', 'password', false)
+    );
+
+    $token = new Token(
+        new PdoStorage($db),
+        $iniReader->v('accessTokenExpiry')
+    );
+
     $request = Request::fromIncomingRequest(new IncomingRequest());
     $response = $token->handleRequest($request);
     $response->sendResponse();
