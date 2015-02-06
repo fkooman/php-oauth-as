@@ -14,11 +14,6 @@ class MockResourceOwner implements IResourceOwner
         $this->data['ext'] = $resourceOwner['ext'];
     }
 
-    public function setResourceOwnerHint($resourceOwnerHint)
-    {
-        // nop
-    }
-
     public function getId()
     {
         return $this->data['id'];

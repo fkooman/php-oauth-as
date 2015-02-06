@@ -30,7 +30,6 @@ class SimpleAuthResourceOwner implements IResourceOwner
     private $iniReader;
 
     private $simpleAuth;
-    private $resourceOwnerHint;
 
     public function __construct(IniReader $config)
     {
@@ -45,14 +44,9 @@ class SimpleAuthResourceOwner implements IResourceOwner
         $this->simpleAuth = new SimpleAuth();
     }
 
-    public function setResourceOwnerHint($resourceOwnerHint)
-    {
-        $this->resourceOwnerHint = $resourceOwnerHint;
-    }
-
     public function getId()
     {
-        return $this->simpleAuth->authenticate($this->resourceOwnerHint);
+        return $this->simpleAuth->authenticate();
     }
 
     public function getEntitlement()

@@ -32,11 +32,6 @@ class DummyResourceOwner implements IResourceOwner
         $this->iniReader = $c;
     }
 
-    public function setResourceOwnerHint($resourceOwnerHint)
-    {
-        // nop
-    }
-
     public function getId()
     {
         return $this->iniReader->v('DummyResourceOwner', 'uid');
