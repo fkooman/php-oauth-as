@@ -12,10 +12,6 @@ accessTokenExpiry = 3600
 ;identifiers you want to give certain entitlements
 entitlementsFile = "/etc/php-oauth-as/entitlements.json"
 
-; Allow remoteStorage (http://remotestorage.io) clients to automatically
-; connect without registration
-allowRemoteStorageClients = false 
-
 ; Allow redirect_uri to be a regular expression in the client configuration
 ; THIS IS NOT RECOMMENDED! PLEASE REGISTER THE FULL REDIRECT URI IN THE CLIENT
 ; CONFIGURATION AND USE THE STATE PARAMETER TO KEEP LOCAL STATE

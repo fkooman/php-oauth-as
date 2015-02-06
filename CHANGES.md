@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.1.9
+- remove remoteStorage automatic client registration support
 - no longer support public 'code' clients, i.e. without password so without
   password only `token` type is supported
 - rename client types to just `code` and `token` and get rid of the 

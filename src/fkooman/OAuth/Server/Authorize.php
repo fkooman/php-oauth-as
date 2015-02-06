@@ -169,44 +169,7 @@ class Authorize
 
             $client = $this->storage->getClient($clientId);
             if (false === $client) {
-                if ($this->iniReader->v('allowRemoteStorageClients', false, false)) {
-                    // first we need to figure out of the authorize request is
-                    // coming from remoteStorage client, this is hard... if the
-                    // client_id and the redirect_uri are both set and both a
-                    // URI and have the same domain, we assume it is a
-                    // new remoteStorage client
-                    try {
-                        $clientIdAsUri = new Uri($clientId);
-                        $redirectUriAsUri = new Uri($redirectUri);
-                        if ($clientIdAsUri->getHost() !== $redirectUriAsUri->getHost()) {
-                            // client_id host and redirect_uri do not have the same host, we are done
-                            throw new ResourceOwnerException('client not registered');
-                        }
-                    } catch (UriException $e) {
-                        // client_id or redirect_uri is not a URI, so we are done again
-                        throw new ResourceOwnerException('client not registered');
-                    }
-
-                    if ("token" !== $responseType) {
-                        // if it is not a token response_type, we are done once more
-                        throw new ResourceOwnerException('client not registered');
-                    }
-
-                    $clientData = new ClientData(
-                        array(
-                            'id' => $clientId,
-                            'secret' => null,
-                            'type' => 'token',
-                            'redirect_uri' => $redirectUri,
-                            'name' => $clientId,
-                            'allowed_scope' => $scope->toString(),
-                        )
-                    );
-                    $this->storage->addClient($clientData);
-                    $client = $this->storage->getClient($clientId);
-                } else {
-                    throw new ResourceOwnerException('client not registered');
-                }
+                throw new ResourceOwnerException('client not registered');
             }
 
             if (null === $redirectUri) {
