@@ -42,12 +42,13 @@ try {
         $iniReader->v('PdoStorage', 'password', false)
     );
 
-    $ro = new SimpleAuthResourceOwner($iniReader);
+    $resourceOwner = new SimpleAuthResourceOwner($iniReader);
 
     $authorize = new Authorize(
         new PdoStorage($db),
-        $ro,
-        $iniReader->v('accessTokenExpiry')
+        $resourceOwner,
+        $iniReader->v('accessTokenExpiry'),
+        $iniReader->v('allowRegExpRedirectUriMatch')
     );
 
     $request = Request::fromIncomingRequest(new IncomingRequest());
