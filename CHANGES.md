@@ -1,6 +1,12 @@
 # Changelog
 
 ## 0.1.9
+- no longer support public 'code' clients, i.e. without password so without
+  password only `token` type is supported
+- rename client types to just `code` and `token` and get rid of the 
+  `web_application`, `native_application` and `user_agent_based_application`
+  types
+- remove resource owner hinting
 - update `fkooman/rest-plugin-basic`
 - include support to allow clients to be automatically approved (issue #24)
 - API calls now always return JSON, also on successful calls to not give

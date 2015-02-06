@@ -192,16 +192,6 @@ class TokenTest extends OAuthHelper
         $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code expired"}', $this->j->encode($response->getContent()));
     }
 
-    public function testNativeClientRequest()
-    {
-        $h = new Request("https://auth.example.org/token", "POST");
-        $h->setPostParameters(array("client_id" => "testnativeclient", "code" => "n4t1v34uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->iniReader, null);
-        $response = $t->handleRequest($h);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read","refresh_token":"n4t1v3r3fr3sh","token_type":"bearer"}$|', $this->j->encode($response->getContent()));
-    }
-
     public function testInvalidCode()
     {
         $h = new Request("https://auth.example.org/token", "POST");

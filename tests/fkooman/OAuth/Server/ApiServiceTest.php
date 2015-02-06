@@ -79,7 +79,7 @@ class ApiServiceTest extends OAuthHelper
                     'name' => 'Simple Test Client',
                     'description' => 'Client for unit testing',
                     'redirect_uri' => 'http://localhost/php-oauth/unit/test.html',
-                    'type' => 'user_agent_based_application',
+                    'type' => 'token',
                     'icon' => null,
                     'allowed_scope' => 'read',
                 ),
@@ -182,7 +182,7 @@ class ApiServiceTest extends OAuthHelper
                 array(
                     'id' => 'foo',
                     'scope' => 'read write',
-                    'type' => 'user_agent_based_application',
+                    'type' => 'token',
                     'secret' => null,
                     'redirect_uri' => 'http://www.example.org/redirect',
                     'name' => 'Foo',

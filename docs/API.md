@@ -131,9 +131,8 @@ the following JSON parameters are required in the POST body:
 * `id` (a unique client identifier)
 * `name` (a one line short name for the service)
 * `description` (a multi-line description of the service)
-* `secret` (only for `web_application` type)
-* `type` (`web_application`, `user_agent_based_application` or 
-  `native_application`)
+* `secret` (only for `code` type)
+* `type` (`code` or `token`)
 * `redirect_uri` (a URL to redirect the browser to after the resource owner 
    grants the access)
 * `icon` (full absolute URL to icon)

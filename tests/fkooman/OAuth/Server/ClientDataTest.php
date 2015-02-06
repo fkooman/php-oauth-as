@@ -25,16 +25,16 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
     public static function validProviderFromArray()
     {
         return array(
-            array('foo', "bar", "web_application", "http://xyz", "Foo", "foo", "http://x/a.png", "Description", "f@example.org"),
+            array('foo', "bar", "code", "http://xyz", "Foo", "foo", "http://x/a.png", "Description", "f@example.org"),
         );
     }
 
     public static function invalidProviderFromArray()
     {
         return array(
-            array('foo', "bar", "web_application", "http://xyz", "Foo", "√", null, null, null, "scope token contains invalid characters"),
-            array('foo', "bar", "web_application", "http://xyz", "Foo", "foo", "x", null, null, "icon must be valid URL with path"),
-            array('foo', "bar", "web_application", "http://xyz", "Foo", "foo", "http://x/a.png", "Description", "nomail", "contact_email should be valid email address"),
+            array('foo', "bar", "code", "http://xyz", "Foo", "√", null, null, null, "scope token contains invalid characters"),
+            array('foo', "bar", "code", "http://xyz", "Foo", "foo", "x", null, null, "icon must be valid URL with path"),
+            array('foo', "bar", "code", "http://xyz", "Foo", "foo", "http://x/a.png", "Description", "nomail", "contact_email should be valid email address"),
         );
     }
 
@@ -84,7 +84,7 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
                 'id' => 'foo',
                 'redirect_uri' => 'https://www.example.org/callback',
                 'name' => 'Foo',
-                'type' => 'web_application'
+                'type' => 'code'
             )
         );
 
@@ -99,7 +99,7 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
                 'id' => 'foo',
                 'redirect_uri' => 'https://www.example.org/callback/[0-9]+',
                 'name' => 'Foo',
-                'type' => 'web_application'
+                'type' => 'code'
             )
         );
 

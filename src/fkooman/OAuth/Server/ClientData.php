@@ -180,7 +180,7 @@ class ClientData
     public function setType($type)
     {
         $this->checkString($type, 'type');
-        $validTypes = array('web_application', 'user_agent_based_application', 'native_application');
+        $validTypes = array('code', 'token');
         if (!in_array($type, $validTypes)) {
             throw new InvalidArgumentException('unsupported type');
         }

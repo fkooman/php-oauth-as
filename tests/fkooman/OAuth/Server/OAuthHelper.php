@@ -65,7 +65,7 @@ class OAuthHelper extends PHPUnit_Framework_TestCase
             "disable_user_consent" => false,
             "contact_email" => "foo@example.org",
             "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
-            "type" => "user_agent_based_application"
+            "type" => "token"
         );
 
         $wa = array(
@@ -78,20 +78,20 @@ class OAuthHelper extends PHPUnit_Framework_TestCase
             "disable_user_consent" => false,
             "contact_email" => null,
             "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
-            "type" => "web_application"
+            "type" => "code"
         );
 
         $na = array(
             "id" => "testnativeclient",
             "name" => "Simple Test Client for Authorization Code Native Profile",
             "description" => "Client for unit testing",
-            "secret" => null,
+            "secret" => "foo",
             "icon" => null,
             "allowed_scope" => "read",
             "contact_email" => null,
             "disable_user_consent" => false,
             "redirect_uri" => "oauth://callback",
-            "type" => "native_application"
+            "type" => "code"
         );
 
         $storage->addClient(new ClientData($uaba));

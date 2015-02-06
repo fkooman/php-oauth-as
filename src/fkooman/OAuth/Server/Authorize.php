@@ -117,7 +117,7 @@ class Authorize
             // tell the client about the error
             $client = $e->getClient();
 
-            if ("user_agent_based_application" === $client->getType()) {
+            if ("token" === $client->getType()) {
                 $separator = "#";
             } else {
                 $separator = (false === strpos($client->getRedirectUri(), "?")) ? "?" : "&";
@@ -196,7 +196,7 @@ class Authorize
                         array(
                             'id' => $clientId,
                             'secret' => null,
-                            'type' => 'user_agent_based_application',
+                            'type' => 'token',
                             'redirect_uri' => $redirectUri,
                             'name' => $clientId,
                             'allowed_scope' => $scope->toString(),
@@ -220,21 +220,7 @@ class Authorize
                 }
             }
 
-            // we need to make sure the client can only request the grant types belonging to its profile
-            $allowedClientProfiles = array(
-                "web_application" => array(
-                    "code",
-                ),
-                "native_application" => array(
-                    "token",
-                    "code",
-                ),
-                "user_agent_based_application" => array(
-                    "token",
-                ),
-            );
-
-            if (!in_array($responseType, $allowedClientProfiles[$client->getType()])) {
+            if ($responseType !== $client->getType()) {
                 throw new ClientException(
                     "unsupported_response_type",
                     "response_type not supported by client profile",

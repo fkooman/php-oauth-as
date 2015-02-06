@@ -92,52 +92,34 @@ class Token
         $clientId     = Utils::getParameter($post, 'client_id');
         $scope        = Utils::getParameter($post, 'scope');
 
-        if (null !== $user && !empty($user) && null !== $pass && !empty($pass)) {
-            // client provided authentication, it MUST be valid now...
-            $client = $this->storage->getClient($user);
-            if (false === $client) {
-                throw new TokenException("invalid_client", "client authentication failed");
-            }
-
-            // check pass
-            if ($pass !== $client->getSecret()) {
-                throw new TokenException("invalid_client", "client authentication failed");
-            }
-
-            // if client_id in POST is set, it must match the user
-            if (null !== $clientId && $clientId !== $user) {
-                throw new TokenException(
-                    "invalid_grant",
-                    "client_id inconsistency: authenticating user must match POST body client_id"
-                );
-            }
-            $hasAuthenticated = true;
-        } else {
-            // client provided no authentication, client_id must be in POST body
-            if (null === $clientId || empty($clientId)) {
-                throw new TokenException(
-                    "invalid_request",
-                    "no client authentication used nor client_id POST parameter"
-                );
-            }
-            $client = $this->storage->getClient($clientId);
-            if (false === $client) {
-                throw new TokenException("invalid_client", "client identity could not be established");
-            }
-
-            $hasAuthenticated = false;
+        if (null === $user || empty($user) || null === $pass || empty($pass)) {
+            throw new TokenException("invalid_client", "client authentication failed");
         }
 
-        if ("user_agent_based_application" === $client->getType()) {
+        // client provided authentication, it MUST be valid now...
+        $client = $this->storage->getClient($user);
+        if (false === $client) {
+            throw new TokenException("invalid_client", "client authentication failed");
+        }
+
+        // check pass
+        if ($pass !== $client->getSecret()) {
+            throw new TokenException("invalid_client", "client authentication failed");
+        }
+
+        // if client_id in POST is set, it must match the user
+        if (null !== $clientId && $clientId !== $user) {
+            throw new TokenException(
+                "invalid_grant",
+                "client_id inconsistency: authenticating user must match POST body client_id"
+            );
+        }
+
+        if ("token" === $client->getType()) {
             throw new TokenException(
                 "unauthorized_client",
                 "this client type is not allowed to use the token endpoint"
             );
-        }
-
-        if ("web_application" === $client->getType() && !$hasAuthenticated) {
-            // web_application type MUST have authenticated
-            throw new TokenException("invalid_client", "client authentication failed");
         }
 
         if (null === $grantType) {
