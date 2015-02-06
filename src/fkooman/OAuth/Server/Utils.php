@@ -17,16 +17,10 @@
 
 namespace fkooman\OAuth\Server;
 
-use Rhumsaa\Uuid\Uuid;
 use Exception;
 
 class Utils
 {
-    public static function randomUuid()
-    {
-        return strval(Uuid::uuid4());
-    }
-
     public static function randomHex($len = 16)
     {
         $randomString = bin2hex(openssl_random_pseudo_bytes($len, $strong));

@@ -34,8 +34,6 @@ Requires:   php-composer(fkooman/oauth-common) >= 0.7.0
 Requires:   php-composer(fkooman/oauth-common) < 0.8.0
 Requires:   php-pear(pear.twig-project.org/Twig) >= 1.15
 Requires:   php-pear(pear.twig-project.org/Twig) < 2.0
-Requires:   php-composer(rhumsaa/uuid) >= 2.8
-Requires:   php-composer(rhumsaa/uuid) < 3.0
 
 #Starting F21 we can use the composer dependency for Symfony
 #Requires:   php-composer(symfony/classloader) >= 2.3.9

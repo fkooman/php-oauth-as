@@ -23,7 +23,6 @@
         "fkooman/rest-plugin-basic": "~0.3.1",
         "fkooman/rest-plugin-bearer": "~0.2.1",
         "php": ">=5.3.3",
-        "rhumsaa/uuid": "~2.8",
         "twig/twig": "~1.15"
     }
 }
