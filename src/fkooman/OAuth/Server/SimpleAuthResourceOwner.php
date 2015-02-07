@@ -67,10 +67,4 @@ class SimpleAuthResourceOwner implements IResourceOwner
 
         return array();
     }
-
-    public function getExt()
-    {
-        // unsupported
-        return array();
-    }
 }

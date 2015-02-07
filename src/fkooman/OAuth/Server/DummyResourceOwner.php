@@ -44,10 +44,4 @@ class DummyResourceOwner implements IResourceOwner
     {
         return $this->entitlements;
     }
-
-    public function getExt()
-    {
-        // unsupported
-        return array();
-    }
 }

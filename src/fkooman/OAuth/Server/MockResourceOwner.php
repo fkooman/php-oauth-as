@@ -23,9 +23,4 @@ class MockResourceOwner implements IResourceOwner
     {
         return $this->data['entitlement'];
     }
-
-    public function getExt()
-    {
-        return $this->data['ext'];
-    }
 }

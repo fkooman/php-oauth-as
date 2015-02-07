@@ -264,18 +264,16 @@ class PdoStorage
     {
         $result = $this->getResourceOwner($resourceOwner->getId());
         if (false === $result) {
-            $stmt = $this->db->prepare("INSERT INTO resource_owner (id, entitlement, ext) VALUES(:id, :entitlement, :ext)");
+            $stmt = $this->db->prepare("INSERT INTO resource_owner (id, entitlement) VALUES(:id, :entitlement)");
             $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
             $stmt->bindValue(":entitlement", Json::encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
-            $stmt->bindValue(":ext", Json::encode($resourceOwner->getExt()), PDO::PARAM_STR);
             $stmt->execute();
 
             return 1 === $stmt->rowCount();
         } else {
-            $stmt = $this->db->prepare("UPDATE resource_owner SET entitlement = :entitlement, ext = :ext WHERE id = :id");
+            $stmt = $this->db->prepare("UPDATE resource_owner SET entitlement = :entitlement WHERE id = :id");
             $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
             $stmt->bindValue(":entitlement", Json::encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
-            $stmt->bindValue(":ext", Json::encode($resourceOwner->getExt()), PDO::PARAM_STR);
             $stmt->execute();
 
             return 1 === $stmt->rowCount();
@@ -284,7 +282,7 @@ class PdoStorage
 
     public function getResourceOwner($resourceOwnerId)
     {
-        $stmt = $this->db->prepare("SELECT id, entitlement, ext FROM resource_owner WHERE id = :id");
+        $stmt = $this->db->prepare("SELECT id, entitlement FROM resource_owner WHERE id = :id");
         $stmt->bindValue(":id", $resourceOwnerId, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -342,7 +340,6 @@ class PdoStorage
             "CREATE TABLE IF NOT EXISTS resource_owner (
                 id VARCHAR(255) NOT NULL,
                 entitlement VARCHAR(255) DEFAULT NULL,
-                ext VARCHAR(255) DEFAULT NULL,
                 PRIMARY KEY (id)
             )",
 
