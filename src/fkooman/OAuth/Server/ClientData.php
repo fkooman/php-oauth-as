@@ -87,6 +87,11 @@ class ClientData
         $this->setDisableUserConsent($clientData['disable_user_consent']);
         $this->setIcon($clientData['icon']);
         $this->setContactEmail($clientData['contact_email']);
+
+        // some additional validation
+        if (null === $this->getSecret() && 'code' === $this->getType()) {
+            throw new InvalidArgumentException('for type code a secret must be set');
+        }
     }
     
     private function checkString($str, $name)

@@ -84,7 +84,8 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
                 'id' => 'foo',
                 'redirect_uri' => 'https://www.example.org/callback',
                 'name' => 'Foo',
-                'type' => 'code'
+                'type' => 'code',
+                'secret' => 'foo'
             )
         );
 
@@ -99,7 +100,8 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
                 'id' => 'foo',
                 'redirect_uri' => 'https://www.example.org/callback/[0-9]+',
                 'name' => 'Foo',
-                'type' => 'code'
+                'type' => 'code',
+                'secret' => 'foo'
             )
         );
 
