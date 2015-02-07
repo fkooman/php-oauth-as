@@ -260,35 +260,6 @@ class PdoStorage
         return 1 === $stmt->rowCount();
     }
 
-    public function updateResourceOwner(IResourceOwner $resourceOwner)
-    {
-        $result = $this->getResourceOwner($resourceOwner->getId());
-        if (false === $result) {
-            $stmt = $this->db->prepare("INSERT INTO resource_owner (id, entitlement) VALUES(:id, :entitlement)");
-            $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
-            $stmt->bindValue(":entitlement", Json::encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
-            $stmt->execute();
-
-            return 1 === $stmt->rowCount();
-        } else {
-            $stmt = $this->db->prepare("UPDATE resource_owner SET entitlement = :entitlement WHERE id = :id");
-            $stmt->bindValue(":id", $resourceOwner->getId(), PDO::PARAM_STR);
-            $stmt->bindValue(":entitlement", Json::encode($resourceOwner->getEntitlement()), PDO::PARAM_STR);
-            $stmt->execute();
-
-            return 1 === $stmt->rowCount();
-        }
-    }
-
-    public function getResourceOwner($resourceOwnerId)
-    {
-        $stmt = $this->db->prepare("SELECT id, entitlement FROM resource_owner WHERE id = :id");
-        $stmt->bindValue(":id", $resourceOwnerId, PDO::PARAM_STR);
-        $stmt->execute();
-
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
     public function getStats()
     {
         $data = array();
@@ -314,35 +285,9 @@ class PdoStorage
         return $data;
     }
 
-    public function getChangeInfo()
-    {
-        $stmt = $this->db->prepare("SELECT MAX(patch_number) AS patch_number, description FROM db_changelog WHERE patch_number IS NOT NULL");
-        $stmt->execute();
-        // ugly hack because query will always return a result, even if there is none...
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return null === $result['patch_number'] ? false : $result;
-    }
-
-    public function addChangeInfo($patchNumber, $description)
-    {
-        $stmt = $this->db->prepare("INSERT INTO db_changelog (patch_number, description) VALUES(:patch_number, :description)");
-        $stmt->bindValue(":patch_number", $patchNumber, PDO::PARAM_INT);
-        $stmt->bindValue(":description", $description, PDO::PARAM_STR);
-        $stmt->execute();
-
-        return 1 === $stmt->rowCount();
-    }
-
     public function initDatabase()
     {
         $queries = array(
-            "CREATE TABLE IF NOT EXISTS resource_owner (
-                id VARCHAR(255) NOT NULL,
-                entitlement VARCHAR(255) DEFAULT NULL,
-                PRIMARY KEY (id)
-            )",
-
             "CREATE TABLE IF NOT EXISTS clients (
                 id VARCHAR(255)  NOT NULL,
                 name VARCHAR(255) NOT NULL,
@@ -367,9 +312,6 @@ class PdoStorage
                 PRIMARY KEY (access_token),
                 FOREIGN KEY (client_id)
                     REFERENCES clients (id)
-                    ON UPDATE CASCADE ON DELETE CASCADE,
-                FOREIGN KEY (resource_owner_id)
-                    REFERENCES resource_owner (id)
                     ON UPDATE CASCADE ON DELETE CASCADE
             )",
 
@@ -381,10 +323,7 @@ class PdoStorage
                 FOREIGN KEY (client_id)
                     REFERENCES clients (id)
                     ON UPDATE CASCADE ON DELETE CASCADE,
-                UNIQUE (client_id , resource_owner_id),
-                FOREIGN KEY (resource_owner_id)
-                    REFERENCES resource_owner (id)
-                    ON UPDATE CASCADE ON DELETE CASCADE
+                UNIQUE (client_id , resource_owner_id)
             )",
 
             "CREATE TABLE IF NOT EXISTS authorization_codes (
@@ -397,16 +336,7 @@ class PdoStorage
                 PRIMARY KEY (authorization_code),
                 FOREIGN KEY (client_id)
                     REFERENCES clients (id)
-                    ON UPDATE CASCADE ON DELETE CASCADE,
-                FOREIGN KEY (resource_owner_id)
-                    REFERENCES resource_owner (id)
                     ON UPDATE CASCADE ON DELETE CASCADE
-            )",
-
-            "CREATE TABLE IF NOT EXISTS db_changelog (
-                patch_number INTEGER NOT NULL,
-                description VARCHAR(255) NOT NULL,
-                PRIMARY KEY (patch_number)
             )",
         );
 
@@ -415,11 +345,9 @@ class PdoStorage
         }
 
         // make sure the tables are empty
-        $this->db->query("DELETE FROM resource_owner");
         $this->db->query("DELETE FROM clients");
         $this->db->query("DELETE FROM access_tokens");
         $this->db->query("DELETE FROM approvals");
         $this->db->query("DELETE FROM authorization_codes");
-        $this->db->query("DELETE FROM db_changelog");
     }
 }

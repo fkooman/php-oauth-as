@@ -18,12 +18,11 @@
 require_once dirname(__DIR__)."/vendor/autoload.php";
 
 use fkooman\Ini\IniReader;
-use fkooman\OAuth\Server\Authorize;
 use fkooman\OAuth\Server\PdoStorage;
-use fkooman\Http\Request;
-use fkooman\Http\Response;
-use fkooman\Http\IncomingRequest;
-use fkooman\OAuth\Server\SimpleAuthResourceOwner;
+use fkooman\OAuth\Server\AuthorizeService;
+use fkooman\Rest\Plugin\Basic\BasicAuthentication;
+use fkooman\Http\Exception\InternalServerErrorException;
+use fkooman\Http\Exception\HttpException;
 
 set_error_handler(
     function ($errno, $errstr, $errfile, $errline) {
@@ -42,33 +41,36 @@ try {
         $iniReader->v('PdoStorage', 'password', false)
     );
 
-    $resourceOwner = new SimpleAuthResourceOwner($iniReader);
+    $basicAuthenticationPlugin = new BasicAuthentication(
+        function ($userId) {
+            switch ($userId) {
+                case 'admin':
+                    return password_hash('adm1n', PASSWORD_DEFAULT);
+                case 'fkooman':
+                    return password_hash('foobar', PASSWORD_DEFAULT);
+                default:
+                    return false;
+            }
+        },
+        'OAuth Server Authentication'
+    );
 
-    $authorize = new Authorize(
+    $authorizeService = new AuthorizeService(
         new PdoStorage($db),
-        $resourceOwner,
         $iniReader->v('accessTokenExpiry'),
         $iniReader->v('allowRegExpRedirectUriMatch')
     );
 
-    $request = Request::fromIncomingRequest(new IncomingRequest());
-    $response = $authorize->handleRequest($request);
-    $response->sendResponse();
+    $authorizeService->registerBeforeEachMatchPlugin($basicAuthenticationPlugin);
+    $authorizeService->run()->sendResponse();
 } catch (Exception $e) {
-    // internal server error, inform resource owner through browser
-    $response = new Response(500);
-    $loader = new Twig_Loader_Filesystem(
-        dirname(__DIR__)."/views"
-    );
-    $twig = new Twig_Environment($loader);
-    $output = $twig->render(
-        "error.twig",
-        array(
-            "statusCode" => $response->getStatusCode(),
-            "statusReason" => $response->getStatusReason(),
-            "errorMessage" => $e->getMessage(),
-        )
-    );
-    $response->setContent($output);
+    if ($e instanceof HttpException) {
+        $response = $e->getHtmlResponse();
+    } else {
+        // we catch all other (unexpected) exceptions and return a 500
+        error_log($e->getTraceAsString());
+        $e = new InternalServerErrorException($e->getMessage());
+        $response = $e->getHtmlResponse();
+    }
     $response->sendResponse();
 }

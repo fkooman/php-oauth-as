@@ -49,6 +49,18 @@ class ClientException extends \Exception
         return $this->state;
     }
 
+#            $client = $e->getClient();
+
+#            if ("token" === $client->getType()) {
+#                $separator = "#";
+#            } else {
+#                $separator = (false === strpos($client->getRedirectUri(), "?")) ? "?" : "&";
+#            }
+#            $parameters = array("error" => $e->getMessage(), "error_description" => $e->getDescription());
+#            if (null !== $e->getState()) {
+#                $parameters['state'] = $e->getState();
+#            }
+
     public function getLogMessage($includeTrace = false)
     {
         $client = $this->getClient();

@@ -37,14 +37,6 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
             )
         );
         $this->storage->initDatabase();
-
-        $resourceOwner = array(
-            "id" => "fkooman",
-            "entitlement" => array(),
-            "ext" => array(),
-        );
-        $this->storage->updateResourceOwner(new MockResourceOwner($resourceOwner));
-
         $clientData = new ClientData(
             array(
                 "id" => "testcodeclient",
@@ -59,7 +51,22 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
                 "type" => "code"
             )
         );
-        $this->storage->addClient($clientData);
+        $this->storage->addClient(
+            new ClientData(
+                array(
+                    "id" => "testcodeclient",
+                    "name" => "Simple Test Client for Authorization Code Profile",
+                    "description" => "Client for unit testing",
+                    "secret" => "abcdef",
+                    "icon" => null,
+                    "allowed_scope" => "read write foo bar foobar",
+                    "disable_user_consent" => false,
+                    "contact_email" => null,
+                    "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
+                    "type" => "code"
+                )
+            )
+        );
 
         $this->storage->addApproval('testcodeclient', 'fkooman', 'read write foo', 'r3fr3sh');
         $this->storage->storeAuthorizationCode("4uth0r1z4t10n", "fkooman", time(), "testcodeclient", null, "read");

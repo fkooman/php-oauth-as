@@ -32,12 +32,13 @@ class TokenIntrospectionService extends Service
     /** @var fkooman\OAuth\Server\PdoStorage */
     private $db;
 
-    public function __construct(PdoStorage $db)
+    public function __construct(PdoStorage $db, Entitlements $entitlements)
     {
         parent::__construct();
 
         $this->db = $db;
-    
+        $this->entitlements = $entitlements;
+
         $compatThis = &$this;
 
         $this->get(
@@ -90,12 +91,9 @@ class TokenIntrospectionService extends Service
             // $tokenInfo['aud' => 'foo';
 
             // add proprietary "x-entitlement"
-            $resourceOwner = $this->db->getResourceOwner($accessToken['resource_owner_id']);
-            if (isset($resourceOwner['entitlement'])) {
-                $e = Json::decode($resourceOwner['entitlement']);
-                if (0 !== count($e)) {
-                    $tokenInfo['x-entitlement'] = implode(" ", $e);
-                }
+            $entitlement = $this->entitlements->getEntitlement($accessToken['resource_owner_id']);
+            if (0 !== count($entitlement)) {
+                $tokenInfo['x-entitlement'] = implode(" ", $entitlement);
             }
         }
 

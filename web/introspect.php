@@ -22,6 +22,7 @@ use fkooman\OAuth\Server\TokenIntrospectionService;
 use fkooman\OAuth\Server\PdoStorage;
 use fkooman\Http\Exception\HttpException;
 use fkooman\Http\Exception\InternalServerErrorException;
+use fkooman\OAuth\Server\Entitlements;
 
 set_error_handler(
     function ($errno, $errstr, $errfile, $errline) {
@@ -41,7 +42,8 @@ try {
     );
 
     $tokenIntrospectionService = new TokenIntrospectionService(
-        new PdoStorage($db)
+        new PdoStorage($db),
+        new Entitlements($iniReader->v('entitlementsFile'))
     );
     $tokenIntrospectionService->run()->sendResponse();
 } catch (Exception $e) {

@@ -74,13 +74,6 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
             )
         );
 
-        $resourceOwner = array(
-            'id' => 'fkooman',
-            'entitlement' => array(),
-            'ext' => array(),
-        );
-        $this->storage->updateResourceOwner(new MockResourceOwner($resourceOwner));
-
         $this->storage->addApproval('testclient', 'fkooman', 'read', null);
         $this->storage->storeAccessToken('12345abc', time(), 'testcodeclient', 'fkooman', 'http://php-oauth.net/scope/authorize', 3600);
 

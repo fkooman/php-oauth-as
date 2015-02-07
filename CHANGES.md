@@ -1,6 +1,9 @@
 # Changelog
 
 ## 0.1.9
+- entitlements are for now only available through the configuration file, no
+  longer through authentication, this was used for the SAML authentication 
+  before, but for non of the other authentication libraries
 - simplify the consent dialog
 - store the client secret hash in the database instead of plain text
 - add `php-oauth-as-housekeeping` script to be run from crontab to ocassionaly
