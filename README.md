@@ -19,9 +19,8 @@ it). Refer to the license for the exact details.
 # Features
 * PDO database backend support
 * Authorization Code and Implicit Grant support
-* [SimpleAuth](https://github.com/fkooman/php-simple-auth/) authentication 
-  backend
-* [simpleSAMLphp](http://www.simplesamlphp.org) authentication backend
+* `BasicAuthenication` Backend (configured in configuration file)
+* `MellonAuthentication` Backend (SAML)
 * Token Introspection for Resource Servers
 * Management API to manage Client Registration and Authorizations
 
@@ -36,9 +35,8 @@ packages can for now be found in the
 [repository](https://copr.fedoraproject.org/coprs/fkooman/php-oauth/). For 
 setting up a development environment, see below.
 
-Currently the documentation for getting started with the packages still needs
-to be written...
-
+Currently the documentation for getting started with the RPM packages still 
+needs to be written...
 
 # Development Requirements
 On Fedora/CentOS:
@@ -146,26 +144,25 @@ This is the Apache configuration you use for development. Place it in
 Restart Apache with `service httpd restart`.
 
 # Authentication
-There are two plugins provided for user authentication:
+There are currently two plugins provided for user authentication:
 
-* `SimpleAuthResourceOwner` - Simple static username/password authentication 
-  library (**DEFAULT**)
-* `SspResourceOwner` - simpleSAMLphp plugin for SAML authentication
+* `BasicAuthentication` - Simple static username/password authentication 
+  configured through `config/oauth.ini` (**DEFAULT**)
+* `MellonAuthentication` - Plugin for SAML authentication
 
 You can configure which plugin to use by modifying the 
-`authenticationMechanism` setting in `config/oauth.ini`.
+`authenticationPlugin` setting in `config/oauth.ini`.
 
 You do need to configure these authentication backend separately. See the 
 respective documentation for those projects.
 
 ## Entitlements
 This OAuth server also uses *entitlements*. Entitlements are certain access 
-rights a particular user using the API has. For instance, you can configure a
+rights a particular user using an API has. For instance, you can configure a
 user to have `manage` rights on the API of the Authorization Server. 
 
-These entitlements can be provided either by the authentication backend, in the
-case of the `SimpleAuthResourceOwner` backend, or through a static
-configuration file in `config/entitlements.json`. 
+These entitlements can be provided through a static configuration file 
+in `config/entitlements.json`. 
 
 Entitlements are needed because sometimes you want users to be able to use the
 provided API, but not be able to manage client registration, or on some APIs, 
@@ -188,32 +185,6 @@ you would put that in `config/entitlements.json`:
 Now, whenever the `admin` user successfully authenticates it can manage clients
 through the API. Users with other IDs will not be able to manage the clients.
 
-## SimpleAuthResourceOwner 
-For the `SimpleAuthResourceOwner` backend you also need to install 
-[SimpleAuth](https://github.com/fkooman/php-simple-auth/). See the 
-instructions there on how to install and configure this. Make sure you set the
-correct path for `simpleAuthPath` in `config/oauth.ini`.
-
-## SspResourceOwner
-In the configuration file `config/oauth.ini` only a few aspects can be 
-configured. To configure the SAML integration, make sure at least the following 
-settings are correct:
-
-    authenticationMechanism = "SspResourceOwner"
-
-    ; simpleSAMLphp configuration
-    [SspResourceOwner]
-    sspPath = "/usr/share/simplesamlphp"
-    authSource = "default-sp"
-    ;resourceOwnerIdAttribute = "eduPersonPrincipalName"
-
-If you do not set `resourceOwnerIdAttribute` the 'persistent NameID value' will
-be requested and used to identify the users on subsequent visits. If this is 
-not available, authentication will fail. To work around this, use an attribute
-provided by the IdP that uniquely identifies the user. We assume you already
-have a working IdP/SP connection. See the simpleSAMLphp documentation for 
-more information.
-
 # Management Clients
 There are two management clients available:
 
@@ -227,7 +198,7 @@ For your convenience they are hosted on
 setup the applications yourself and can immediately use the hosted versions. 
 Just specify the endpoint to your Authorization Server to get started. They 
 also work with the Docker image, you can then use 
-`https://localhost/php-oauth-as` as the URL to connect to.
+`https://localhost/php-oauth-as/` as the URL to connect to.
 
 # Resource Servers
 If you are writing a resource server (RS) an API is available to verify the 
@@ -249,8 +220,7 @@ Now in order to verify it, the RS can send a request to the OAuth service:
         "scope": "http://php-oauth.net/scope/manage",
         "sub": "admin",
         "token_type": "bearer",
-        "x-entitlement": [
-            "http://php-oauth.net/entitlement/manage"
+        "x-entitlement": "http://php-oauth.net/entitlement/manage"
         ]
     }
     
@@ -265,17 +235,11 @@ If your service needs to provision a user, the field `sub` SHOULD to be used
 for that. The `scope` field can be used to determine the scope the client was 
 granted by the resource owner.
 
-There are two proprietary extensions to this format: `x-entitlement` and 
-`x-ext`. The former one gives the entitlement values as an array. The `x-ext` 
-provides additional "raw" information obtained through the authentication 
-framework. For instance all SAML attributes released are placed in this 
-`x-ext` field. They can contain for instance an email address or display name.
+There is a proprietary extensions to this format: `x-entitlement`. It gives the 
+entitlement values as a space separated list of entitlements, just like the 
+`scope` field.
 
-A library written in PHP to access the introspection endpoint is available 
-[here](https://github.com/fkooman/php-oauth-lib-rs).
-
-# Resource Owner Data
-Whenever a resource owner successfully authenticates using some of the supported
-authentication mechanisms, some user information, like the entitlement a user
-has, is stored in the database. This is done to give this information to 
-registered clients and to resource servers that have a valid access token.
+A plugin for `fkooman/rest`, `fkooman/rest-plugin-bearer` is available to 
+integrate with this OAuth 2.0 AS service using 
+[Composer](https://getcomposer.org). Or see the project 
+[site](https://github.com/fkooman/php-lib-rest-plugin-bearer).
