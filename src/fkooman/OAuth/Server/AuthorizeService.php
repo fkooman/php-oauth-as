@@ -25,7 +25,7 @@ use fkooman\Http\Exception\BadRequestException;
 use fkooman\OAuth\Common\Scope;
 use fkooman\Http\RedirectResponse;
 use fkooman\OAuth\Server\Exception\ClientException;
-use fkooman\Rest\Plugin\Basic\BasicUserInfo;
+use fkooman\Rest\Plugin\UserInfo;
 
 class AuthorizeService extends Service
 {
@@ -50,20 +50,20 @@ class AuthorizeService extends Service
 
         $this->get(
             '/',
-            function (Request $request, BasicUserInfo $basicUserInfo) use ($compatThis) {
-                return $compatThis->getAuthorization($request, $basicUserInfo);
+            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+                return $compatThis->getAuthorization($request, $userInfo);
             }
         );
 
         $this->post(
             '/',
-            function (Request $request, BasicUserInfo $basicUserInfo) use ($compatThis) {
-                return $compatThis->postAuthorization($request, $basicUserInfo);
+            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+                return $compatThis->postAuthorization($request, $userInfo);
             }
         );
     }
 
-    public function getAuthorization(Request $request, BasicUserInfo $basicUserInfo)
+    public function getAuthorization(Request $request, UserInfo $userInfo)
     {
         // FIXME: validate all these parameters
         $clientId     = $request->getQueryParameter('client_id');
@@ -115,7 +115,7 @@ class AuthorizeService extends Service
             // we do not require approval by the user
             $approvedScope = array('scope' => $scope->toString());
         } else {
-            $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $basicUserInfo->getUserId());
+            $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $userInfo->getUserId());
         }
 
         if (false === $approvedScope || false === $scope->isSubsetOf(Scope::fromString($approvedScope['scope']))) {
@@ -124,7 +124,7 @@ class AuthorizeService extends Service
             return $twig->render(
                 "askAuthorization.twig",
                 array(
-                    'resourceOwnerId' => $basicUserInfo->getUserId(),
+                    'resourceOwnerId' => $userInfo->getUserId(),
                     'sslEnabled' => "https" === $request->getRequestUri()->getScheme(),
                     'contactEmail' => $client->getContactEmail(),
                     'scopes' => $scope->toArray(),
@@ -143,7 +143,7 @@ class AuthorizeService extends Service
                     $accessToken,
                     time(),
                     $clientId,
-                    $basicUserInfo->getUserId(),
+                    $userInfo->getUserId(),
                     $scope->toString(),
                     $this->accessTokenExpiry
                 );
@@ -167,7 +167,7 @@ class AuthorizeService extends Service
                 $authorizationCode = bin2hex(openssl_random_pseudo_bytes(16));
                 $this->storage->storeAuthorizationCode(
                     $authorizationCode,
-                    $basicUserInfo->getUserId(),
+                    $userInfo->getUserId(),
                     time(),
                     $clientId,
                     $redirectUri,
@@ -185,7 +185,7 @@ class AuthorizeService extends Service
         }
     }
 
-    public function postAuthorization(Request $request, BasicUserInfo $basicUserInfo)
+    public function postAuthorization(Request $request, UserInfo $userInfo)
     {
         $clientId     = $request->getQueryParameter('client_id');
         $responseType = $request->getQueryParameter('response_type');
@@ -208,14 +208,14 @@ class AuthorizeService extends Service
             throw new ClientException("access_denied", "not authorized by resource owner", $client, $state);
         }
 
-        $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $basicUserInfo->getUserId());
+        $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $userInfo->getUserId());
         if (false === $approvedScope) {
             // no approved scope stored yet, new entry
             $refreshToken = ("code" === $responseType) ? bin2hex(openssl_random_pseudo_bytes(16)) : null;
-            $this->storage->addApproval($clientId, $basicUserInfo->getUserId(), $scope->toString(), $refreshToken);
+            $this->storage->addApproval($clientId, $userInfo->getUserId(), $scope->toString(), $refreshToken);
         } else {
             // FIXME: update merges the scopes?
-            $this->storage->updateApproval($clientId, $basicUserInfo->getUserId(), $scope->getScope());
+            $this->storage->updateApproval($clientId, $userInfo->getUserId(), $scope->getScope());
         }
 
         // redirect back to the authorize uri, this time there should be an

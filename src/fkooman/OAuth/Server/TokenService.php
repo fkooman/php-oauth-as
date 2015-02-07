@@ -18,7 +18,7 @@
 namespace fkooman\OAuth\Server;
 
 use fkooman\Rest\Service;
-use fkooman\Rest\Plugin\Basic\BasicUserInfo;
+use fkooman\Rest\Plugin\UserInfo;
 use fkooman\Http\Request;
 use fkooman\Http\Exception\BadRequestException;
 use fkooman\OAuth\Common\Scope;
@@ -43,15 +43,15 @@ class TokenService extends Service
 
         $this->post(
             '/',
-            function (Request $request, BasicUserInfo $basicUserInfo) use ($compatThis) {
-                return $compatThis->postToken($request, $basicUserInfo);
+            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+                return $compatThis->postToken($request, $userInfo);
             }
         );
     }
 
-    public function postToken(Request $request, BasicUserInfo $basicUserInfo)
+    public function postToken(Request $request, UserInfo $userInfo)
     {
-        $userId = $basicUserInfo->getUserId();
+        $userId = $userInfo->getUserId();
 
         $clientData = $this->db->getClient($userId);
         if (false === $clientData) {
