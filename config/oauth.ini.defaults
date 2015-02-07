@@ -1,7 +1,7 @@
 ; This is the OAuth Authorization Server configuration
 
-authenticationMechanism = "SimpleAuthResourceOwner"
-;authenticationMechanism = "SspResourceOwner"
+authenticationPlugin = "BasicAuthentication"
+;authenticationPlugin = "MellonAuthentication"
 
 ; the access token expiry time (in seconds)
 accessTokenExpiry = 3600
@@ -24,15 +24,10 @@ dsn = "sqlite:/var/lib/php-oauth-as/db.sqlite"
 ;password = "s3cr3t"
 ;dsn = "pgsql:host=localhost;port=5432;dbname=XYZ;user=ABC;password=DEF"
 
-; SimpleAuth configuration
-[SimpleAuthResourceOwner]
-simpleAuthPath = "/usr/share/php-simple-auth"
+[BasicAuthentication]
+admin = "adm1n"
+fkooman = "foobar"
 
-; simpleSAMLphp configuration
-;[SspResourceOwner]
-;sspPath    = "/usr/share/simplesamlphp"
-;authSource = "default-sp"
-
-; if you want to use an attribute for the resource owner identifier instead of 
-; the persistent NameID value set it below
-;resourceOwnerIdAttribute = "eduPersonPrincipalName"
+[MellonAuthentication]
+mellonAttribute = 'MELLON_NAME_ID'
+;mellonAttribute = 'MELLON_eduPersonTargetedID'

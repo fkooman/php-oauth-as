@@ -20,7 +20,7 @@ require_once dirname(__DIR__)."/vendor/autoload.php";
 use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\PdoStorage;
 use fkooman\OAuth\Server\AuthorizeService;
-use fkooman\Rest\Plugin\Basic\BasicAuthentication;
+use fkooman\OAuth\Server\Authenticator;
 use fkooman\Http\Exception\InternalServerErrorException;
 use fkooman\Http\Exception\HttpException;
 
@@ -41,27 +41,16 @@ try {
         $iniReader->v('PdoStorage', 'password', false)
     );
 
-    $basicAuthenticationPlugin = new BasicAuthentication(
-        function ($userId) {
-            switch ($userId) {
-                case 'admin':
-                    return password_hash('adm1n', PASSWORD_DEFAULT);
-                case 'fkooman':
-                    return password_hash('foobar', PASSWORD_DEFAULT);
-                default:
-                    return false;
-            }
-        },
-        'OAuth Server Authentication'
-    );
+    $auth = new Authenticator($iniReader);
+    $authenticationPlugin = $auth->getAuthenticationPlugin();
 
     $authorizeService = new AuthorizeService(
         new PdoStorage($db),
         $iniReader->v('accessTokenExpiry'),
         $iniReader->v('allowRegExpRedirectUriMatch')
     );
+    $authorizeService->registerBeforeEachMatchPlugin($authenticationPlugin);
 
-    $authorizeService->registerBeforeEachMatchPlugin($basicAuthenticationPlugin);
     $authorizeService->run()->sendResponse();
 } catch (Exception $e) {
     if ($e instanceof HttpException) {
