@@ -3,6 +3,8 @@
 namespace fkooman\OAuth\Server;
 
 use fkooman\Json\Json;
+use InvalidArgumentException;
+use RuntimeException;
 
 class Entitlements
 {
@@ -12,7 +14,11 @@ class Entitlements
 
     public function __construct($entitlementsFile)
     {
-        $entitlements = Json::decodeFile($entitlementsFile);
+        try {
+            $entitlements = Json::decodeFile($entitlementsFile);
+        } catch (InvalidArgumentException $e) {
+            throw new RuntimeException('unable to parse the file');
+        }
         if (!is_array($entitlements)) {
             throw new RuntimeException('entitlements not stored as JSON array');
         }
