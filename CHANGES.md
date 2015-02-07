@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.1.9
+- simplify the consent dialog
 - store the client secret hash in the database instead of plain text
 - add `php-oauth-as-housekeeping` script to be run from crontab to ocassionaly
   delete expired tokens from the database

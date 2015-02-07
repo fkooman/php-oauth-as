@@ -9,47 +9,37 @@
 </head>
 
 <body>
-    <div id="wrapper">
-      <div id="header">
-        <h1>My Protected API</h1>
-        <span id="userInfo">Logged in as <strong>{{ resourceOwnerId|e }}</strong></span>
-      </div>
-      <div id="container">
-        <div class="authorizeMessage">
-            <div id="clientInfo">
-                {% if clientIcon %}
-                    <img src="{{ clientIcon|e }}" width="128" height="128" />
-                {% endif %}
-                <div class="clientDetails">
-                    <h3 title="{{ clientId|e }}">{{ clientName|e }}</h3>
-                    <em>{{ clientDescription|e }}</em>
-                </div> <!-- /clientDetails -->
-            </div> <!-- /clientInfo -->
+    <div id="container">
+        <h1 title="You are authenticated as '{{ resourceOwnerId|e }}'">My API</h1>
+        <div class="clientInfo">
+            <h3 title="{{ clientId|e }}">{{ clientName|e }}</h3>
+            <p class="clientDescription">
+                {{ clientDescription|e }}
+            </p>
+        </div> <!-- /clientInfo -->
 
-            <div id="clientScope">
-              <strong>This application wants access to:</strong>
-              <ul>
-                  {% for scope in scopes %}
-                    <li>{{ scope|e }}</li>
-                  {% endfor %}
-              </ul>
-            </div>
-        </div> <!-- /authorizeMessage -->
+        <div class="clientPermissions">
+          This application wants the following permissions:
+          <ul>
+              {% for scope in scopes %}
+                <li><code>{{ scope|e }}</code></li>
+              {% endfor %}
+          </ul>
+        </div> <!-- /clientScope -->
 
         {% if not sslEnabled %}
-            <div class="warnBox">
-                <strong>INSECURE</strong> connection to this service, SSL or TLS <strong>MUST</strong> be used!
-                {% if contactEmail %}
-                    Please <a href="mailto:{{ contactEmail|e }}">inform</a> the application provider.
-                {% endif %}
-            </div>
+        <p class="warning">
+            <strong>INSECURE</strong> connection to this service, SSL or TLS <strong>MUST</strong> be used!
+            {% if contactEmail %}
+                Please <a href="mailto:{{ contactEmail|e }}">inform</a> the application provider.
+            {% endif %}
+        </p>
         {% endif %}
 
         <form method="post" action="">
-            <button type="submit" name="approval" value="reject">Reject</button>
-            <button type="submit" name="approval" value="approve">Approve</button>
+            <button class="reject" type="submit" name="approval" value="reject">Reject</button>
+            <button class="approve" type="submit" name="approval" value="approve">Approve</button>
         </form>
-      </div><!-- /container -->
-  </div><!-- /wrapper -->
+    </div> <!-- /container -->
 </body>
 </html>
