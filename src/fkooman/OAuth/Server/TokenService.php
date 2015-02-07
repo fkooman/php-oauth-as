@@ -132,7 +132,7 @@ class TokenService extends Service
         $approval = $this->db->getApprovalByResourceOwnerId($clientData->getId(), $result['resource_owner_id']);
 
         $token = array();
-        $token['access_token'] = Utils::randomHex(16);
+        $token['access_token'] = bin2hex(openssl_random_pseudo_bytes(16));
         $token['expires_in'] = $this->accessTokenExpiry;
         // we always grant the scope the user authorized, no further restrictions here...
         // FIXME: the merging of authorized scopes in the authorize function is a bit of a mess!
@@ -169,7 +169,7 @@ class TokenService extends Service
         }
 
         $token = array();
-        $token['access_token'] = Utils::randomHex(16);
+        $token['access_token'] = bin2hex(openssl_random_pseudo_bytes(16));
         $token['expires_in'] = $this->accessTokenExpiry;
         if (null !== $scope) {
             // the client wants to obtain a specific scope

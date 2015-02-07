@@ -138,7 +138,7 @@ class AuthorizeService extends Service
             if ("token" === $responseType) {
                 // implicit grant
                 // FIXME: return existing access token if it exists for this exact client, resource owner and scope?
-                $accessToken = Utils::randomHex(16);
+                $accessToken = bin2hex(openssl_random_pseudo_bytes(16));
                 $this->storage->storeAccessToken(
                     $accessToken,
                     time(),
@@ -164,7 +164,7 @@ class AuthorizeService extends Service
                 return new RedirectResponse($responseUri, 302);
             } else {
                 // authorization code grant
-                $authorizationCode = Utils::randomHex(16);
+                $authorizationCode = bin2hex(openssl_random_pseudo_bytes(16));
                 $this->storage->storeAuthorizationCode(
                     $authorizationCode,
                     $basicUserInfo->getUserId(),
@@ -211,7 +211,7 @@ class AuthorizeService extends Service
         $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $basicUserInfo->getUserId());
         if (false === $approvedScope) {
             // no approved scope stored yet, new entry
-            $refreshToken = ("code" === $responseType) ? Utils::randomHex(16) : null;
+            $refreshToken = ("code" === $responseType) ? bin2hex(openssl_random_pseudo_bytes(16)) : null;
             $this->storage->addApproval($clientId, $basicUserInfo->getUserId(), $scope->toString(), $refreshToken);
         } else {
             // FIXME: update merges the scopes?
