@@ -132,9 +132,10 @@ the following JSON parameters are required in the POST body:
 * `name` (a one line short name for the service)
 * `description` (a multi-line description of the service)
 * `secret` (only for `code` type)
+* `disable_user_consent` (`true` or `false`)
 * `type` (`code` or `token`)
 * `redirect_uri` (a URL to redirect the browser to after the resource owner 
-   grants the access)
+  grants the access)
 * `icon` (full absolute URL to icon)
 * `allowed_scope` (scopes the client is allowed to request, space separated)
 * `contact_email` (contact email address to report issues with the application 

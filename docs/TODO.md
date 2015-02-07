@@ -7,4 +7,3 @@
   service
 * make it possible to link a client to one or more resource servers instead of 
   "allowing access" to all resource servers
-* make it possible to skip user consent, e.g. for management clients
