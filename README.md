@@ -69,7 +69,6 @@ following lines, and set them to the values shown here:
 
     entitlementsFile = "/var/www/php-oauth-as/config/entitlements.json"
     dsn = "sqlite:/var/www/php-oauth-as/data/db.sqlite"
-    simpleAuthPath = "/var/www/php-simple-auth"
 
 Now continue with the configuration:
 
