@@ -11,7 +11,7 @@
             "fkooman\\OAuth\\Server": "src/"
         }
     },
-    "description": "PHP OAuth 2.0 Authorization Server",
+    "description": "OAuth 2.0 Authorization Server",
     "license": "AGPL-3.0",
     "name": "fkooman/php-oauth-as",
     "require": {
