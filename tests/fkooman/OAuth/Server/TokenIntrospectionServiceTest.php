@@ -17,16 +17,43 @@
 
 namespace fkooman\OAuth\Server;
 
-require_once 'OAuthHelper.php';
-
+use PDO;
+use PHPUnit_Framework_TestCase;
 use fkooman\Http\Request;
 use fkooman\Json\Json;
 
-class TokenIntrospectionServiceTest extends OAuthHelper
+class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
 {
+    /** @var fkooman\OAuth\Server\PdoStorage */
+    protected $storage;
+
     public function setUp()
     {
-        parent::setUp();
+        $this->storage = new PdoStorage(
+            new PDO(
+                $GLOBALS['DB_DSN'],
+                $GLOBALS['DB_USER'],
+                $GLOBALS['DB_PASSWD']
+            )
+        );
+        $this->storage->initDatabase();
+
+        $clientData = new ClientData(
+            array(
+                "id" => "testclient",
+                "name" => "Simple Test Client",
+                "description" => "Client for unit testing",
+                "secret" => null,
+                "icon" => null,
+                "allowed_scope" => "read",
+                "disable_user_consent" => false,
+                "contact_email" => "foo@example.org",
+                "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
+                "type" => "token"
+            )
+        );
+
+        $this->storage->addClient($clientData);
 
         $resourceOwnerOne = array(
             "id" => "fkooman",

@@ -17,17 +17,62 @@
 
 namespace fkooman\OAuth\Server;
 
-require_once 'OAuthHelper.php';
-
+use PDO;
+use PHPUnit_Framework_TestCase;
 use fkooman\Json\Json;
 use fkooman\Http\Request;
 use fkooman\Rest\Plugin\Bearer\TokenIntrospection;
 
-class ApiServiceTest extends OAuthHelper
+class ApiServiceTest extends PHPUnit_Framework_TestCase
 {
+    private $storage;
+
+    private $bearerAuthenticationStub;
+
     public function setUp()
     {
-        parent::setUp();
+        $this->storage = new PdoStorage(
+            new PDO(
+                $GLOBALS['DB_DSN'],
+                $GLOBALS['DB_USER'],
+                $GLOBALS['DB_PASSWD']
+            )
+        );
+        $this->storage->initDatabase();
+
+        $this->storage->addClient(
+            new ClientData(
+                array(
+                    "id" => "testclient",
+                    "name" => "Simple Test Client",
+                    "description" => "Client for unit testing",
+                    "secret" => null,
+                    "icon" => null,
+                    "allowed_scope" => "read",
+                    "disable_user_consent" => false,
+                    "contact_email" => "foo@example.org",
+                    "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
+                    "type" => "token"
+                )
+            )
+        );
+
+        $this->storage->addClient(
+            new ClientData(
+                array(
+                    "id" => "testcodeclient",
+                    "name" => "Simple Test Client for Authorization Code Profile",
+                    "description" => "Client for unit testing",
+                    "secret" => 'abcdef',
+                    "icon" => null,
+                    "allowed_scope" => "read write foo bar foobar",
+                    "disable_user_consent" => false,
+                    "contact_email" => null,
+                    "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
+                    "type" => "code"
+                )
+            )
+        );
 
         $resourceOwner = array(
             'id' => 'fkooman',

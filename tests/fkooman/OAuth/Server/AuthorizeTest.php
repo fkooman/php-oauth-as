@@ -17,15 +17,42 @@
 
 namespace fkooman\OAuth\Server;
 
-require_once 'OAuthHelper.php';
+use PDO;
+use PHPUnit_Framework_TestCase;
+use fkooman\Http\Request;
 
-use fkooman\Http\Request as HttpRequest;
-
-class AuthorizeTest extends OAuthHelper
+class AuthorizeTest extends PHPUnit_Framework_TestCase
 {
+    private $storage;
+
     public function setUp()
     {
-        parent::setUp();
+        $this->storage = new PdoStorage(
+            new PDO(
+                $GLOBALS['DB_DSN'],
+                $GLOBALS['DB_USER'],
+                $GLOBALS['DB_PASSWD']
+            )
+        );
+        $this->storage->initDatabase();
+
+        $this->storage->addClient(
+            new ClientData(
+                array(
+                    "id" => "testclient",
+                    "name" => "Simple Test Client",
+                    "description" => "Client for unit testing",
+                    "secret" => null,
+                    "icon" => null,
+                    "allowed_scope" => "read",
+                    "disable_user_consent" => false,
+                    "contact_email" => "foo@example.org",
+                    "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
+                    "type" => "token"
+                )
+            )
+        );
+
         $this->resourceOwner = new DummyResourceOwner(
             'fkooman',
             array(
@@ -36,7 +63,7 @@ class AuthorizeTest extends OAuthHelper
 
     public function testGetAuthorize()
     {
-        $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz", "GET");
+        $h = new Request("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz", "GET");
         $o = new Authorize($this->storage, $this->resourceOwner, 5);
         $response = $o->handleRequest($h);
         $this->assertEquals(200, $response->getStatusCode());
@@ -44,7 +71,7 @@ class AuthorizeTest extends OAuthHelper
 
     public function testPostAuthorize()
     {
-        $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz", "POST");
+        $h = new Request("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz", "POST");
         $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz");
         $h->setPostParameters(array("approval" => "approve", "scope" => array("read")));
         $o = new Authorize($this->storage, $this->resourceOwner, 5);
@@ -53,7 +80,7 @@ class AuthorizeTest extends OAuthHelper
         $this->assertRegexp("|^http://localhost/php-oauth/unit/test.html#access_token=[a-zA-Z0-9]+&expires_in=5&token_type=bearer&scope=read&state=xyz$|", $response->getHeader("Location"));
 
         // now a get should immediately return the access token redirect...
-        $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=abc", "GET");
+        $h = new Request("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=abc", "GET");
         $o = new Authorize($this->storage, $this->resourceOwner, 5);
         $response = $o->handleRequest($h);
         $this->assertEquals(302, $response->getStatusCode());
@@ -62,7 +89,7 @@ class AuthorizeTest extends OAuthHelper
 
     public function testUnsupportedScope()
     {
-        $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=foo&state=xyz", "GET");
+        $h = new Request("https://auth.example.org?client_id=testclient&response_type=token&scope=foo&state=xyz", "GET");
         $o = new Authorize($this->storage, $this->resourceOwner, 5);
         $response = $o->handleRequest($h);
         $this->assertEquals(302, $response->getStatusCode());
@@ -71,7 +98,7 @@ class AuthorizeTest extends OAuthHelper
 
     public function testUnregisteredClient()
     {
-        $h = new HttpRequest("https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz", "GET");
+        $h = new Request("https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz", "GET");
         $o = new Authorize($this->storage, $this->resourceOwner, 5);
         $response = $o->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
@@ -80,7 +107,7 @@ class AuthorizeTest extends OAuthHelper
 
     public function testInvalidRequestMethod()
     {
-        $h = new HttpRequest("https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz", "DELETE");
+        $h = new Request("https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz", "DELETE");
         $o = new Authorize($this->storage, $this->resourceOwner, 5);
         $response = $o->handleRequest($h);
         $this->assertEquals(405, $response->getStatusCode());
@@ -88,7 +115,7 @@ class AuthorizeTest extends OAuthHelper
 
     public function testCSRFAttack()
     {
-        $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz", "POST");
+        $h = new Request("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=xyz", "POST");
         $h->setHeader("HTTP_REFERER", "https://evil.site.org/xyz");
         $h->setPostParameters(array("approval" => "approve", "scope" => array("read")));
         $o = new Authorize($this->storage, $this->resourceOwner, 5);
@@ -99,7 +126,7 @@ class AuthorizeTest extends OAuthHelper
 
     public function testMissingClientId()
     {
-        $h = new HttpRequest("https://auth.example.org", "GET");
+        $h = new Request("https://auth.example.org", "GET");
         $o = new Authorize($this->storage, $this->resourceOwner, 5);
         $response = $o->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
@@ -108,7 +135,7 @@ class AuthorizeTest extends OAuthHelper
 
     public function testMissingResponseType()
     {
-        $h = new HttpRequest("https://auth.example.org?client_id=testclient", "GET");
+        $h = new Request("https://auth.example.org?client_id=testclient", "GET");
         $o = new Authorize($this->storage, $this->resourceOwner, 5);
         $response = $o->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
@@ -118,7 +145,7 @@ class AuthorizeTest extends OAuthHelper
     public function testWrongRedirectUri()
     {
         $u = urlencode("http://wrong.example.org/foo");
-        $h = new HttpRequest("https://auth.example.org?client_id=testclient&response_type=token&scope=read&redirect_uri=$u", "GET");
+        $h = new Request("https://auth.example.org?client_id=testclient&response_type=token&scope=read&redirect_uri=$u", "GET");
         $o = new Authorize($this->storage, $this->resourceOwner, 5);
         $response = $o->handleRequest($h);
         $this->assertEquals(400, $response->getStatusCode());
@@ -127,7 +154,7 @@ class AuthorizeTest extends OAuthHelper
 
     public function testWrongClientType()
     {
-        $h = new HttpRequest("https://auth.example.org?client_id=testclient&scope=read&response_type=code", "GET");
+        $h = new Request("https://auth.example.org?client_id=testclient&scope=read&response_type=code", "GET");
         $o = new Authorize($this->storage, $this->resourceOwner, 5);
         $response = $o->handleRequest($h);
         $this->assertEquals(302, $response->getStatusCode());
