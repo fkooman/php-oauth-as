@@ -50,7 +50,7 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
                 "id" => "testcodeclient",
                 "name" => "Simple Test Client for Authorization Code Profile",
                 "description" => "Client for unit testing",
-                "secret" => password_hash("abcdef", PASSWORD_DEFAULT, array("cost" => 7)),
+                "secret" => "abcdef",
                 "icon" => null,
                 "allowed_scope" => "read write foo bar foobar",
                 "disable_user_consent" => false,

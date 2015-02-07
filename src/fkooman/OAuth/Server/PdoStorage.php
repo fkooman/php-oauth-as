@@ -62,7 +62,7 @@ class PdoStorage
         $stmt = $this->db->prepare("UPDATE clients SET name = :name, description = :description, secret = :secret, disable_user_consent = :disable_user_consent, redirect_uri = :redirect_uri, type = :type, icon = :icon, allowed_scope = :allowed_scope, contact_email = :contact_email WHERE id = :client_id");
         $stmt->bindValue(":name", $clientData->getName(), PDO::PARAM_STR);
         $stmt->bindValue(":description", $clientData->getDescription(), PDO::PARAM_STR);
-        $stmt->bindValue(":secret", $clientData->getSecret(), PDO::PARAM_STR);
+        $stmt->bindValue(":secret", $clientData->getSecret(true), PDO::PARAM_STR);
         $stmt->bindValue(":redirect_uri", $clientData->getRedirectUri(), PDO::PARAM_STR);
         $stmt->bindValue(":disable_user_consent", $clientData->getDisableUserConsent(), PDO::PARAM_BOOL);
         $stmt->bindValue(":type", $clientData->getType(), PDO::PARAM_STR);
@@ -81,7 +81,7 @@ class PdoStorage
         $stmt->bindValue(":client_id", $clientData->getId(), PDO::PARAM_STR);
         $stmt->bindValue(":name", $clientData->getName(), PDO::PARAM_STR);
         $stmt->bindValue(":description", $clientData->getDescription(), PDO::PARAM_STR);
-        $stmt->bindValue(":secret", $clientData->getSecret(), PDO::PARAM_STR);
+        $stmt->bindValue(":secret", $clientData->getSecret(true), PDO::PARAM_STR);
         $stmt->bindValue(":redirect_uri", $clientData->getRedirectUri(), PDO::PARAM_STR);
         $stmt->bindValue(":disable_user_consent", $clientData->getDisableUserConsent(), PDO::PARAM_BOOL);
         $stmt->bindValue(":type", $clientData->getType(), PDO::PARAM_STR);
@@ -341,32 +341,32 @@ class PdoStorage
         $queries = array(
             "CREATE TABLE IF NOT EXISTS resource_owner (
                 id VARCHAR(255) NOT NULL,
-                entitlement TEXT DEFAULT NULL,
-                ext TEXT DEFAULT NULL,
+                entitlement VARCHAR(255) DEFAULT NULL,
+                ext VARCHAR(255) DEFAULT NULL,
                 PRIMARY KEY (id)
             )",
 
             "CREATE TABLE IF NOT EXISTS clients (
-                id VARCHAR(64) NOT NULL,
-                name TEXT NOT NULL,
-                description TEXT DEFAULT NULL,
-                secret TEXT DEFAULT NULL,
-                redirect_uri TEXT NOT NULL,
+                id VARCHAR(255)  NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                description VARCHAR(255) DEFAULT NULL,
+                secret VARCHAR(255) DEFAULT NULL,
+                redirect_uri VARCHAR(255) NOT NULL,
                 disable_user_consent BOOLEAN DEFAULT 0,
-                type TEXT NOT NULL,
-                icon TEXT DEFAULT NULL,
-                allowed_scope TEXT DEFAULT NULL,
-                contact_email TEXT DEFAULT NULL,
+                type VARCHAR(255) NOT NULL,
+                icon VARCHAR(255) DEFAULT NULL,
+                allowed_scope VARCHAR(255) DEFAULT NULL,
+                contact_email VARCHAR(255) DEFAULT NULL,
                 PRIMARY KEY (id)
             )",
 
             "CREATE TABLE IF NOT EXISTS access_tokens (
-                access_token VARCHAR(64) NOT NULL,
-                client_id VARCHAR(64) NOT NULL,
-                resource_owner_id VARCHAR(64) NOT NULL,
+                access_token VARCHAR(255)  NOT NULL,
+                client_id VARCHAR(255)  NOT NULL,
+                resource_owner_id VARCHAR(255)  NOT NULL,
                 issue_time INTEGER DEFAULT NULL,
                 expires_in INTEGER DEFAULT NULL,
-                scope TEXT NOT NULL,
+                scope VARCHAR(255) NOT NULL,
                 PRIMARY KEY (access_token),
                 FOREIGN KEY (client_id)
                     REFERENCES clients (id)
@@ -377,10 +377,10 @@ class PdoStorage
             )",
 
             "CREATE TABLE IF NOT EXISTS approvals (
-                client_id VARCHAR(64) NOT NULL,
-                resource_owner_id VARCHAR(64) NOT NULL,
-                scope TEXT DEFAULT NULL,
-                refresh_token TEXT DEFAULT NULL,
+                client_id VARCHAR(255)  NOT NULL,
+                resource_owner_id VARCHAR(255)  NOT NULL,
+                scope VARCHAR(255) DEFAULT NULL,
+                refresh_token VARCHAR(255) DEFAULT NULL,
                 FOREIGN KEY (client_id)
                     REFERENCES clients (id)
                     ON UPDATE CASCADE ON DELETE CASCADE,
@@ -391,12 +391,12 @@ class PdoStorage
             )",
 
             "CREATE TABLE IF NOT EXISTS authorization_codes (
-                authorization_code VARCHAR(64) NOT NULL,
-                client_id VARCHAR(64) NOT NULL,
-                resource_owner_id VARCHAR(64) NOT NULL,
-                redirect_uri TEXT DEFAULT NULL,
+                authorization_code VARCHAR(255)  NOT NULL,
+                client_id VARCHAR(255)  NOT NULL,
+                resource_owner_id VARCHAR(255)  NOT NULL,
+                redirect_uri VARCHAR(255) DEFAULT NULL,
                 issue_time INTEGER NOT NULL,
-                scope TEXT DEFAULT NULL,
+                scope VARCHAR(255) DEFAULT NULL,
                 PRIMARY KEY (authorization_code),
                 FOREIGN KEY (client_id)
                     REFERENCES clients (id)
@@ -408,7 +408,7 @@ class PdoStorage
 
             "CREATE TABLE IF NOT EXISTS db_changelog (
                 patch_number INTEGER NOT NULL,
-                description TEXT NOT NULL,
+                description VARCHAR(255) NOT NULL,
                 PRIMARY KEY (patch_number)
             )",
         );
