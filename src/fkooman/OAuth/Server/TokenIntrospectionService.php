@@ -55,14 +55,14 @@ class TokenIntrospectionService extends Service
         );
     }
 
-    public function getTokenIntrospection($token)
+    public function getTokenIntrospection($tokenValue)
     {
-        if (null === $token) {
+        if (null === $tokenValue) {
             throw new BadRequestException("invalid_token", "the token parameter is missing");
         }
         // FIXME: validate token format
 
-        $accessToken = $this->db->getAccessToken($token);
+        $accessToken = $this->db->getAccessToken($tokenValue);
 
         if (false === $accessToken) {
             // token does not exist
