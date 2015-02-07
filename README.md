@@ -5,6 +5,9 @@ This is an OAuth 2.0 Authorization Server written in PHP that is easy to
 integrate with your existing REST services, written in any language. It will
 require minimal changes to your existing software.
 
+Part of the development of this software was made possible by 
+[SURFnet](https://www.surfnet.nl).
+
 # License
 Licensed under the GNU Affero General Public License as published by the Free 
 Software Foundation, either version 3 of the License, or (at your option) any 
