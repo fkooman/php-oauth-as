@@ -33,7 +33,7 @@ class Token
     public function __construct(PdoStorage $db, $accessTokenExpiry = 3600)
     {
         $this->db = $db;
-        $this->accessTokenExpiry = $accessTokenExpiry;
+        $this->accessTokenExpiry = (int) $accessTokenExpiry;
     }
 
     public function handleRequest(Request $request)
@@ -108,7 +108,7 @@ class Token
             );
         }
 
-        if ("token" === $client->getType()) {
+        if ("code" !== $client->getType()) {
             throw new TokenException(
                 "unauthorized_client",
                 "this client type is not allowed to use the token endpoint"
@@ -145,7 +145,7 @@ class Token
 
                 $token = array();
                 $token['access_token'] = Utils::randomHex(16);
-                $token['expires_in'] = intval($this->accessTokenExpiry);
+                $token['expires_in'] = $this->accessTokenExpiry;
                 // we always grant the scope the user authorized, no further restrictions here...
                 // FIXME: the merging of authorized scopes in the authorize function is a bit of a mess!
                 // we should deal with that there and come up with a good solution...
@@ -172,7 +172,7 @@ class Token
 
                 $token = array();
                 $token['access_token'] = Utils::randomHex(16);
-                $token['expires_in'] = intval($this->accessTokenExpiry);
+                $token['expires_in'] = $this->accessTokenExpiry;
                 if (null !== $scope) {
                     // the client wants to obtain a specific scope
                     $requestedScope = Scope::fromString($scope);
