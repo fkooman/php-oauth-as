@@ -53,5 +53,7 @@ try {
         $e = new InternalServerErrorException($e->getMessage());
         $response = $e->getJsonResponse();
     }
+    $response->setHeader('Cache-Control', 'no-store');
+    $response->setHeader('Pragma', 'no-cache');
     $response->sendResponse();
 }

@@ -1,0 +1,25 @@
+#!/usr/bin/php
+<?php
+require_once dirname(__DIR__).'/vendor/autoload.php';
+
+use fkooman\Ini\IniReader;
+use fkooman\OAuth\Server\PdoStorage;
+
+try {
+    $iniReader = IniReader::fromFile(
+        dirname(__DIR__).'/config/oauth.ini'
+    );
+
+    $db = new PDO(
+        $iniReader->v('PdoStorage', 'dsn'),
+        $iniReader->v('PdoStorage', 'username', false),
+        $iniReader->v('PdoStorage', 'password', false)
+    );
+
+    $storage = new PdoStorage($db);
+    $storage->deleteExpiredAccessTokens();
+    $storage->deleteExpiredAuthorizationCodes();
+} catch (Exception $e) {
+    echo $e->getMessage().PHP_EOL;
+    exit(1);
+}
