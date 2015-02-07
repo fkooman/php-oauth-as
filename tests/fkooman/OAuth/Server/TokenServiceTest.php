@@ -17,16 +17,26 @@
 
 namespace fkooman\OAuth\Server;
 
-require_once 'OAuthHelper.php';
-
+use PDO;
+use PHPUnit_Framework_TestCase;
+use fkooman\Rest\Plugin\Basic\BasicAuthentication;
 use fkooman\Http\Request;
 use fkooman\Json\Json;
 
-class TokenTest extends OAuthHelper
+class TokenServiceTest extends PHPUnit_Framework_TestCase
 {
+    private $storage;
+
     public function setUp()
     {
-        parent::setUp();
+        $this->storage = new PdoStorage(
+            new PDO(
+                $GLOBALS['DB_DSN'],
+                $GLOBALS['DB_USER'],
+                $GLOBALS['DB_PASSWD']
+            )
+        );
+        $this->storage->initDatabase();
 
         $resourceOwner = array(
             "id" => "fkooman",
@@ -35,12 +45,40 @@ class TokenTest extends OAuthHelper
         );
         $this->storage->updateResourceOwner(new MockResourceOwner($resourceOwner));
 
+        $clientData = new ClientData(
+            array(
+                "id" => "testcodeclient",
+                "name" => "Simple Test Client for Authorization Code Profile",
+                "description" => "Client for unit testing",
+                "secret" => password_hash("abcdef", PASSWORD_DEFAULT, array("cost" => 7)),
+                "icon" => null,
+                "allowed_scope" => "read write foo bar foobar",
+                "disable_user_consent" => false,
+                "contact_email" => null,
+                "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
+                "type" => "code"
+            )
+        );
+        $this->storage->addClient($clientData);
+
         $this->storage->addApproval('testcodeclient', 'fkooman', 'read write foo', 'r3fr3sh');
-        $this->storage->addApproval('testnativeclient', 'fkooman', 'read', 'n4t1v3r3fr3sh');
         $this->storage->storeAuthorizationCode("4uth0r1z4t10n", "fkooman", time(), "testcodeclient", null, "read");
         $this->storage->storeAuthorizationCode("3xp1r3d4uth0r1z4t10n", "fkooman", time() - 1000, "testcodeclient", null, "read");
-        $this->storage->storeAuthorizationCode("n4t1v34uth0r1z4t10n", "fkooman", time(), "testnativeclient", null, "read");
         $this->storage->storeAuthorizationCode("authorizeRequestWithRedirectUri", "fkooman", time(), "testcodeclient", "http://localhost/php-oauth/unit/test.html", "read");
+
+        $compatStorage = &$this->storage;
+
+        $basicAuthenticationPlugin = new BasicAuthentication(
+            function ($userId) use ($compatStorage) {
+                $clientData = $compatStorage->getClient($userId);
+
+                return false !== $clientData ? $clientData->getSecret() : false;
+            },
+            'OAuth Server'
+        );
+
+        $this->service = new TokenService($this->storage, 5);
+        $this->service->registerBeforeEachMatchPlugin($basicAuthenticationPlugin);
     }
 
     public function testAuthorizationCode()
@@ -49,12 +87,16 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
+        
+        $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}$|', Json::encode($response->getContent()));
     }
 
+    /**
+     * @expectedException \fkooman\Http\Exception\BadRequestException
+     * @expectedExceptionMessage invalid_grant
+     */
     public function testAuthorizationCodeWithoutRedirectUri()
     {
         $h = new Request("https://auth.example.org/token", "POST");
@@ -63,22 +105,21 @@ class TokenTest extends OAuthHelper
         // fail because redrect_uri was part of the authorize request, so must also be
         // there at token request
         $h->setPostParameters(array("code" => "authorizeRequestWithRedirectUri", "grant_type" => "authorization_code"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code was not found"}', Json::encode($response->getContent()));
+        $this->service->run($h);
     }
 
+    /**
+     * @expectedException \fkooman\Http\Exception\BadRequestException
+     * @expectedExceptionMessage invalid_grant
+     */
     public function testAuthorizationCodeWithInvalidRedirectUri()
     {
         $h = new Request("https://auth.example.org/token", "POST");
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("redirect_uri" => "http://example.org/invalid", "code" => "authorizeRequestWithRedirectUri", "grant_type" => "authorization_code"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code was not found"}', Json::encode($response->getContent()));
+        
+        $this->service->run($h);
     }
 
     public function testAuthorizationCodeWithRedirectUri()
@@ -87,8 +128,8 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("redirect_uri" => "http://localhost/php-oauth/unit/test.html", "code" => "authorizeRequestWithRedirectUri", "grant_type" => "authorization_code"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
+        
+        $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}$|', Json::encode($response->getContent()));
     }
@@ -99,130 +140,148 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("refresh_token" => "r3fr3sh", "grant_type" => "refresh_token"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
+        
+        $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read write foo","token_type":"bearer"}$|', Json::encode($response->getContent()));
     }
 
+    /**
+     * @expectedException \fkooman\Http\Exception\MethodNotAllowedException
+     */
     public function testInvalidRequestMethod()
     {
         $h = new Request("https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz", "GET");
-        $o = new Token($this->storage, 5);
-        $response = $o->handleRequest($h);
+        
+        $this->service->run($h);
         $this->assertEquals(405, $response->getStatusCode());
     }
 
+    /**
+     * @expectedException \fkooman\Http\Exception\BadRequestException
+     * @expectedExceptionMessage invalid_request
+     */
     public function testWithoutGrantType()
     {
         $h = new Request("https://auth.example.org/token", "POST");
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals('{"error":"invalid_request","error_description":"the grant_type parameter is missing"}', Json::encode($response->getContent()));
+        
+        $this->service->run($h);
     }
 
+    /**
+     * @expectedException \fkooman\Http\Exception\UnauthorizedException
+     * @expectedExceptionMessage invalid_credentials
+     */
     public function testWithoutCredentials()
     {
         $h = new Request("https://auth.example.org/token", "POST");
         $h->setPostParameters(array("client_id" => "testcodeclient", "code" => "4uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
-        $this->assertEquals(401, $response->getStatusCode());
-        $this->assertEquals('Basic realm="OAuth Server"', $response->getHeader("WWW-Authenticate"));
-        $this->assertEquals('{"error":"invalid_client","error_description":"client authentication failed"}', Json::encode($response->getContent()));
+        
+        $this->service->run($h);
     }
 
+    /**
+     * @expectedException \fkooman\Http\Exception\UnauthorizedException
+     * @expectedExceptionMessage invalid_credentials
+     */
     public function testWithInvalidClient()
     {
         $h = new Request("https://auth.example.org/token", "POST");
         $h->setBasicAuthUser("NONEXISTINGCLIENT");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
-        $this->assertEquals(401, $response->getStatusCode());
-        $this->assertEquals('Basic realm="OAuth Server"', $response->getHeader("WWW-Authenticate"));
-        $this->assertEquals('{"error":"invalid_client","error_description":"client authentication failed"}', Json::encode($response->getContent()));
+        
+        $this->service->run($h);
     }
 
+    /**
+     * @expectedException \fkooman\Http\Exception\UnauthorizedException
+     * @expectedExceptionMessage invalid_credentials
+     */
     public function testWithInvalidPassword()
     {
         $h = new Request("https://auth.example.org/token", "POST");
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("WRONGPASSWORD");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
-        $this->assertEquals(401, $response->getStatusCode());
-        $this->assertEquals('Basic realm="OAuth Server"', $response->getHeader("WWW-Authenticate"));
-        $this->assertEquals('{"error":"invalid_client","error_description":"client authentication failed"}', Json::encode($response->getContent()));
+        
+        $this->service->run($h);
     }
 
+    /**
+     * @expectedException \fkooman\Http\Exception\BadRequestException
+     * @expectedExceptionMessage invalid_grant
+     */
     public function testClientIdUserMismatch()
     {
         $h = new Request("https://auth.example.org/token", "POST");
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n", "grant_type" => "authorization_code", "client_id" => "MISMATCH_CLIENT_ID"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals('{"error":"invalid_grant","error_description":"client_id inconsistency: authenticating user must match POST body client_id"}', Json::encode($response->getContent()));
+        
+        $this->service->run($h);
     }
 
+    /**
+     * @expectedException \fkooman\Http\Exception\BadRequestException
+     * @expectedExceptionMessage invalid_grant
+     */
     public function testExpiredAuthorization()
     {
         $h = new Request("https://auth.example.org/token", "POST");
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "3xp1r3d4uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code expired"}', Json::encode($response->getContent()));
+        
+        $this->service->run($h);
     }
 
+    /**
+     * @expectedException \fkooman\Http\Exception\BadRequestException
+     * @expectedExceptionMessage invalid_grant
+     */
     public function testInvalidCode()
     {
         $h = new Request("https://auth.example.org/token", "POST");
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "1nv4l1d4uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code was not found"}', Json::encode($response->getContent()));
+        
+        $this->service->run($h);
     }
 
+    /**
+     * @expectedException \fkooman\Http\Exception\BadRequestException
+     * @expectedExceptionMessage invalid_grant
+     */
     public function testCodeNotBoundToUsedClient()
     {
         $h = new Request("https://auth.example.org/token", "POST");
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "n4t1v34uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code was not found"}', Json::encode($response->getContent()));
+        
+        $this->service->run($h);
     }
 
+    /**
+     * @expectedException \fkooman\Http\Exception\BadRequestException
+     * @expectedExceptionMessage invalid_grant
+     */
     public function checkReuseAuthorizationCode()
     {
         $h = new Request("https://auth.example.org/token", "POST");
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("code" => "4uth0r1z4t10n", "grant_type" => "authorization_code"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
+        
+        $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}$|', $response->getContent());
-        $response = $t->handleRequest($h);
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals('{"error":"invalid_grant","error_description":"the authorization code was not found"}', Json::encode($response->getContent()));
+        $this->service->run($h);
     }
 
     public function testRefreshTokenSubScope()
@@ -231,8 +290,8 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("refresh_token" => "r3fr3sh", "scope" => "foo", "grant_type" => "refresh_token"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
+        
+        $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"foo","token_type":"bearer"}$|', Json::encode($response->getContent()));
     }
@@ -243,8 +302,8 @@ class TokenTest extends OAuthHelper
         $h->setBasicAuthUser("testcodeclient");
         $h->setBasicAuthPass("abcdef");
         $h->setPostParameters(array("refresh_token" => "r3fr3sh", "scope" => "we want no sub scope", "grant_type" => "refresh_token"));
-        $t = new Token($this->storage, 5);
-        $response = $t->handleRequest($h);
+        
+        $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read write foo","token_type":"bearer"}$|', Json::encode($response->getContent()));
     }
