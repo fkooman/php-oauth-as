@@ -93,22 +93,26 @@ class AuthorizeService extends Service
         }
 
         if ($responseType !== $client->getType()) {
-            return new ClientErrorResponse(
+            return new ClientResponse(
                 $client,
                 $request,
                 $redirectUri,
-                "unsupported_response_type",
-                "response_type not supported by client profile"
+                array(
+                    'error' => 'unsupported_response_type',
+                    'error_description' => 'response_type not supported by client profile'
+                )
             );
         }
 
         if (!$scope->isSubsetOf(Scope::fromString($client->getAllowedScope()))) {
-            return new ClientErrorResponse(
+            return new ClientResponse(
                 $client,
                 $request,
                 $redirectUri,
-                "invalid_scope",
-                "not authorized to request this scope"
+                array(
+                    'error' => 'invalid_scope',
+                    'error_description' => 'not authorized to request this scope'
+                )
             );
         }
         
@@ -148,21 +152,17 @@ class AuthorizeService extends Service
                     $scope->toString(),
                     $this->accessTokenExpiry
                 );
-                $token = array(
-                    "access_token" => $accessToken,
-                    "expires_in" => $this->accessTokenExpiry,
-                    "token_type" => "bearer",
+                return new ClientResponse(
+                    $client,
+                    $request,
+                    $redirectUri,
+                    array(
+                        "access_token" => $accessToken,
+                        "expires_in" => $this->accessTokenExpiry,
+                        "token_type" => "bearer",
+                        "scope" => $scope->toString()
+                    )
                 );
-                $s = $scope->toString();
-                if (!empty($s)) {
-                    $token += array("scope" => $s);
-                }
-                if (null !== $state) {
-                    $token += array("state" => $state);
-                }
-
-                $responseUri = sprintf('%s#%s', $redirectUri, http_build_query($token));
-                return new RedirectResponse($responseUri, 302);
             } else {
                 // authorization code grant
                 $authorizationCode = bin2hex(openssl_random_pseudo_bytes(16));
@@ -174,14 +174,14 @@ class AuthorizeService extends Service
                     $redirectUri,
                     $scope->getScope()
                 );
-                $token = array("code" => $authorizationCode);
-                if (null !== $state) {
-                    $token += array("state" => $state);
-                }
-
-                $separator = (false === strpos($redirectUri, "?")) ? "?" : "&";
-                $responseUri = sprintf('%s%s%s', $redirectUri, $separator, http_build_query($token));
-                return new RedirectResponse($responseUri, 302);
+                return new ClientResponse(
+                    $client,
+                    $request,
+                    $redirectUri,
+                    array(
+                        'code' => $authorizationCode
+                    )
+                );
             }
         }
     }
@@ -206,12 +206,14 @@ class AuthorizeService extends Service
         $client = $this->storage->getClient($clientId);
 
         if ("approve" !== $approval) {
-            return new ClientErrorResponse(
+            return new ClientResponse(
                 $client,
                 $request,
                 $redirectUri,
-                'access_denied',
-                'not authorized by resource owner'
+                array(
+                    'error' => 'access_denied',
+                    'error_description' => 'not authorized by resource owner'
+                )
             );
         }
 

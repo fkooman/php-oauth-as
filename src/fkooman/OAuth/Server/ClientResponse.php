@@ -20,12 +20,19 @@ namespace fkooman\OAuth\Server;
 use fkooman\Http\Request;
 use fkooman\Http\RedirectResponse;
 
-class ClientErrorResponse extends RedirectResponse
+class ClientResponse extends RedirectResponse
 {
-    public function __construct(ClientData $clientData, Request $request, $redirectUri, $error, $description)
+    public function __construct(ClientData $clientData, Request $request, $redirectUri, array $urlParams)
     {
         $clientType = $clientData->getType();
-        $state = $request->getQueryParameter('state');
+        $urlParams['state'] = $request->getQueryParameter('state');
+
+        // remove empty parameters
+        foreach ($urlParams as $key => $value) {
+            if (empty($value)) {
+                unset($urlParams[$key]);
+            }
+        }
 
         if ('token' === $clientType) {
             $separator = "#";
@@ -33,20 +40,12 @@ class ClientErrorResponse extends RedirectResponse
             $separator = (false === strpos($redirectUri, "?")) ? "?" : "&";
         }
 
-        $parameters = array(
-            "error" => $error,
-            "error_description" => $description
-        );
-        if (null !== $state) {
-            $parameters['state'] = $state;
-        }
-
         parent::__construct(
             sprintf(
                 '%s%s%s',
                 $redirectUri,
                 $separator,
-                http_build_query($parameters)
+                http_build_query($urlParams)
             ),
             302
         );
