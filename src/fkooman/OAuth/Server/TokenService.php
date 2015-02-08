@@ -22,6 +22,7 @@ use fkooman\Rest\Plugin\UserInfo;
 use fkooman\Http\Request;
 use fkooman\Http\Exception\BadRequestException;
 use fkooman\Http\JsonResponse;
+use RuntimeException;
 
 class TokenService extends Service
 {
@@ -50,20 +51,18 @@ class TokenService extends Service
 
     public function postToken(Request $request, UserInfo $userInfo)
     {
+        $tokenRequest = new TokenRequest($request);
+
+        $grantType = $tokenRequest->getGrantType();
+        $clientId = $tokenRequest->getClientId();
+
+        // the userId from Basic Autentication is the same as the client_id
         $userId = $userInfo->getUserId();
 
         $clientData = $this->db->getClient($userId);
         if (false === $clientData) {
-            // weird, client does not exist, but was able to authenticate?
-            // is part of handling public clients...
-            throw new \Exception("invalid_client", "client does not exist");
+            throw new RuntimeException('authenticated, but client no longer exists');
         }
-
-        // verify the information
-        $grantType    = $request->getPostParameter('grant_type');
-        // FIXME: validate grant_type
-        $clientId     = $request->getPostParameter('client_id');
-        // FIXME: validate client_id
 
         if (null !== $clientId) {
             if ($clientId !== $userId) {
@@ -74,23 +73,22 @@ class TokenService extends Service
             }
         }
 
-        if ("code" !== $clientData->getType()) {
+        if ('code' !== $clientData->getType()) {
             throw new BadRequestException(
-                "invalid_client",
+                'invalid_client',
                 "this client type is not allowed to use the token endpoint"
             );
         }
 
-        if (null === $grantType) {
-            throw new BadRequestException("invalid_request", "the grant_type parameter is missing");
-        }
-
-        if ('authorization_code' === $grantType) {
-            $accessToken = $this->handleCode($request, $clientData);
-        } elseif ('refresh_token' === $grantType) {
-            $accessToken = $this->handleRefreshToken($request, $clientData);
-        } else {
-            throw new BadRequestException('invalid_request', 'unsupported grant_type');
+        switch ($grantType) {
+            case 'authorization_code':
+                $accessToken = $this->handleCode($tokenRequest, $clientData);
+                break;
+            case 'refresh_token':
+                $accessToken = $this->handleRefreshToken($tokenRequest, $clientData);
+                break;
+            default:
+                throw new BadRequestException('invalid_request', 'unsupported grant_type');
         }
 
         $response = new JsonResponse();
@@ -101,16 +99,11 @@ class TokenService extends Service
         return $response;
     }
 
-    public function handleCode(Request $request, ClientData $clientData)
+    public function handleCode(TokenRequest $tokenRequest, ClientData $clientData)
     {
-        $code = $request->getPostParameter('code');
-        // FIXME: validate code
-        $redirectUri = $request->getPostParameter('redirect_uri');
-        // FIXME: validate redirect_uri
+        $code = $tokenRequest->getCode();
+        $redirectUri = $tokenRequest->getRedirectUri();
 
-        if (null === $code) {
-            throw new BadRequestException("invalid_request", "the code parameter is missing");
-        }
         // If the redirect_uri was present in the authorize request, it MUST also be there
         // in the token request. If it was not there in authorize request, it MUST NOT be
         // there in the token request (this is not explicit in the spec!)
@@ -118,6 +111,7 @@ class TokenService extends Service
         if (false === $result) {
             throw new BadRequestException("invalid_grant", "the authorization code was not found");
         }
+
         if (time() > $result['issue_time'] + 600) {
             throw new BadRequestException("invalid_grant", "the authorization code expired");
         }
@@ -139,6 +133,7 @@ class TokenService extends Service
         $token['scope'] = $result['scope'];
         $token['refresh_token'] = $approval['refresh_token'];
         $token['token_type'] = "bearer";
+
         $this->db->storeAccessToken(
             $token['access_token'],
             time(),
@@ -151,17 +146,11 @@ class TokenService extends Service
         return $token;
     }
 
-    public function handleRefreshToken(Request $request, ClientData $clientData)
+    public function handleRefreshToken(TokenRequest $tokenRequest, ClientData $clientData)
     {
-        $refreshToken = $request->getPostParameter('refresh_token');
-        // FIXME: validate refresh_token
+        $refreshToken = $tokenRequest->getRefreshToken();
+        $scope = $tokenRequest->getScope();
 
-        $scope = $request->getPostParameter('scope');
-        // FIXME: validate scope
-
-        if (null === $refreshToken) {
-            throw new BadRequestException("invalid_request", "the refresh_token parameter is missing");
-        }
         $result = $this->db->getApprovalByRefreshToken($clientData->getId(), $refreshToken);
         if (false === $result) {
             throw new BadRequestException("invalid_grant", "the refresh_token was not found");
@@ -186,6 +175,7 @@ class TokenService extends Service
         }
 
         $token['token_type'] = "bearer";
+
         $this->db->storeAccessToken(
             $token['access_token'],
             time(),
