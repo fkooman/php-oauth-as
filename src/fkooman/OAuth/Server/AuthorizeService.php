@@ -101,7 +101,7 @@ class AuthorizeService extends Service
         $scopeObj = new Scope($scope);
         $allowedScopeObj = new Scope($clientData->getAllowedScope());
 
-        if(!$scopeObj->hasOnlyScope($allowedScopeObj)) {
+        if (!$scopeObj->hasOnlyScope($allowedScopeObj)) {
             return new ClientResponse(
                 $clientData,
                 $request,
