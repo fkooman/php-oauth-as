@@ -21,7 +21,6 @@ use fkooman\Rest\Service;
 use fkooman\Rest\Plugin\UserInfo;
 use fkooman\Http\Request;
 use fkooman\Http\Exception\BadRequestException;
-use fkooman\OAuth\Common\Scope;
 use fkooman\Http\JsonResponse;
 
 class TokenService extends Service
@@ -173,9 +172,9 @@ class TokenService extends Service
         $token['expires_in'] = $this->accessTokenExpiry;
         if (null !== $scope) {
             // the client wants to obtain a specific scope
-            $requestedScope = Scope::fromString($scope);
-            $authorizedScope = Scope::fromString($result['scope']);
-            if ($requestedScope->isSubsetOf($authorizedScope)) {
+            $requestedScope = new Scope($scope);
+            $authorizedScope = new Scope($result['scope']);
+            if ($requestedScope->hasOnlyScope($authorizedScope)) {
                 // if it is a subset of the authorized scope we honor that
                 $token['scope'] = $requestedScope->toString();
             } else {

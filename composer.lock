@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e11c3be07307653f51354cd9aacb8c8a",
+    "hash": "709465a0bacd22e6ab46f54095f0260a",
     "packages": [
         {
             "name": "fkooman/ini",
@@ -79,43 +79,6 @@
             ],
             "description": "PHP library to encode and decode JSON",
             "time": "2014-10-22 12:49:20"
-        },
-        {
-            "name": "fkooman/oauth-common",
-            "version": "0.7.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fkooman/php-oauth-lib-common.git",
-                "reference": "6d5b60f02c153062cfde0c271451f7a997e28b0c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-oauth-lib-common/zipball/6d5b60f02c153062cfde0c271451f7a997e28b0c",
-                "reference": "6d5b60f02c153062cfde0c271451f7a997e28b0c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "fkooman\\OAuth\\Common": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "François Kooman",
-                    "email": "fkooman@tuxed.net",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PHP library for common OAuth classes.",
-            "time": "2014-10-26 15:34:10"
         },
         {
             "name": "fkooman/rest",

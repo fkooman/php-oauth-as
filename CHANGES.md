@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.1.9
+- no longer need `fkooman/oauth-common`
+- better input validation
 - major overhaul of configuration for authentication backends
 - entitlements are for now only available through the configuration file, no
   longer through authentication, this was used for the SAML authentication 

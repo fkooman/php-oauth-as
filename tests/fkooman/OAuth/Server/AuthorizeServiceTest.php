@@ -149,7 +149,7 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException fkooman\Http\Exception\BadRequestException
-     * @expectedExceptionMessage client_id missing
+     * @expectedExceptionMessage "client_id" must be a non-empty string with maximum length 255
      */
     public function testMissingClientId()
     {
@@ -162,7 +162,7 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException fkooman\Http\Exception\BadRequestException
-     * @expectedExceptionMessage response_type missing
+     * @expectedExceptionMessage "response_type" must be a non-empty string with maximum length 255
      */
     public function testMissingResponseType()
     {
@@ -180,7 +180,7 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
     public function testWrongRedirectUri()
     {
         $u = urlencode("http://wrong.example.org/foo");
-        $h = new Request("https://auth.example.org?client_id=testclient&response_type=token&scope=read&redirect_uri=$u", "GET");
+        $h = new Request("https://auth.example.org?client_id=testclient&response_type=token&scope=read&state=abc&redirect_uri=$u", "GET");
         $h->setBasicAuthUser("fkooman");
         $h->setBasicAuthPass("foo");
         
@@ -189,12 +189,12 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 
     public function testWrongClientType()
     {
-        $h = new Request("https://auth.example.org?client_id=testclient&scope=read&response_type=code", "GET");
+        $h = new Request("https://auth.example.org?client_id=testclient&scope=read&response_type=code&state=foo", "GET");
         $h->setBasicAuthUser("fkooman");
         $h->setBasicAuthPass("foo");
         
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('http://localhost/php-oauth/unit/test.html#error=unsupported_response_type&error_description=response_type+not+supported+by+client+profile', $response->getHeader('Location'));
+        $this->assertEquals('http://localhost/php-oauth/unit/test.html#error=unsupported_response_type&error_description=response_type+not+supported+by+client+profile&state=foo', $response->getHeader('Location'));
     }
 }

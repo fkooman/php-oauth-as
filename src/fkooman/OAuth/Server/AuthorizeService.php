@@ -22,7 +22,6 @@ use Twig_Environment;
 use fkooman\Rest\Service;
 use fkooman\Http\Request;
 use fkooman\Http\Exception\BadRequestException;
-use fkooman\OAuth\Common\Scope;
 use fkooman\Http\RedirectResponse;
 use fkooman\Rest\Plugin\UserInfo;
 
@@ -64,37 +63,32 @@ class AuthorizeService extends Service
 
     public function getAuthorization(Request $request, UserInfo $userInfo)
     {
-        // FIXME: validate all these parameters
-        $clientId     = $request->getQueryParameter('client_id');
-        $responseType = $request->getQueryParameter('response_type');
-        $redirectUri  = $request->getQueryParameter('redirect_uri');
-        // FIXME: scope can never be empty, if the client requests no scope we should have a default scope!
-        $scope        = Scope::fromString($request->getQueryParameter('scope'));
-        $state        = $request->getQueryParameter('state');
+        $authorizeRequest = new AuthorizeRequest($request);
 
-        if (null === $clientId) {
-            throw new BadRequestException('client_id missing');
-        }
-        if (null === $responseType) {
-            throw new BadRequestException('response_type missing');
-        }
-        $client = $this->storage->getClient($clientId);
-        if (false === $client) {
+        $clientId = $authorizeRequest->getClientId();
+        $responseType = $authorizeRequest->getResponseType();
+        $redirectUri = $authorizeRequest->getRedirectUri();
+        $scope = $authorizeRequest->getScope();
+        $state = $authorizeRequest->getState();
+
+        $clientData = $this->storage->getClient($clientId);
+        if (false === $clientData) {
             throw new BadRequestException('client not registered');
         }
         if (null === $redirectUri) {
-            $redirectUri = $client->getRedirectUri();
+            $redirectUri = $clientData->getRedirectUri();
         } else {
-            if (!$client->verifyRedirectUri($redirectUri, $this->allowRegExpRedirectUriMatch)) {
+            if (!$clientData->verifyRedirectUri($redirectUri, $this->allowRegExpRedirectUriMatch)) {
                 throw new BadRequestException(
                     'specified redirect_uri not the same as registered redirect_uri'
                 );
             }
+            // we now use the provided redirect_uri...
         }
 
-        if ($responseType !== $client->getType()) {
+        if ($responseType !== $clientData->getType()) {
             return new ClientResponse(
-                $client,
+                $clientData,
                 $request,
                 $redirectUri,
                 array(
@@ -103,10 +97,13 @@ class AuthorizeService extends Service
                 )
             );
         }
+        
+        $scopeObj = new Scope($scope);
+        $allowedScopeObj = new Scope($clientData->getAllowedScope());
 
-        if (!$scope->isSubsetOf(Scope::fromString($client->getAllowedScope()))) {
+        if(!$scopeObj->hasOnlyScope($allowedScopeObj)) {
             return new ClientResponse(
-                $client,
+                $clientData,
                 $request,
                 $redirectUri,
                 array(
@@ -116,14 +113,17 @@ class AuthorizeService extends Service
             );
         }
         
-        if ($client->getDisableUserConsent()) {
+        if ($clientData->getDisableUserConsent()) {
             // we do not require approval by the user
-            $approvedScope = array('scope' => $scope->toString());
+            $approvedScope = array('scope' => $scope);
         } else {
             $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $userInfo->getUserId());
         }
+    
+        $approvedScopeObj = new Scope($approvedScope['scope']);
 
-        if (false === $approvedScope || false === $scope->isSubsetOf(Scope::fromString($approvedScope['scope']))) {
+        // FIXME: why the || ???
+        if (false === $approvedScope || false === $scopeObj->hasOnlyScope($approvedScopeObj)) {
             // we need to ask for approval
             $twig = $this->getTwig();
             return $twig->render(
@@ -131,11 +131,11 @@ class AuthorizeService extends Service
                 array(
                     'resourceOwnerId' => $userInfo->getUserId(),
                     'sslEnabled' => "https" === $request->getRequestUri()->getScheme(),
-                    'contactEmail' => $client->getContactEmail(),
-                    'scopes' => $scope->toArray(),
-                    'clientName' => $client->getName(),
-                    'clientId' => $client->getId(),
-                    'clientDescription' => $client->getDescription()
+                    'contactEmail' => $clientData->getContactEmail(),
+                    'scopes' => $scopeObj->toArray(),
+                    'clientName' => $clientData->getName(),
+                    'clientId' => $clientData->getId(),
+                    'clientDescription' => $clientData->getDescription()
                 )
             );
         } else {
@@ -149,18 +149,18 @@ class AuthorizeService extends Service
                     time(),
                     $clientId,
                     $userInfo->getUserId(),
-                    $scope->toString(),
+                    $scope,
                     $this->accessTokenExpiry
                 );
                 return new ClientResponse(
-                    $client,
+                    $clientData,
                     $request,
                     $redirectUri,
                     array(
                         "access_token" => $accessToken,
                         "expires_in" => $this->accessTokenExpiry,
                         "token_type" => "bearer",
-                        "scope" => $scope->toString()
+                        "scope" => $scope
                     )
                 );
             } else {
@@ -172,10 +172,10 @@ class AuthorizeService extends Service
                     time(),
                     $clientId,
                     $redirectUri,
-                    $scope->getScope()
+                    $scope
                 );
                 return new ClientResponse(
-                    $client,
+                    $clientData,
                     $request,
                     $redirectUri,
                     array(
@@ -188,26 +188,26 @@ class AuthorizeService extends Service
 
     public function postAuthorization(Request $request, UserInfo $userInfo)
     {
-        $clientId     = $request->getQueryParameter('client_id');
-        $responseType = $request->getQueryParameter('response_type');
-        $redirectUri  = $request->getQueryParameter('redirect_uri');
-        $scope        = Scope::fromString($request->getQueryParameter('scope'));
-        $state        = $request->getQueryParameter('state');
-        // FIXME: validate all parameters...
+        $authorizeRequest = new AuthorizeRequest($request);
 
-        // FIXME: csrf! referer check!
+        $clientId = $authorizeRequest->getClientId();
+        $responseType = $authorizeRequest->getResponseType();
+        $redirectUri = $authorizeRequest->getRedirectUri();
+        $scope = $authorizeRequest->getScope();
+        $state = $authorizeRequest->getState();
+
         if ($request->getHeader('HTTP_REFERER') !== $request->getRequestUri()->getUri()) {
             throw new BadRequestException('CSRF protection triggered');
         }
 
-        $approval = $request->getPostParameter('approval');
+        $clientData = $this->storage->getClient($clientId);
+        if (false === $clientData) {
+            throw new BadRequestException('client not registered');
+        }
 
-        // FIXME: client may be false if it is a fake post!
-        $client = $this->storage->getClient($clientId);
-
-        if ("approve" !== $approval) {
+        if ("approve" !== $request->getPostParameter('approval')) {
             return new ClientResponse(
-                $client,
+                $clientData,
                 $request,
                 $redirectUri,
                 array(
@@ -218,19 +218,20 @@ class AuthorizeService extends Service
         }
 
         $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $userInfo->getUserId());
+        // FIXME: why no if here?
         if (false === $approvedScope) {
             // no approved scope stored yet, new entry
             $refreshToken = ("code" === $responseType) ? bin2hex(openssl_random_pseudo_bytes(16)) : null;
-            $this->storage->addApproval($clientId, $userInfo->getUserId(), $scope->toString(), $refreshToken);
+            $this->storage->addApproval($clientId, $userInfo->getUserId(), $scope, $refreshToken);
         } else {
             // FIXME: update merges the scopes?
-            $this->storage->updateApproval($clientId, $userInfo->getUserId(), $scope->getScope());
+            $this->storage->updateApproval($clientId, $userInfo->getUserId(), $scope);
         }
 
         // redirect back to the authorize uri, this time there should be an
         // approval...
         // FIXME: maybe move the already having approval code from getAuthorize
-        // in a separate function as to avoid this extra 'redirect'
+        // in a separate function as to avoid this extra ugly 'redirect'
         return new RedirectResponse($request->getRequestUri()->getUri(), 302);
     }
 
