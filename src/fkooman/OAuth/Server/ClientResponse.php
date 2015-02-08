@@ -35,9 +35,9 @@ class ClientResponse extends RedirectResponse
         }
 
         if ('token' === $clientType) {
-            $separator = "#";
+            $separator = '#';
         } else {
-            $separator = (false === strpos($redirectUri, "?")) ? "?" : "&";
+            $separator = (false === strpos($redirectUri, '?')) ? '?' : '&';
         }
 
         parent::__construct(

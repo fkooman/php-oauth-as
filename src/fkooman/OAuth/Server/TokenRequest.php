@@ -82,7 +82,7 @@ class TokenRequest
         $this->checkString($grantType, 'grant_type');
         
         if (!in_array($grantType, array('authorization_code', 'refresh_token'))) {
-            throw new BadRequestException('grant_type contains unsupported grant_type');
+            throw new BadRequestException('invalid_request', 'grant_type contains unsupported grant_type');
         }
         $this->grantType = $grantType;
     }
@@ -100,7 +100,7 @@ class TokenRequest
         $this->checkString($code, 'code');
 
         if (1 !== preg_match(self::REGEXP_VSCHAR, $code)) {
-            throw new BadRequestException('code contains invalid characters');
+            throw new BadRequestException('invalid_request', 'code contains invalid characters');
         }
 
         $this->code = $code;
@@ -119,11 +119,11 @@ class TokenRequest
         $this->checkString($redirectUri, 'redirect_uri');
 
         if (false === filter_var($redirectUri, FILTER_VALIDATE_URL)) {
-            throw new BadRequestException('redirect_uri MUST be a valid URL');
+            throw new BadRequestException('invalid_request', 'redirect_uri MUST be a valid URL');
         }
         // not allowed to have a fragment (#) in it
         if (false !== strpos($redirectUri, '#')) {
-            throw new BadRequestException('redirect_uri MUST NOT contain a fragment');
+            throw new BadRequestException('invalid_request', 'redirect_uri MUST NOT contain a fragment');
         }
         $this->redirectUri = $redirectUri;
     }
@@ -141,7 +141,7 @@ class TokenRequest
         $this->checkString($clientId, 'client_id');
 
         if (1 !== preg_match(self::REGEXP_VSCHAR, $clientId)) {
-            throw new BadRequestException('client_id contains invalid characters');
+            throw new BadRequestException('invalid_request', 'client_id contains invalid characters');
         }
         $this->clientId = $clientId;
     }
@@ -159,7 +159,7 @@ class TokenRequest
         $this->checkString($refreshToken, 'refresh_token');
 
         if (1 !== preg_match(self::REGEXP_VSCHAR, $refreshToken)) {
-            throw new BadRequestException('refresh_token contains invalid characters');
+            throw new BadRequestException('invalid_request', 'refresh_token contains invalid characters');
         }
 
         $this->refreshToken = $refreshToken;
@@ -180,10 +180,10 @@ class TokenRequest
         $scopeTokens = explode(' ', $scope);
         foreach ($scopeTokens as $scopeToken) {
             if (0 >= strlen($scopeToken)) {
-                throw new BadRequestException('scope token must be a non-empty string');
+                throw new BadRequestException('invalid_request', 'scope token must be a non-empty string');
             }
             if (1 !== preg_match(self::REGEXP_SCOPE_TOKEN, $scopeToken)) {
-                throw new BadRequestException('scope token contains invalid characters');
+                throw new BadRequestException('invalid_request', 'scope token contains invalid characters');
             }
         }
         $this->scope = $scope;

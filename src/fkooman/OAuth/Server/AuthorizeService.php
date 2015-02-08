@@ -127,10 +127,10 @@ class AuthorizeService extends Service
             // we need to ask for approval
             $twig = $this->getTwig();
             return $twig->render(
-                "askAuthorization.twig",
+                'askAuthorization.twig',
                 array(
                     'resourceOwnerId' => $userInfo->getUserId(),
-                    'sslEnabled' => "https" === $request->getRequestUri()->getScheme(),
+                    'sslEnabled' => 'https' === $request->getRequestUri()->getScheme(),
                     'contactEmail' => $clientData->getContactEmail(),
                     'scopes' => $scopeObj->toArray(),
                     'clientName' => $clientData->getName(),
@@ -140,7 +140,7 @@ class AuthorizeService extends Service
             );
         } else {
             // we already have approval
-            if ("token" === $responseType) {
+            if ('token' === $responseType) {
                 // implicit grant
                 // FIXME: return existing access token if it exists for this exact client, resource owner and scope?
                 $accessToken = bin2hex(openssl_random_pseudo_bytes(16));
@@ -157,10 +157,10 @@ class AuthorizeService extends Service
                     $request,
                     $redirectUri,
                     array(
-                        "access_token" => $accessToken,
-                        "expires_in" => $this->accessTokenExpiry,
-                        "token_type" => "bearer",
-                        "scope" => $scope
+                        'access_token' => $accessToken,
+                        'expires_in' => $this->accessTokenExpiry,
+                        'token_type' => 'bearer',
+                        'scope' => $scope
                     )
                 );
             } else {
@@ -205,7 +205,7 @@ class AuthorizeService extends Service
             throw new BadRequestException('client not registered');
         }
 
-        if ("approve" !== $request->getPostParameter('approval')) {
+        if ('approve' !== $request->getPostParameter('approval')) {
             return new ClientResponse(
                 $clientData,
                 $request,
@@ -221,7 +221,7 @@ class AuthorizeService extends Service
         // FIXME: why no if here?
         if (false === $approvedScope) {
             // no approved scope stored yet, new entry
-            $refreshToken = ("code" === $responseType) ? bin2hex(openssl_random_pseudo_bytes(16)) : null;
+            $refreshToken = ('code' === $responseType) ? bin2hex(openssl_random_pseudo_bytes(16)) : null;
             $this->storage->addApproval($clientId, $userInfo->getUserId(), $scope, $refreshToken);
         } else {
             // FIXME: update merges the scopes?

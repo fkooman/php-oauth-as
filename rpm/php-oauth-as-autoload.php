@@ -14,14 +14,13 @@ $loader->registerNamespaces(
         'fkooman\\OAuth\\Server'              => $baseDir.'/src',
         'fkooman\\Rest\\Plugin\\Bearer'       => $vendorDir,
         'fkooman\\Rest\\Plugin\\Basic'        => $vendorDir,
+        'fkooman\\Rest\\Plugin\\Mellon'       => $vendorDir,
         'fkooman\\Rest'                       => $vendorDir,
-        'fkooman\\OAuth\\Common'              => $vendorDir,
         'fkooman\\Json'                       => $vendorDir,
         'fkooman\\Ini'                        => $vendorDir,
         'fkooman\\Http'                       => $vendorDir,
         'Symfony\\Component\\EventDispatcher' => $vendorDir,
-        'Guzzle'                              => $vendorDir,
-        'Rhumsaa\\Uuid'                       => $vendorDir,
+        'Guzzle'                              => $vendorDir
     )
 );
 

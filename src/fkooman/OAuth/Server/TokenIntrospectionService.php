@@ -59,7 +59,7 @@ class TokenIntrospectionService extends Service
     public function getTokenIntrospection($tokenValue)
     {
         if (null === $tokenValue) {
-            throw new BadRequestException("invalid_token", "the token parameter is missing");
+            throw new BadRequestException('invalid_token', 'the token parameter is missing');
         }
         // FIXME: validate token format
 
@@ -90,10 +90,10 @@ class TokenIntrospectionService extends Service
             // as long as we have no RS registration we cannot set the audience...
             // $tokenInfo['aud' => 'foo';
 
-            // add proprietary "x-entitlement"
+            // add proprietary 'x-entitlement'
             $entitlement = $this->entitlements->getEntitlement($accessToken['resource_owner_id']);
             if (0 !== count($entitlement)) {
-                $tokenInfo['x-entitlement'] = implode(" ", $entitlement);
+                $tokenInfo['x-entitlement'] = implode(' ', $entitlement);
             }
         }
 

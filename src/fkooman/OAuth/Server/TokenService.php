@@ -67,8 +67,8 @@ class TokenService extends Service
         if (null !== $clientId) {
             if ($clientId !== $userId) {
                 throw new BadRequestException(
-                    "invalid_grant",
-                    "authenicated user must match client_id in request body"
+                    'invalid_grant',
+                    'authenicated user must match client_id in request body'
                 );
             }
         }
@@ -76,7 +76,7 @@ class TokenService extends Service
         if ('code' !== $clientData->getType()) {
             throw new BadRequestException(
                 'invalid_client',
-                "this client type is not allowed to use the token endpoint"
+                'this client type is not allowed to use the token endpoint'
             );
         }
 
@@ -109,17 +109,17 @@ class TokenService extends Service
         // there in the token request (this is not explicit in the spec!)
         $result = $this->db->getAuthorizationCode($clientData->getId(), $code, $redirectUri);
         if (false === $result) {
-            throw new BadRequestException("invalid_grant", "the authorization code was not found");
+            throw new BadRequestException('invalid_grant', 'the authorization code was not found');
         }
 
         if (time() > $result['issue_time'] + 600) {
-            throw new BadRequestException("invalid_grant", "the authorization code expired");
+            throw new BadRequestException('invalid_grant', 'the authorization code expired');
         }
 
         // we MUST be able to delete the authorization code, otherwise it was used before
         if (false === $this->db->deleteAuthorizationCode($clientData->getId(), $code, $redirectUri)) {
             // check to prevent deletion race condition
-            throw new BadRequestException("invalid_grant", "this authorization code grant was already used");
+            throw new BadRequestException('invalid_grant', 'this authorization code grant was already used');
         }
 
         $approval = $this->db->getApprovalByResourceOwnerId($clientData->getId(), $result['resource_owner_id']);
@@ -132,7 +132,7 @@ class TokenService extends Service
         // we should deal with that there and come up with a good solution...
         $token['scope'] = $result['scope'];
         $token['refresh_token'] = $approval['refresh_token'];
-        $token['token_type'] = "bearer";
+        $token['token_type'] = 'bearer';
 
         $this->db->storeAccessToken(
             $token['access_token'],
@@ -153,7 +153,7 @@ class TokenService extends Service
 
         $result = $this->db->getApprovalByRefreshToken($clientData->getId(), $refreshToken);
         if (false === $result) {
-            throw new BadRequestException("invalid_grant", "the refresh_token was not found");
+            throw new BadRequestException('invalid_grant', 'the refresh_token was not found');
         }
 
         $token = array();
@@ -174,7 +174,7 @@ class TokenService extends Service
             $token['scope'] = $result['scope'];
         }
 
-        $token['token_type'] = "bearer";
+        $token['token_type'] = 'bearer';
 
         $this->db->storeAccessToken(
             $token['access_token'],
