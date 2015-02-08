@@ -27,9 +27,7 @@ it). Refer to the license for the exact details.
 * Token Introspection for Resource Servers
 * Management API to manage Client Registration and Authorizations
 
-# Screenshots
-This is a screenshot of the consent dialog:
-
+# Screenshot
 ![oauth_consent](https://github.com/fkooman/php-oauth-as/raw/master/docs/oauth_consent.png)
 
 # Installation
@@ -144,6 +142,12 @@ This is the Apache configuration you use for development. Place it in
     </Directory>
 
 Restart Apache with `service httpd restart`.
+
+# Templates
+The template `views/askAuthorization.twig` can be copied to 
+`config/views/askAuthorization.twig` and modified there. One can update the 
+HTML and also point to an alternative CSS style to customize it for your
+particular API service.
 
 # Authentication
 There are currently two plugins provided for user authentication:
