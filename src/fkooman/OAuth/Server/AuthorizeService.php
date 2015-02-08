@@ -24,7 +24,6 @@ use fkooman\Http\Request;
 use fkooman\Http\Exception\BadRequestException;
 use fkooman\OAuth\Common\Scope;
 use fkooman\Http\RedirectResponse;
-use fkooman\OAuth\Server\Exception\ClientException;
 use fkooman\Rest\Plugin\UserInfo;
 
 class AuthorizeService extends Service
@@ -94,20 +93,22 @@ class AuthorizeService extends Service
         }
 
         if ($responseType !== $client->getType()) {
-            throw new ClientException(
-                "unsupported_response_type",
-                "response_type not supported by client profile",
+            return new ClientErrorResponse(
                 $client,
-                $state
+                $request,
+                $redirectUri,
+                "unsupported_response_type",
+                "response_type not supported by client profile"
             );
         }
 
         if (!$scope->isSubsetOf(Scope::fromString($client->getAllowedScope()))) {
-            throw new ClientException(
-                "invalid_scope",
-                "not authorized to request this scope",
+            return new ClientErrorResponse(
                 $client,
-                $state
+                $request,
+                $redirectUri,
+                "invalid_scope",
+                "not authorized to request this scope"
             );
         }
         
@@ -205,7 +206,13 @@ class AuthorizeService extends Service
         $client = $this->storage->getClient($clientId);
 
         if ("approve" !== $approval) {
-            throw new ClientException("access_denied", "not authorized by resource owner", $client, $state);
+            return new ClientErrorResponse(
+                $client,
+                $request,
+                $redirectUri,
+                'access_denied',
+                'not authorized by resource owner'
+            );
         }
 
         $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $userInfo->getUserId());

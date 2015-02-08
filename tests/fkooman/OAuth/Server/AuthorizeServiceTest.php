@@ -98,16 +98,14 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 #        $this->assertRegexp("|^http://localhost/php-oauth/unit/test.html#access_token=[a-zA-Z0-9]+&expires_in=5&token_type=bearer&scope=read&state=abc$|", $response->getHeader("Location"));
 #    }
 
-    /**
-     * @expectedException \fkooman\OAuth\Server\Exception\ClientException
-     * @expectedExceptionMessage invalid_scope
-     */
     public function testUnsupportedScope()
     {
         $h = new Request("https://auth.example.org?client_id=testclient&response_type=token&scope=foo&state=xyz", "GET");
         $h->setBasicAuthUser("fkooman");
         $h->setBasicAuthPass("foo");
-        $this->service->run($h);
+        $response = $this->service->run($h);
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals('http://localhost/php-oauth/unit/test.html#error=invalid_scope&error_description=not+authorized+to+request+this+scope&state=xyz', $response->getHeader('Location'));
     }
 
     /**
@@ -189,16 +187,14 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
         $this->service->run($h);
     }
 
-    /**
-     * @expectedException fkooman\OAuth\Server\Exception\ClientException
-     * @expectedExceptionMessage unsupported_response_type
-     */
     public function testWrongClientType()
     {
         $h = new Request("https://auth.example.org?client_id=testclient&scope=read&response_type=code", "GET");
         $h->setBasicAuthUser("fkooman");
         $h->setBasicAuthPass("foo");
         
-        $this->service->run($h);
+        $response = $this->service->run($h);
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals('http://localhost/php-oauth/unit/test.html#error=unsupported_response_type&error_description=response_type+not+supported+by+client+profile', $response->getHeader('Location'));
     }
 }
