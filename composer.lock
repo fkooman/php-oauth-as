@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "709465a0bacd22e6ab46f54095f0260a",
+    "hash": "50a7678e9fa27f410b1bdbe663705318",
     "packages": [
         {
             "name": "fkooman/ini",
@@ -239,6 +239,44 @@
             ],
             "description": "Mellon (SAML) Authentication plugin for fkooman/rest",
             "time": "2015-02-07 22:18:20"
+        },
+        {
+            "name": "fkooman/rest-plugin-simplesaml",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fkooman/php-lib-rest-plugin-simplesaml.git",
+                "reference": "ccd0f817d1f9620a3f96679c179573fa35fbae69"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-simplesaml/zipball/ccd0f817d1f9620a3f96679c179573fa35fbae69",
+                "reference": "ccd0f817d1f9620a3f96679c179573fa35fbae69",
+                "shasum": ""
+            },
+            "require": {
+                "fkooman/rest": "~0.6.7",
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "fkooman\\Rest\\Plugin\\SimpleSaml": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "François Kooman",
+                    "email": "fkooman@tuxed.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "simpleSAMLphp (SAML) Authentication plugin for fkooman/rest",
+            "time": "2015-02-09 13:35:11"
         },
         {
             "name": "guzzle/guzzle",

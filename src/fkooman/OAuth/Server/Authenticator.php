@@ -20,6 +20,7 @@ namespace fkooman\OAuth\Server;
 use fkooman\Ini\IniReader;
 use fkooman\Rest\Plugin\Basic\BasicAuthentication;
 use fkooman\Rest\Plugin\Mellon\MellonAuthentication;
+use fkooman\Rest\Plugin\Mellon\SimpleSamlAuthentication;
 
 class Authenticator
 {
@@ -40,6 +41,8 @@ class Authenticator
                 return $this->getBasicAuthenticationPlugin();
             case 'MellonAuthentication':
                 return $this->getMellonAuthenticationPlugin();
+            case 'SimpleSamlAuthentication':
+                return $this->getSimpleSamlAuthenticationPlugin();
             default:
                 throw new RuntimeException('unsupported authentication plugin');
         }
@@ -63,6 +66,15 @@ class Authenticator
     {
         return new MellonAuthentication(
             $this->iniReader->v('MellonAuthentication', 'mellonAttribute')
+        );
+    }
+
+    public function getSimpleSamlAuthenticationPlugin()
+    {
+        return new SimpleSamlAuthentication(
+            $this->iniReader->v('SimpleSamlAuthentication', 'simpleSamlPath'),
+            $this->iniReader->v('SimpleSamlAuthentication', 'authSource'),
+            $this->iniReader->v('SimpleSamlAuthentication', 'userAttribute', false, null)
         );
     }
 }
