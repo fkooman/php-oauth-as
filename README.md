@@ -24,6 +24,8 @@ it). Refer to the license for the exact details.
 * Authorization Code and Implicit Grant support
 * `BasicAuthenication` Backend (configured in configuration file)
 * `MellonAuthentication` Backend (SAML)
+* `SimpleSamlAuthentication` Backend (SAML) **DEPRECATED** use 
+  `MellonAuthentication` instead
 * Token Introspection for Resource Servers
 * Management API to manage Client Registration and Authorizations
 
@@ -155,6 +157,7 @@ There are currently two plugins provided for user authentication:
 * `BasicAuthentication` - Simple static username/password authentication 
   configured through `config/oauth.ini` (**DEFAULT**)
 * `MellonAuthentication` - Plugin for SAML authentication
+* `SimpleSamlAuthentication` - Plugin for SAML authentication (**DEPRECATED**)
 
 You can configure which plugin to use by modifying the 
 `authenticationPlugin` setting in `config/oauth.ini`.
