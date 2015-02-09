@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "50a7678e9fa27f410b1bdbe663705318",
+    "hash": "605c3c6211bcc96545e523a5407a3954",
     "packages": [
         {
             "name": "fkooman/ini",
@@ -242,16 +242,16 @@
         },
         {
             "name": "fkooman/rest-plugin-simplesaml",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest-plugin-simplesaml.git",
-                "reference": "ccd0f817d1f9620a3f96679c179573fa35fbae69"
+                "reference": "d3cdefafa2186846a72f30ba47a74c7c197fbdf3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-simplesaml/zipball/ccd0f817d1f9620a3f96679c179573fa35fbae69",
-                "reference": "ccd0f817d1f9620a3f96679c179573fa35fbae69",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-simplesaml/zipball/d3cdefafa2186846a72f30ba47a74c7c197fbdf3",
+                "reference": "d3cdefafa2186846a72f30ba47a74c7c197fbdf3",
                 "shasum": ""
             },
             "require": {
@@ -276,7 +276,7 @@
                 }
             ],
             "description": "simpleSAMLphp (SAML) Authentication plugin for fkooman/rest",
-            "time": "2015-02-09 13:35:11"
+            "time": "2015-02-09 19:18:51"
         },
         {
             "name": "guzzle/guzzle",

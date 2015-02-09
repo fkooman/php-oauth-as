@@ -32,7 +32,7 @@ Requires:   php-composer(fkooman/rest-plugin-basic) >= 0.4.0
 Requires:   php-composer(fkooman/rest-plugin-basic) < 0.4.0
 Requires:   php-composer(fkooman/rest-plugin-mellon) >= 0.2.0
 Requires:   php-composer(fkooman/rest-plugin-mellon) < 0.3.0
-Requires:   php-composer(fkooman/rest-plugin-simplesaml) >= 0.1.0
+Requires:   php-composer(fkooman/rest-plugin-simplesaml) >= 0.1.1
 Requires:   php-composer(fkooman/rest-plugin-simplesaml) < 0.2.0
 Requires:   php-pear(pear.twig-project.org/Twig) >= 1.15
 Requires:   php-pear(pear.twig-project.org/Twig) < 2.0

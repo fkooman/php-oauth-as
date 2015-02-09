@@ -22,7 +22,7 @@
         "fkooman/rest-plugin-basic": "~0.4.0",
         "fkooman/rest-plugin-bearer": "~0.2.1",
         "fkooman/rest-plugin-mellon": "~0.2.0",
-        "fkooman/rest-plugin-simplesaml": "~0.1.0",
+        "fkooman/rest-plugin-simplesaml": "~0.1.1",
         "php": ">=5.3.3",
         "twig/twig": "~1.15"
     }
