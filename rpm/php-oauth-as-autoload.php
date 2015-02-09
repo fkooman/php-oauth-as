@@ -15,6 +15,7 @@ $loader->registerNamespaces(
         'fkooman\\Rest\\Plugin\\Bearer'       => $vendorDir,
         'fkooman\\Rest\\Plugin\\Basic'        => $vendorDir,
         'fkooman\\Rest\\Plugin\\Mellon'       => $vendorDir,
+        'fkooman\\Rest\\Plugin\\SimpleSaml'   => $vendorDir,
         'fkooman\\Rest'                       => $vendorDir,
         'fkooman\\Json'                       => $vendorDir,
         'fkooman\\Ini'                        => $vendorDir,
