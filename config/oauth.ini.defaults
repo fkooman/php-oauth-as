@@ -34,6 +34,6 @@ mellonAttribute = 'MELLON_NAME_ID'
 ;mellonAttribute = 'MELLON_eduPersonTargetedID'
 
 [SimpleSamlAuthentication]
-simpleSamlPath = '/var/www/simplesaml'
-authSource = 'default'
+simpleSamlPath = '/var/www/simplesamlphp'
+authSource = 'default-sp'
 ;userAttribute = 'eduPersonPrincipalName'

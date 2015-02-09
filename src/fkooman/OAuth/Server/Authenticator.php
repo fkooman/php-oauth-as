@@ -20,7 +20,7 @@ namespace fkooman\OAuth\Server;
 use fkooman\Ini\IniReader;
 use fkooman\Rest\Plugin\Basic\BasicAuthentication;
 use fkooman\Rest\Plugin\Mellon\MellonAuthentication;
-use fkooman\Rest\Plugin\Mellon\SimpleSamlAuthentication;
+use fkooman\Rest\Plugin\SimpleSaml\SimpleSamlAuthentication;
 
 class Authenticator
 {
