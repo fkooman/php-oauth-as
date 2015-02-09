@@ -48,6 +48,13 @@ try {
     $tokenIntrospectionService->run()->sendResponse();
 } catch (Exception $e) {
     if ($e instanceof HttpException) {
+        error_log(
+            sprintf(
+                'M: %s, D: %s',
+                $e->getMessage(),
+                $e->getDescription()
+            )
+        );
         $response = $e->getJsonResponse();
     } else {
         // we catch all other (unexpected) exceptions and return a 500
