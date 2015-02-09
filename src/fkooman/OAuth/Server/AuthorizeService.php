@@ -171,7 +171,9 @@ class AuthorizeService extends Service
                     $userInfo->getUserId(),
                     time(),
                     $clientId,
-                    $redirectUri,
+                    // we need to store the actual redirect_uri provided, or null if none
+                    // was provided...
+                    $authorizeRequest->getRedirectUri(),
                     $scope
                 );
                 return new ClientResponse(
