@@ -29,7 +29,7 @@
 
         {% if not sslEnabled %}
         <p class="warning">
-            <strong>INSECURE</strong> connection to this service, SSL or TLS <strong>MUST</strong> be used!
+            <strong>INSECURE</strong> connection to this service, TLS <strong>MUST</strong> be used!
             {% if contactEmail %}
                 Please <a href="mailto:{{ contactEmail|e }}">inform</a> the application provider.
             {% endif %}
