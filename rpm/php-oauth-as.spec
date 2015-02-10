@@ -105,7 +105,7 @@ fi
 %{_datadir}/php-oauth-as/views
 %{_datadir}/php-oauth-as/config
 %dir %attr(0700,apache,apache) %{_localstatedir}/lib/php-oauth-as
-%doc README.md agpl-3.0.txt composer.json docs/ config/
+%doc CHANGES.md UPGRADING.md README.md agpl-3.0.txt composer.json docs/ config/
 
 %changelog
 * Wed Dec 17 2014 François Kooman <fkooman@tuxed.net> - 0.1.8-1
