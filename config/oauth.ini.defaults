@@ -36,4 +36,5 @@ mellonAttribute = 'MELLON_NAME_ID'
 [SimpleSamlAuthentication]
 simpleSamlPath = '/var/www/simplesamlphp'
 authSource = 'default-sp'
+;If no attribute is specified, the persistent NameID value is used
 ;userAttribute = 'eduPersonPrincipalName'
