@@ -61,7 +61,8 @@ TBD
 ### Housekeeping
 A new script is available to delete expired tokens from the database to be run
 from a "cron" task. The script is called `php-oauth-as-housekeeping` and should
-be run periodically, say once every day. 
+be run periodically, say once every day. If you are using SQlite as a database
+the script should be run as the `apache` user, or `root` (not recommended).
 
 ### UI Customization
 One can now customize the consent dialog by copying the file 
