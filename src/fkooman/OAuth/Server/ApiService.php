@@ -298,14 +298,14 @@ class ApiService extends Service
     private function requireScope(Scope $scope, $scopeValue)
     {
         if (!$scope->hasScope($scopeValue)) {
-            throw new ForbiddenException('insufficient_scope');
+            throw new ForbiddenException('insufficient_scope', sprintf('need scope %s', $scopeValue));
         }
     }
 
     private function requireEntitlement(Entitlement $entitlement, $entitlementValue)
     {
         if (!$entitlement->hasEntitlement($entitlementValue)) {
-            throw new ForbiddenException('insufficient_entitlement');
+            throw new ForbiddenException('insufficient_entitlement', sprintf('need entitlement %s', $entitlementValue));
         }
     }
 }
