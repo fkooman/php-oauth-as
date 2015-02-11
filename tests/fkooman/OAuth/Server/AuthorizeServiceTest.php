@@ -58,7 +58,7 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 
         $basicAuthenticationPlugin = new BasicAuthentication(
             function ($userId) use ($compatStorage) {
-                return 'fkooman' === $userId ? password_hash('foo', PASSWORD_DEFAULT) : false;
+                return 'fkooman' === $userId ? password_hash('foo', PASSWORD_DEFAULT, array('cost' => 4)) : false;
             },
             'OAuth Server Authentication'
         );
