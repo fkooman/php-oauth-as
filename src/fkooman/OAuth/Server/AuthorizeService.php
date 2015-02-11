@@ -114,17 +114,16 @@ class AuthorizeService extends Service
         }
         
         if ($clientData->getDisableUserConsent()) {
-            // we do not require approval by the user
-            $approvedScope = array('scope' => $scope);
-        } else {
-            $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $userInfo->getUserId());
+            // we do not require approval by the user, add implicit approval
+            $this->addApproval($clientId, $userInfo->getUserId(), $scope);
         }
-    
+
+        $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $userInfo->getUserId());
         $approvedScopeObj = new Scope($approvedScope['scope']);
 
-        // FIXME: why the || ???
         if (false === $approvedScope || false === $scopeObj->hasOnlyScope($approvedScopeObj)) {
-            // we need to ask for approval
+            // we do not yet have an approval at all, or client wants more
+            // permissions, so we ask the user for approval
             $twig = $this->getTwig();
             return $twig->render(
                 'askAuthorization.twig',
@@ -210,7 +209,7 @@ class AuthorizeService extends Service
 
         // if no redirect_uri is part of the query parameter, use the one from
         // the client registration
-        if(null === $redirectUri) {
+        if (null === $redirectUri) {
             $redirectUri = $clientData->getRedirectUri();
         }
 
@@ -226,22 +225,24 @@ class AuthorizeService extends Service
             );
         }
 
-        $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $userInfo->getUserId());
-        // FIXME: why no if here?
-        if (false === $approvedScope) {
-            // no approved scope stored yet, new entry
+        $this->addApproval($clientId, $userInfo->getUserId(), $scope);
+
+        // redirect to self
+        return new RedirectResponse($request->getRequestUri()->getUri(), 302);
+    }
+
+    private function addApproval($clientId, $userId, $scope)
+    {
+        $approval = $this->storage->getApprovalByResourceOwnerId($clientId, $userId);
+        if (false === $approval) {
+            // no approval exists, generate a refresh_token and add it
             $refreshToken = ('code' === $responseType) ? bin2hex(openssl_random_pseudo_bytes(16)) : null;
             $this->storage->addApproval($clientId, $userInfo->getUserId(), $scope, $refreshToken);
         } else {
-            // we update the approval, possibly a new scope was granted
-            $this->storage->updateApproval($clientId, $userInfo->getUserId(), $scope);
+            // an approval exists, we don't care about the scope, we just
+            // update it if needed keeping the same refresh_token
+            $this->storage->updateApproval($clientId, $userId, $scope);
         }
-
-        // redirect back to the authorize uri, this time there should be an
-        // approval...
-        // FIXME: maybe move the already having approval code from getAuthorize
-        // in a separate function as to avoid this extra ugly 'redirect'
-        return new RedirectResponse($request->getRequestUri()->getUri(), 302);
     }
 
     private function getTwig()
