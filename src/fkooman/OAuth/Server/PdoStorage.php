@@ -62,7 +62,7 @@ class PdoStorage
         $stmt = $this->db->prepare('UPDATE clients SET name = :name, description = :description, secret = :secret, disable_user_consent = :disable_user_consent, redirect_uri = :redirect_uri, type = :type, icon = :icon, allowed_scope = :allowed_scope, contact_email = :contact_email WHERE id = :client_id');
         $stmt->bindValue(':name', $clientData->getName(), PDO::PARAM_STR);
         $stmt->bindValue(':description', $clientData->getDescription(), PDO::PARAM_STR);
-        $stmt->bindValue(':secret', $clientData->getSecret(true), PDO::PARAM_STR);
+        $stmt->bindValue(':secret', $clientData->getSecret(), PDO::PARAM_STR);
         $stmt->bindValue(':redirect_uri', $clientData->getRedirectUri(), PDO::PARAM_STR);
         $stmt->bindValue(':disable_user_consent', $clientData->getDisableUserConsent(), PDO::PARAM_BOOL);
         $stmt->bindValue(':type', $clientData->getType(), PDO::PARAM_STR);
@@ -81,7 +81,7 @@ class PdoStorage
         $stmt->bindValue(':client_id', $clientData->getId(), PDO::PARAM_STR);
         $stmt->bindValue(':name', $clientData->getName(), PDO::PARAM_STR);
         $stmt->bindValue(':description', $clientData->getDescription(), PDO::PARAM_STR);
-        $stmt->bindValue(':secret', $clientData->getSecret(true), PDO::PARAM_STR);
+        $stmt->bindValue(':secret', $clientData->getSecret(), PDO::PARAM_STR);
         $stmt->bindValue(':redirect_uri', $clientData->getRedirectUri(), PDO::PARAM_STR);
         $stmt->bindValue(':disable_user_consent', $clientData->getDisableUserConsent(), PDO::PARAM_BOOL);
         $stmt->bindValue(':type', $clientData->getType(), PDO::PARAM_STR);

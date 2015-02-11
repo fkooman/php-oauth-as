@@ -251,12 +251,8 @@ class ClientData
         return $this->allowedScope;
     }
 
-    public function getSecret($getHash = false)
+    public function getSecret()
     {
-        if (null !== $this->secret && $getHash) {
-            return password_hash($this->secret, PASSWORD_DEFAULT);
-        }
-
         return $this->secret;
     }
 

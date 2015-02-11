@@ -47,7 +47,7 @@ try {
         function ($userId) use ($pdoStorage) {
             $clientData = $pdoStorage->getClient($userId);
 
-            return false !== $clientData ? $clientData->getSecret() : false;
+            return false !== $clientData ? password_hash($clientData->getSecret(), PASSWORD_DEFAULT) : false;
         },
         'OAuth Server'
     );

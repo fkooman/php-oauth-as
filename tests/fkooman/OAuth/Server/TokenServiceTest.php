@@ -79,7 +79,7 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
             function ($userId) use ($compatStorage) {
                 $clientData = $compatStorage->getClient($userId);
 
-                return false !== $clientData ? $clientData->getSecret() : false;
+                return false !== $clientData ? password_hash($clientData->getSecret(), PASSWORD_DEFAULT) : false;
             },
             'OAuth Server'
         );

@@ -8,7 +8,6 @@
   longer through authentication, this was used for the SAML authentication 
   before, but for non of the other authentication libraries
 - simplify the consent dialog
-- store the client secret hash in the database instead of plain text
 - add `php-oauth-as-housekeeping` script to be run from crontab to ocassionaly
   delete expired tokens from the database
 - no longer pass the `IniReader` object down the stack, keep all configuration 
