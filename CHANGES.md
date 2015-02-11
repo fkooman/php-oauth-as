@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.9
+## 0.2.0
 - no longer need `fkooman/oauth-common`
 - better input validation
 - major overhaul of configuration for authentication backends
