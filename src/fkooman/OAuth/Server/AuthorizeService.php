@@ -115,7 +115,7 @@ class AuthorizeService extends Service
         
         if ($clientData->getDisableUserConsent()) {
             // we do not require approval by the user, add implicit approval
-            $this->addApproval($clientId, $userInfo->getUserId(), $scope);
+            $this->addApproval($clientData, $userInfo->getUserId(), $scope);
         }
 
         $approval = $this->storage->getApprovalByResourceOwnerId($clientId, $userInfo->getUserId());
@@ -225,23 +225,23 @@ class AuthorizeService extends Service
             );
         }
 
-        $this->addApproval($clientId, $userInfo->getUserId(), $scope);
+        $this->addApproval($clientData, $userInfo->getUserId(), $scope);
 
         // redirect to self
         return new RedirectResponse($request->getRequestUri()->getUri(), 302);
     }
 
-    private function addApproval($clientId, $userId, $scope)
+    private function addApproval(ClientData $clientData, $userId, $scope)
     {
-        $approval = $this->storage->getApprovalByResourceOwnerId($clientId, $userId);
+        $approval = $this->storage->getApprovalByResourceOwnerId($clientData->getId(), $userId);
         if (false === $approval) {
             // no approval exists, generate a refresh_token and add it
-            $refreshToken = ('code' === $responseType) ? bin2hex(openssl_random_pseudo_bytes(16)) : null;
-            $this->storage->addApproval($clientId, $userInfo->getUserId(), $scope, $refreshToken);
+            $refreshToken = ('code' === $clientData->getType()) ? bin2hex(openssl_random_pseudo_bytes(16)) : null;
+            $this->storage->addApproval($clientData->getId(), $userId, $scope, $refreshToken);
         } else {
             // an approval exists, we don't care about the scope, we just
             // update it if needed keeping the same refresh_token
-            $this->storage->updateApproval($clientId, $userId, $scope);
+            $this->storage->updateApproval($clientData->getId(), $userId, $scope);
         }
     }
 
