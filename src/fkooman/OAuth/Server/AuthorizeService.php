@@ -198,6 +198,7 @@ class AuthorizeService extends Service
         $scope = $authorizeRequest->getScope();
         $state = $authorizeRequest->getState();
 
+        // CSRF protection
         if ($request->getHeader('HTTP_REFERER') !== $request->getRequestUri()->getUri()) {
             throw new BadRequestException('CSRF protection triggered');
         }
@@ -205,6 +206,12 @@ class AuthorizeService extends Service
         $clientData = $this->storage->getClient($clientId);
         if (false === $clientData) {
             throw new BadRequestException('client not registered');
+        }
+
+        // if no redirect_uri is part of the query parameter, use the one from
+        // the client registration
+        if(null === $redirectUri) {
+            $redirectUri = $clientData->getRedirectUri();
         }
 
         if ('approve' !== $request->getPostParameter('approval')) {
@@ -226,7 +233,7 @@ class AuthorizeService extends Service
             $refreshToken = ('code' === $responseType) ? bin2hex(openssl_random_pseudo_bytes(16)) : null;
             $this->storage->addApproval($clientId, $userInfo->getUserId(), $scope, $refreshToken);
         } else {
-            // FIXME: update merges the scopes?
+            // we update the approval, possibly a new scope was granted
             $this->storage->updateApproval($clientId, $userInfo->getUserId(), $scope);
         }
 
