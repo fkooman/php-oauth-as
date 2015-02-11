@@ -38,8 +38,29 @@ packages can for now be found in the
 [repository](https://copr.fedoraproject.org/coprs/fkooman/php-oauth/). For 
 setting up a development environment, see below.
 
-Currently the documentation for getting started with the RPM packages still 
-needs to be written...
+To enable the repositories on Fedora do the following:
+
+    $ sudo yum -y install yum-plugin-copr
+    $ yum copr enable -y fkooman/php-base
+    $ yum copr enable -y fkooman/php-oauth
+    $ yum install -y php-oauth-as
+
+Restart Apache:
+
+    $ sudo service httpd restart
+
+You can now configure the OAuth server in `/etc/php-oauth-as/oauth.ini` and set
+the entitlements in `/etc/php-oauth-as/entitlements.json`. After this is done
+you can initialize the database and add some clients:
+
+    $ sudo -u apache php-oauth-as-initdb
+    $ sudo -u apache php-oauth-as-register https://www.php-oauth.net/app/config.json
+
+Now you can use the management applications on 
+[https://www.php-oauth.net](https://www.php-oauth.net) to manage your server on
+`https://localhost/php-oauth-as` or install them yourself from the repository,
+see below. Using these management applications you can register new clients 
+and manage the authorizations you gave to clients.
 
 # Development Requirements
 On Fedora/CentOS:
