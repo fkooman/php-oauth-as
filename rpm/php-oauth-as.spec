@@ -56,6 +56,7 @@ written in any language, without requiring extensive changes.
 
 sed -i "s|dirname(__DIR__)|'%{_datadir}/php-oauth-as'|" bin/php-oauth-as-initdb
 sed -i "s|dirname(__DIR__)|'%{_datadir}/php-oauth-as'|" bin/php-oauth-as-register
+sed -i "s|dirname(__DIR__)|'%{_datadir}/php-oauth-as'|" bin/php-oauth-as-housekeeping
 
 %build
 
@@ -98,6 +99,7 @@ fi
 %config(noreplace) %{_sysconfdir}/php-oauth-as
 %{_bindir}/php-oauth-as-initdb
 %{_bindir}/php-oauth-as-register
+%{_bindir}/php-oauth-as-housekeeping
 %dir %{_datadir}/php-oauth-as
 %{_datadir}/php-oauth-as/src
 %{_datadir}/php-oauth-as/vendor
