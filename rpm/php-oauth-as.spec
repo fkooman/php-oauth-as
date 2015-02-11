@@ -29,7 +29,7 @@ Requires:   php-composer(fkooman/rest) < 0.7.0
 Requires:   php-composer(fkooman/rest-plugin-bearer) >= 0.2.1
 Requires:   php-composer(fkooman/rest-plugin-bearer) < 0.3.0
 Requires:   php-composer(fkooman/rest-plugin-basic) >= 0.4.0
-Requires:   php-composer(fkooman/rest-plugin-basic) < 0.4.0
+Requires:   php-composer(fkooman/rest-plugin-basic) < 0.5.0
 Requires:   php-composer(fkooman/rest-plugin-mellon) >= 0.2.0
 Requires:   php-composer(fkooman/rest-plugin-mellon) < 0.3.0
 Requires:   php-composer(fkooman/rest-plugin-simplesaml) >= 0.1.1
