@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+- fix refresh_token generation for implicit authorized clients
+- fix redirects when client did not put a redirect_uri in the query
+  parameters in the authorization request
+
 ## 0.2.0
 - no longer need `fkooman/oauth-common`
 - better input validation

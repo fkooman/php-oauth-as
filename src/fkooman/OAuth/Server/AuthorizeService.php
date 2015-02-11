@@ -118,10 +118,10 @@ class AuthorizeService extends Service
             $this->addApproval($clientId, $userInfo->getUserId(), $scope);
         }
 
-        $approvedScope = $this->storage->getApprovalByResourceOwnerId($clientId, $userInfo->getUserId());
-        $approvedScopeObj = new Scope($approvedScope['scope']);
+        $approval = $this->storage->getApprovalByResourceOwnerId($clientId, $userInfo->getUserId());
+        $approvedScopeObj = new Scope($approval['scope']);
 
-        if (false === $approvedScope || false === $scopeObj->hasOnlyScope($approvedScopeObj)) {
+        if (false === $approval || false === $scopeObj->hasOnlyScope($approvedScopeObj)) {
             // we do not yet have an approval at all, or client wants more
             // permissions, so we ask the user for approval
             $twig = $this->getTwig();
