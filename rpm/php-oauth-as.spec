@@ -2,7 +2,7 @@
 %global github_name      php-oauth-as
 
 Name:       php-oauth-as
-Version:    0.1.8
+Version:    0.1.9
 Release:    1%{?dist}
 Summary:    OAuth 2.0 Authorization Server written in PHP
 
@@ -10,7 +10,7 @@ Group:      Applications/Internet
 License:    AGPLv3+
 URL:        https://github.com/%{github_owner}/%{github_name}
 Source0:    https://github.com/%{github_owner}/%{github_name}/archive/%{version}.tar.gz
-Source1:    php-oauth-as-httpd-conf
+Source1:    php-oauth-as-httpd.conf
 Source2:    php-oauth-as-autoload.php
 
 BuildArch:  noarch
@@ -108,6 +108,9 @@ fi
 %doc CHANGES.md UPGRADING.md README.md agpl-3.0.txt composer.json docs/ config/
 
 %changelog
+* Wed Feb 11 2015 François Kooman <fkooman@tuxed.net> - 0.1.9-1
+- update to 0.1.9
+
 * Wed Dec 17 2014 François Kooman <fkooman@tuxed.net> - 0.1.8-1
 - update to 0.1.8
 
