@@ -2,7 +2,7 @@
 %global github_name      php-oauth-as
 
 Name:       php-oauth-as
-Version:    0.2.0
+Version:    0.2.1
 Release:    1%{?dist}
 Summary:    OAuth 2.0 Authorization Server written in PHP
 
@@ -110,6 +110,9 @@ fi
 %doc CHANGES.md UPGRADING.md README.md agpl-3.0.txt composer.json docs/ config/
 
 %changelog
+* Thu Feb 12 2015 François Kooman <fkooman@tuxed.net> - 0.2.1-1
+- update to 0.2.1
+
 * Wed Feb 11 2015 François Kooman <fkooman@tuxed.net> - 0.2.0-1
 - update to 0.2.0
 
