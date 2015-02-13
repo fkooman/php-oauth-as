@@ -161,21 +161,21 @@ class PdoStorage
         return 1 === $stmt->rowCount();
     }
 
-    public function deleteExpiredAccessTokens()
+    public function deleteExpiredAccessTokens($currentTime)
     {
         // delete access tokens that expired 8 hours or longer ago
         $stmt = $this->db->prepare('DELETE FROM access_tokens WHERE issue_time + expires_in < :time');
-        $stmt->bindValue(':time', time() - 28800, PDO::PARAM_INT);
+        $stmt->bindValue(':time', $currentTime - 28800, PDO::PARAM_INT);
         $stmt->execute();
 
         return true;
     }
 
-    public function deleteExpiredAuthorizationCodes()
+    public function deleteExpiredAuthorizationCodes($currentTime)
     {
         // delete authorization codes that expired 8 hours or longer ago
         $stmt = $this->db->prepare('DELETE FROM authorization_codes WHERE issue_time + 600 < :time');
-        $stmt->bindValue(':time', time() - 28800, PDO::PARAM_INT);
+        $stmt->bindValue(':time', $currentTime - 28800, PDO::PARAM_INT);
         $stmt->execute();
 
         return true;

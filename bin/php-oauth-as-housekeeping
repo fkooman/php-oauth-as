@@ -33,8 +33,8 @@ try {
     );
 
     $storage = new PdoStorage($db);
-    $storage->deleteExpiredAccessTokens();
-    $storage->deleteExpiredAuthorizationCodes();
+    $storage->deleteExpiredAccessTokens(time());
+    $storage->deleteExpiredAuthorizationCodes(time());
 } catch (Exception $e) {
     echo $e->getMessage().PHP_EOL;
     exit(1);
