@@ -167,7 +167,7 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
         
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp(
+        $this->assertEquals(
             '{"access_token":"11111111","expires_in":5,"scope":"read write foo","token_type":"bearer"}',
             Json::encode($response->getContent())
         );
