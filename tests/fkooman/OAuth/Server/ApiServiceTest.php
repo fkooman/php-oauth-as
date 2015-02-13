@@ -75,7 +75,6 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
         );
 
         $this->storage->addApproval('testclient', 'fkooman', 'read', null);
-        $this->storage->storeAccessToken('12345abc', time(), 'testcodeclient', 'fkooman', 'http://php-oauth.net/scope/authorize', 3600);
 
         $stub = $this->getMockBuilder('fkooman\Rest\Plugin\Bearer\BearerAuthentication')
                      ->disableOriginalConstructor()

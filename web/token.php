@@ -52,7 +52,7 @@ try {
         'OAuth Server'
     );
 
-    $tokenService = new TokenService($pdoStorage, $iniReader->v('accessTokenExpiry'));
+    $tokenService = new TokenService($pdoStorage, null, $iniReader->v('accessTokenExpiry'));
     $tokenService->registerBeforeEachMatchPlugin($basicAuthenticationPlugin);
 
     $tokenService->run()->sendResponse();

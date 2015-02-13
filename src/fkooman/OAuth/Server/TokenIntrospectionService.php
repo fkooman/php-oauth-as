@@ -28,16 +28,23 @@ use fkooman\Http\Exception\BadRequestException;
  */
 class TokenIntrospectionService extends Service
 {
-
     /** @var fkooman\OAuth\Server\PdoStorage */
     private $db;
 
-    public function __construct(PdoStorage $db, Entitlements $entitlements)
+    /** @var fkooman\OAuth\Server\IO */
+    private $io;
+
+    public function __construct(PdoStorage $db, Entitlements $entitlements, IO $io = null)
     {
         parent::__construct();
 
         $this->db = $db;
         $this->entitlements = $entitlements;
+
+        if (null === $io) {
+            $io = new IO();
+        }
+        $this->io = $io;
 
         $compatThis = &$this;
 
@@ -70,7 +77,7 @@ class TokenIntrospectionService extends Service
             $tokenInfo = array(
                 'active' => false
             );
-        } elseif (time() > $accessToken['issue_time'] + $accessToken['expires_in']) {
+        } elseif ($this->io->getTime() > $accessToken['issue_time'] + $accessToken['expires_in']) {
             // token expired
             $tokenInfo = array(
                 'active' => false

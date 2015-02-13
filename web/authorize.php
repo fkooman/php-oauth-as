@@ -46,6 +46,7 @@ try {
 
     $authorizeService = new AuthorizeService(
         new PdoStorage($db),
+        null,
         $iniReader->v('accessTokenExpiry'),
         $iniReader->v('allowRegExpRedirectUriMatch')
     );

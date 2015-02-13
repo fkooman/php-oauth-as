@@ -30,17 +30,26 @@ class AuthorizeService extends Service
     /** @var fkooman\OAuth\Server\PdoStorage */
     private $storage;
 
+    /** @var fkooman\OAuth\Server\IO */
+    private $io;
+
     /** @var int */
     private $accessTokenExpiry;
 
     /** @var bool */
     private $allowRegExpRedirectUriMatch;
 
-    public function __construct(PdoStorage $storage, $accessTokenExpiry = 3600, $allowRegExpRedirectUriMatch = false)
+    public function __construct(PdoStorage $storage, IO $io = null, $accessTokenExpiry = 3600, $allowRegExpRedirectUriMatch = false)
     {
         parent::__construct();
 
         $this->storage = $storage;
+
+        if (null === $io) {
+            $io = new IO();
+        }
+        $this->io = $io;
+
         $this->accessTokenExpiry = $accessTokenExpiry;
         $this->allowRegExpRedirectUriMatch = (bool) $allowRegExpRedirectUriMatch;
 
@@ -142,10 +151,10 @@ class AuthorizeService extends Service
             if ('token' === $responseType) {
                 // implicit grant
                 // FIXME: return existing access token if it exists for this exact client, resource owner and scope?
-                $accessToken = bin2hex(openssl_random_pseudo_bytes(16));
+                $accessToken = $this->io->getRandomHex();
                 $this->storage->storeAccessToken(
                     $accessToken,
-                    time(),
+                    $this->io->getTime(),
                     $clientId,
                     $userInfo->getUserId(),
                     $scope,
@@ -164,11 +173,11 @@ class AuthorizeService extends Service
                 );
             } else {
                 // authorization code grant
-                $authorizationCode = bin2hex(openssl_random_pseudo_bytes(16));
+                $authorizationCode = $this->io->getRandomHex();
                 $this->storage->storeAuthorizationCode(
                     $authorizationCode,
                     $userInfo->getUserId(),
-                    time(),
+                    $this->io->getTime(),
                     $clientId,
                     // we need to store the actual redirect_uri provided, or null if none
                     // was provided...
@@ -236,7 +245,7 @@ class AuthorizeService extends Service
         $approval = $this->storage->getApprovalByResourceOwnerId($clientData->getId(), $userId);
         if (false === $approval) {
             // no approval exists, generate a refresh_token and add it
-            $refreshToken = ('code' === $clientData->getType()) ? bin2hex(openssl_random_pseudo_bytes(16)) : null;
+            $refreshToken = ('code' === $clientData->getType()) ? $this->io->getRandomHex() : null;
             $this->storage->addApproval($clientData->getId(), $userId, $scope, $refreshToken);
         } else {
             // an approval exists, we don't care about the scope, we just

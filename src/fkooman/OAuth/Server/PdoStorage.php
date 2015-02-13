@@ -152,7 +152,7 @@ class PdoStorage
         $stmt = $this->db->prepare('INSERT INTO access_tokens (client_id, resource_owner_id, issue_time, expires_in, scope, access_token) VALUES(:client_id, :resource_owner_id, :issue_time, :expires_in, :scope, :access_token)');
         $stmt->bindValue(':client_id', $clientId, PDO::PARAM_STR);
         $stmt->bindValue(':resource_owner_id', $resourceOwnerId, PDO::PARAM_STR);
-        $stmt->bindValue(':issue_time', time(), PDO::PARAM_INT);
+        $stmt->bindValue(':issue_time', $issueTime, PDO::PARAM_INT);
         $stmt->bindValue(':expires_in', $expiry, PDO::PARAM_INT);
         $stmt->bindValue(':scope', $scope, PDO::PARAM_STR);
         $stmt->bindValue(':access_token', $accessToken, PDO::PARAM_STR);

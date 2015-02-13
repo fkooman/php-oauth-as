@@ -68,10 +68,21 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
             )
         );
 
+        $ioStub = $this->getMockBuilder('fkooman\OAuth\Server\IO')->getMock();
+        $ioStub->method('getRandomHex')->will(
+            $this->onConsecutiveCalls(
+                '11111111'//,
+                //'22222222',
+                //'33333333',
+                //'44444444'
+            )
+        );
+        $ioStub->method('getTime')->willReturn(1111111111);
+
         $this->storage->addApproval('testcodeclient', 'fkooman', 'read write foo', 'r3fr3sh');
-        $this->storage->storeAuthorizationCode("4uth0r1z4t10n", "fkooman", time(), "testcodeclient", null, "read");
-        $this->storage->storeAuthorizationCode("3xp1r3d4uth0r1z4t10n", "fkooman", time() - 1000, "testcodeclient", null, "read");
-        $this->storage->storeAuthorizationCode("authorizeRequestWithRedirectUri", "fkooman", time(), "testcodeclient", "http://localhost/php-oauth/unit/test.html", "read");
+        $this->storage->storeAuthorizationCode("4uth0r1z4t10n", "fkooman", 1111111222, "testcodeclient", null, "read");
+        $this->storage->storeAuthorizationCode("3xp1r3d4uth0r1z4t10n", "fkooman", 1111110000, "testcodeclient", null, "read");
+        $this->storage->storeAuthorizationCode("authorizeRequestWithRedirectUri", "fkooman", 1111111222, "testcodeclient", "http://localhost/php-oauth/unit/test.html", "read");
 
         $compatStorage = &$this->storage;
 
@@ -84,7 +95,7 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
             'OAuth Server'
         );
 
-        $this->service = new TokenService($this->storage, 5);
+        $this->service = new TokenService($this->storage, $ioStub, 5);
         $this->service->registerBeforeEachMatchPlugin($basicAuthenticationPlugin);
     }
 
@@ -97,7 +108,10 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
         
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}$|', Json::encode($response->getContent()));
+        $this->assertEquals(
+            '{"access_token":"11111111","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}',
+            Json::encode($response->getContent())
+        );
     }
 
     /**
@@ -138,7 +152,10 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
         
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}$|', Json::encode($response->getContent()));
+        $this->assertEquals(
+            '{"access_token":"11111111","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}',
+            Json::encode($response->getContent())
+        );
     }
 
     public function testRefreshToken()
@@ -150,7 +167,10 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
         
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read write foo","token_type":"bearer"}$|', Json::encode($response->getContent()));
+        $this->assertRegexp(
+            '{"access_token":"11111111","expires_in":5,"scope":"read write foo","token_type":"bearer"}',
+            Json::encode($response->getContent())
+        );
     }
 
     /**
@@ -287,7 +307,10 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
         
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}$|', $response->getContent());
+        $this->assertEquals(
+            '{"access_token":"11111111","expires_in":5,"scope":"read","refresh_token":"r3fr3sh","token_type":"bearer"}',
+            $response->getContent()
+        );
         $this->service->run($h);
     }
 
@@ -300,7 +323,10 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
         
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"foo","token_type":"bearer"}$|', Json::encode($response->getContent()));
+        $this->assertEquals(
+            '{"access_token":"11111111","expires_in":5,"scope":"foo","token_type":"bearer"}',
+            Json::encode($response->getContent())
+        );
     }
 
     public function testRefreshTokenNoSubScope()
@@ -312,6 +338,9 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
         
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertRegexp('|^{"access_token":"[a-zA-Z0-9]+","expires_in":5,"scope":"read write foo","token_type":"bearer"}$|', Json::encode($response->getContent()));
+        $this->assertEquals(
+            '{"access_token":"11111111","expires_in":5,"scope":"read write foo","token_type":"bearer"}',
+            Json::encode($response->getContent())
+        );
     }
 }

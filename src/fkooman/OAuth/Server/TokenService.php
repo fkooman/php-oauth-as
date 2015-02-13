@@ -29,14 +29,23 @@ class TokenService extends Service
     /** @var fkooman\OAuth\Server\PdoStorage */
     private $db;
 
+    /** @var fkooman\OAuth\Server\IO */
+    private $io;
+
     /** @var int */
     private $accessTokenExpiry;
 
-    public function __construct(PdoStorage $db, $accessTokenExpiry = 3600)
+    public function __construct(PdoStorage $db, IO $io = null, $accessTokenExpiry = 3600)
     {
         parent::__construct();
 
         $this->db = $db;
+
+        if (null === $io) {
+            $io = new IO();
+        }
+        $this->io = $io;
+
         $this->accessTokenExpiry = (int) $accessTokenExpiry;
 
         $compatThis = &$this;
@@ -112,7 +121,7 @@ class TokenService extends Service
             throw new BadRequestException('invalid_grant', 'the authorization code was not found');
         }
 
-        if (time() > $result['issue_time'] + 600) {
+        if ($this->io->getTime() > $result['issue_time'] + 600) {
             throw new BadRequestException('invalid_grant', 'the authorization code expired');
         }
 
@@ -125,7 +134,7 @@ class TokenService extends Service
         $approval = $this->db->getApprovalByResourceOwnerId($clientData->getId(), $result['resource_owner_id']);
 
         $token = array();
-        $token['access_token'] = bin2hex(openssl_random_pseudo_bytes(16));
+        $token['access_token'] = $this->io->getRandomHex();
         $token['expires_in'] = $this->accessTokenExpiry;
         // we always grant the scope the user authorized, no further restrictions here...
         // FIXME: the merging of authorized scopes in the authorize function is a bit of a mess!
@@ -136,7 +145,7 @@ class TokenService extends Service
 
         $this->db->storeAccessToken(
             $token['access_token'],
-            time(),
+            $this->io->getTime(),
             $clientData->getId(),
             $result['resource_owner_id'],
             $token['scope'],
@@ -157,7 +166,7 @@ class TokenService extends Service
         }
 
         $token = array();
-        $token['access_token'] = bin2hex(openssl_random_pseudo_bytes(16));
+        $token['access_token'] = $this->io->getRandomHex();
         $token['expires_in'] = $this->accessTokenExpiry;
         if (null !== $scope) {
             // the client wants to obtain a specific scope
@@ -178,7 +187,7 @@ class TokenService extends Service
 
         $this->db->storeAccessToken(
             $token['access_token'],
-            time(),
+            $this->io->getTime(),
             $clientData->getId(),
             $result['resource_owner_id'],
             $token['scope'],

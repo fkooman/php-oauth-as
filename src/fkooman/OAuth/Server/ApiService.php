@@ -37,10 +37,18 @@ class ApiService extends Service
     /** @var fkooman\OAuth\Server\PdoSTorage */
     private $storage;
 
-    public function __construct(PdoStorage $storage)
+    /** @var fkooman\OAuth\Server\IO */
+    private $io;
+
+    public function __construct(PdoStorage $storage, IO $io = null)
     {
         parent::__construct();
         $this->storage = $storage;
+
+        if (null === $io) {
+            $io = new IO();
+        }
+        $this->io = $io;
 
         // compatibility for PHP 5.3
         $compatThis = &$this;
@@ -139,7 +147,7 @@ class ApiService extends Service
             throw new NotFoundException('client is not registered');
         }
 
-        $refreshToken = (array_key_exists('refresh_token', $data) && $data['refresh_token']) ? bin2hex(openssl_random_pseudo_bytes(16)) : null;
+        $refreshToken = (array_key_exists('refresh_token', $data) && $data['refresh_token']) ? $this->io->getRandomHex() : null;
 
         // check to see if an authorization for this client/resource_owner already exists
         if (false === $this->storage->getApprovalByResourceOwnerId($clientId, $tokenIntrospection->getSub())) {
