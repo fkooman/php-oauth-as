@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.2
+- restructure code to use a separate IO class for random number and time
+  handling
+- increase code coverage by writing better unit tests
+
 ## 0.2.1
 - fix refresh_token generation for implicit authorized clients
 - fix redirects when client did not put a redirect_uri in the query
