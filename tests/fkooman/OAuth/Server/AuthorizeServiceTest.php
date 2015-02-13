@@ -136,13 +136,71 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
+    public function testPostAuthorizeTokenClientApprove()
+    {
+        $h = new Request("https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz", "POST");
+        $h->setBasicAuthUser("admin");
+        $h->setBasicAuthPass("adm1n");
+        $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz");
+        $h->setPostParameters(array("approval" => "approve"));
+
+        $response = $this->service->run($h);
+        $this->assertEquals(302, $response->getStatusCode());
+        //$this->assertEquals('', $response->getHeader("Location"));
+    }
+
+    public function testPostAuthorizeTokenClientReject()
+    {
+        $h = new Request("https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz", "POST");
+        $h->setBasicAuthUser("admin");
+        $h->setBasicAuthPass("adm1n");
+        $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz");
+        $h->setPostParameters(array("approval" => "reject"));
+
+        $response = $this->service->run($h);
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals(
+            'https://example.org/callback.html#error=access_denied&error_description=not+authorized+by+resource+owner&state=xyz',
+            $response->getHeader("Location")
+        );
+    }
+
+    public function testPostAuthorizeCodeClientApprove()
+    {
+        $h = new Request("https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz", "POST");
+        $h->setBasicAuthUser("admin");
+        $h->setBasicAuthPass("adm1n");
+        $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz");
+        $h->setPostParameters(array("approval" => "approve"));
+
+        $response = $this->service->run($h);
+        $this->assertEquals(302, $response->getStatusCode());
+        //$this->assertEquals('', $response->getHeader("Location"));
+    }
+
+    public function testPostAuthorizeCodeClientReject()
+    {
+        $h = new Request("https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz", "POST");
+        $h->setBasicAuthUser("admin");
+        $h->setBasicAuthPass("adm1n");
+        $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz");
+        $h->setPostParameters(array("approval" => "reject"));
+
+        $response = $this->service->run($h);
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals(
+            'https://example.org/callback?error=access_denied&error_description=not+authorized+by+resource+owner&state=xyz',
+            $response->getHeader("Location")
+        );
+    }
+
 #    public function testPostAuthorize()
 #    {
 #        $h = new Request("https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz", "POST");
 #        $h->setBasicAuthUser("admin");
 #        $h->setBasicAuthPass("adm1n");
 #        $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz");
-#        $h->setPostParameters(array("approval" => "approve", "scope" => array("read")));
+#        $h->setPostParameters(array("approval" => "approve"));
 #
 #        $response = $this->service->run($h);
 #        $this->assertEquals(302, $response->getStatusCode());
