@@ -2,7 +2,7 @@
 %global github_name      php-oauth-as
 
 Name:       php-oauth-as
-Version:    0.2.1
+Version:    0.2.2
 Release:    1%{?dist}
 Summary:    OAuth 2.0 Authorization Server written in PHP
 
@@ -110,39 +110,11 @@ fi
 %doc CHANGES.md UPGRADING.md README.md agpl-3.0.txt composer.json docs/ config/
 
 %changelog
+* Sat Feb 14 2015 François Kooman <fkooman@tuxed.net> - 0.2.2-1
+- update to 0.2.2
+
 * Thu Feb 12 2015 François Kooman <fkooman@tuxed.net> - 0.2.1-1
 - update to 0.2.1
 
 * Wed Feb 11 2015 François Kooman <fkooman@tuxed.net> - 0.2.0-1
 - update to 0.2.0
-
-* Wed Dec 17 2014 François Kooman <fkooman@tuxed.net> - 0.1.8-1
-- update to 0.1.8
-
-* Wed Oct 01 2014 François Kooman <fkooman@tuxed.net> - 0.1.7-1
-- update to 0.1.7
-
-* Wed Oct 01 2014 François Kooman <fkooman@tuxed.net> - 0.1.6-1
-- update to 0.1.6
-
-* Wed Sep 24 2014 François Kooman <fkooman@tuxed.net> - 0.1.5-1
-- update to 0.1.5
-
-* Mon Sep 22 2014 François Kooman <fkooman@tuxed.net> - 0.1.4-1
-- update to 0.1.4
-
-* Tue Sep 16 2014 François Kooman <fkooman@tuxed.net> - 0.1.3-1
-- update to 0.1.3
-
-* Mon Sep 01 2014 François Kooman <fkooman@tuxed.net> - 0.1.2-1
-- update to 0.1.2
-
-* Sun Aug 31 2014 François Kooman <fkooman@tuxed.net> - 0.1.1-3
-- fix the autoloader to check both pearDir and vendorDir for CentOS 7
-  compatibility
-
-* Sat Aug 30 2014 François Kooman <fkooman@tuxed.net> - 0.1.1-2
-- fix wrong basedir in autoload file
-
-* Sat Aug 30 2014 François Kooman <fkooman@tuxed.net> - 0.1.1-1
-- initial package
