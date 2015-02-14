@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once dirname(__DIR__)."/vendor/autoload.php";
+require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\PdoStorage;
@@ -32,7 +32,7 @@ set_error_handler(
 
 try {
     $iniReader = IniReader::fromFile(
-        dirname(__DIR__)."/config/oauth.ini"
+        dirname(__DIR__).'/config/oauth.ini'
     );
 
     $db = new PDO(

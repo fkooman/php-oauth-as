@@ -43,16 +43,16 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
         $this->storage->addClient(
             new ClientData(
                 array(
-                    "id" => "testclient",
-                    "name" => "Simple Test Client",
-                    "description" => "Client for unit testing",
-                    "secret" => null,
-                    "icon" => null,
-                    "allowed_scope" => "read",
-                    "disable_user_consent" => false,
-                    "contact_email" => "foo@example.org",
-                    "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
-                    "type" => "token"
+                    'id' => 'testclient',
+                    'name' => 'Simple Test Client',
+                    'description' => 'Client for unit testing',
+                    'secret' => null,
+                    'icon' => null,
+                    'allowed_scope' => 'read',
+                    'disable_user_consent' => false,
+                    'contact_email' => 'foo@example.org',
+                    'redirect_uri' => 'http://localhost/php-oauth/unit/test.html',
+                    'type' => 'token'
                 )
             )
         );
@@ -60,16 +60,16 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
         $this->storage->addClient(
             new ClientData(
                 array(
-                    "id" => "testcodeclient",
-                    "name" => "Simple Test Client for Authorization Code Profile",
-                    "description" => "Client for unit testing",
-                    "secret" => 'abcdef',
-                    "icon" => null,
-                    "allowed_scope" => "read write foo bar foobar",
-                    "disable_user_consent" => false,
-                    "contact_email" => null,
-                    "redirect_uri" => "http://localhost/php-oauth/unit/test.html",
-                    "type" => "code"
+                    'id' => 'testcodeclient',
+                    'name' => 'Simple Test Client for Authorization Code Profile',
+                    'description' => 'Client for unit testing',
+                    'secret' => 'abcdef',
+                    'icon' => null,
+                    'allowed_scope' => 'read write foo bar foobar',
+                    'disable_user_consent' => false,
+                    'contact_email' => null,
+                    'redirect_uri' => 'http://localhost/php-oauth/unit/test.html',
+                    'type' => 'code'
                 )
             )
         );

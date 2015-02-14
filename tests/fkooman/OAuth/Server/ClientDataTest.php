@@ -25,16 +25,16 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
     public static function validProviderFromArray()
     {
         return array(
-            array('foo', "bar", "code", "http://xyz", "Foo", "foo", "http://x/a.png", "Description", "f@example.org"),
+            array('foo', 'bar', 'code', 'http://xyz', 'Foo', 'foo', 'http://x/a.png', 'Description', 'f@example.org'),
         );
     }
 
     public static function invalidProviderFromArray()
     {
         return array(
-            array('foo', "bar", "code", "http://xyz", "Foo", "√", null, null, null, "scope token contains invalid characters"),
-            array('foo', "bar", "code", "http://xyz", "Foo", "foo", "x", null, null, "icon must be valid URL with path"),
-            array('foo', "bar", "code", "http://xyz", "Foo", "foo", "http://x/a.png", "Description", "nomail", "contact_email should be valid email address"),
+            array('foo', 'bar', 'code', 'http://xyz', 'Foo', '√', null, null, null, 'scope token contains invalid characters'),
+            array('foo', 'bar', 'code', 'http://xyz', 'Foo', 'foo', 'x', null, null, 'icon must be valid URL with path'),
+            array('foo', 'bar', 'code', 'http://xyz', 'Foo', 'foo', 'http://x/a.png', 'Description', 'nomail', 'contact_email should be valid email address'),
         );
     }
 
@@ -43,7 +43,19 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
      */
     public function testValidFromArray($id, $secret, $type, $redirectUri, $name, $allowedScope, $icon, $description, $contactEmail)
     {
-        $c = new ClientData(array("id" => $id, "secret" => $secret, "redirect_uri" => $redirectUri, "name" => $name, 'type' => $type, "allowed_scope" => $allowedScope, "icon" => $icon, "description" => $description, "contact_email" => $contactEmail));
+        $c = new ClientData(
+            array(
+                'id' => $id,
+                'secret' => $secret,
+                'redirect_uri' => $redirectUri,
+                'name' => $name,
+                'type' => $type,
+                'allowed_scope' => $allowedScope,
+                'icon' => $icon,
+                'description' => $description,
+                'contact_email' => $contactEmail
+            )
+        );
         $this->assertEquals($id, $c->getId());
         $this->assertEquals($secret, $c->getSecret());
         $this->assertEquals($redirectUri, $c->getRedirectUri());
@@ -61,7 +73,19 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
     public function testInvalidFromArray($id, $secret, $type, $redirectUri, $name, $allowedScope, $icon, $description, $contactEmail, $exceptionMessage)
     {
         try {
-            $c = new ClientData(array("id" => $id, "secret" => $secret, "type" => $type, "redirect_uri" => $redirectUri, "name" => $name, "allowed_scope" => $allowedScope, "icon" => $icon, "description" => $description, "contact_email" => $contactEmail));
+            $c = new ClientData(
+                array(
+                    'id' => $id,
+                    'secret' => $secret,
+                    'redirect_uri' => $redirectUri,
+                    'name' => $name,
+                    'type' => $type,
+                    'allowed_scope' => $allowedScope,
+                    'icon' => $icon,
+                    'description' => $description,
+                    'contact_email' => $contactEmail
+                )
+            );
             $this->assertTrue(false);
         } catch (InvalidArgumentException $e) {
             $this->assertEquals($exceptionMessage, $e->getMessage());
@@ -74,7 +98,7 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
      */
     public function testBrokenFromArray()
     {
-        new ClientData(array("foo" => "bar"));
+        new ClientData(array('foo' => 'bar'));
     }
 
     public function testVerifyRedirectUriNoRegExp()

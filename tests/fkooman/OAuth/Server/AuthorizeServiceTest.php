@@ -40,11 +40,11 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
         $this->storage->addClient(
             new ClientData(
                 array(
-                    "id" => "token_client",
-                    "name" => "Token Client",
-                    "allowed_scope" => "read",
-                    "redirect_uri" => "https://example.org/callback.html",
-                    "type" => "token"
+                    'id' => 'token_client',
+                    'name' => 'Token Client',
+                    'allowed_scope' => 'read',
+                    'redirect_uri' => 'https://example.org/callback.html',
+                    'type' => 'token'
                 )
             )
         );
@@ -52,12 +52,12 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
         $this->storage->addClient(
             new ClientData(
                 array(
-                    "id" => "code_client",
-                    "name" => "Code Client",
-                    "secret" => "foobar",
-                    "allowed_scope" => "read",
-                    "redirect_uri" => "https://example.org/callback",
-                    "type" => "code"
+                    'id' => 'code_client',
+                    'name' => 'Code Client',
+                    'secret' => 'foobar',
+                    'allowed_scope' => 'read',
+                    'redirect_uri' => 'https://example.org/callback',
+                    'type' => 'code'
                 )
             )
         );
@@ -85,9 +85,9 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 
     public function testGetAuthorizeToken()
     {
-        $h = new Request("https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz", "GET");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
+        $h = new Request('https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz', 'GET');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('text/html', $response->getContentType());
@@ -100,9 +100,9 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
         // we already store an approval so we should get a redirect
         $this->storage->addApproval('token_client', 'admin', 'read', null);
 
-        $h = new Request("https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz", "GET");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
+        $h = new Request('https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz', 'GET');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(
@@ -116,9 +116,9 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
         // we already store an approval so we should get a redirect
         $this->storage->addApproval('code_client', 'admin', 'read', '12345');
 
-        $h = new Request("https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz", "GET");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
+        $h = new Request('https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz', 'GET');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(
@@ -129,98 +129,98 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 
     public function testGetAuthorizeCode()
     {
-        $h = new Request("https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz", "GET");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
+        $h = new Request('https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz', 'GET');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testPostAuthorizeTokenClientApprove()
     {
-        $h = new Request("https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz", "POST");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
-        $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz");
-        $h->setPostParameters(array("approval" => "approve"));
+        $h = new Request('https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz', 'POST');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
+        $h->setHeader('HTTP_REFERER', 'https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz');
+        $h->setPostParameters(array('approval' => 'approve'));
 
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
-        //$this->assertEquals('', $response->getHeader("Location"));
+        //$this->assertEquals('', $response->getHeader('Location'));
     }
 
     public function testPostAuthorizeTokenClientReject()
     {
-        $h = new Request("https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz", "POST");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
-        $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz");
-        $h->setPostParameters(array("approval" => "reject"));
+        $h = new Request('https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz', 'POST');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
+        $h->setHeader('HTTP_REFERER', 'https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz');
+        $h->setPostParameters(array('approval' => 'reject'));
 
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(
             'https://example.org/callback.html#error=access_denied&error_description=not+authorized+by+resource+owner&state=xyz',
-            $response->getHeader("Location")
+            $response->getHeader('Location')
         );
     }
 
     public function testPostAuthorizeCodeClientApprove()
     {
-        $h = new Request("https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz", "POST");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
-        $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz");
-        $h->setPostParameters(array("approval" => "approve"));
+        $h = new Request('https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz', 'POST');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
+        $h->setHeader('HTTP_REFERER', 'https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz');
+        $h->setPostParameters(array('approval' => 'approve'));
 
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
-        //$this->assertEquals('', $response->getHeader("Location"));
+        //$this->assertEquals('', $response->getHeader('Location'));
     }
 
     public function testPostAuthorizeCodeClientReject()
     {
-        $h = new Request("https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz", "POST");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
-        $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz");
-        $h->setPostParameters(array("approval" => "reject"));
+        $h = new Request('https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz', 'POST');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
+        $h->setHeader('HTTP_REFERER', 'https://auth.example.org?client_id=code_client&response_type=code&scope=read&state=xyz');
+        $h->setPostParameters(array('approval' => 'reject'));
 
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(
             'https://example.org/callback?error=access_denied&error_description=not+authorized+by+resource+owner&state=xyz',
-            $response->getHeader("Location")
+            $response->getHeader('Location')
         );
     }
 
 #    public function testPostAuthorize()
 #    {
-#        $h = new Request("https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz", "POST");
-#        $h->setBasicAuthUser("admin");
-#        $h->setBasicAuthPass("adm1n");
-#        $h->setHeader("HTTP_REFERER", "https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz");
-#        $h->setPostParameters(array("approval" => "approve"));
+#        $h = new Request('https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz', 'POST');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
+#        $h->setHeader('HTTP_REFERER', 'https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz');
+#        $h->setPostParameters(array('approval' => 'approve'));
 #
 #        $response = $this->service->run($h);
 #        $this->assertEquals(302, $response->getStatusCode());
-#        $this->assertRegexp("|^http://localhost/php-oauth/unit/test.html#access_token=[a-zA-Z0-9]+&expires_in=5&token_type=bearer&scope=read&state=xyz$|", $response->getHeader("Location"));
+#        $this->assertRegexp('|^http://localhost/php-oauth/unit/test.html#access_token=[a-zA-Z0-9]+&expires_in=5&token_type=bearer&scope=read&state=xyz$|', $response->getHeader('Location'));
 
 #        // now a get should immediately return the access token redirect...
-#        $h = new Request("https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=abc", "GET");
-#        $h->setBasicAuthUser("admin");
-#        $h->setBasicAuthPass("adm1n");
+#        $h = new Request('https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=abc', 'GET');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
 
 #        $response = $this->service->run($h);
 #        $this->assertEquals(302, $response->getStatusCode());
-#        $this->assertRegexp("|^http://localhost/php-oauth/unit/test.html#access_token=[a-zA-Z0-9]+&expires_in=5&token_type=bearer&scope=read&state=abc$|", $response->getHeader("Location"));
+#        $this->assertRegexp('|^http://localhost/php-oauth/unit/test.html#access_token=[a-zA-Z0-9]+&expires_in=5&token_type=bearer&scope=read&state=abc$|', $response->getHeader('Location'));
 #    }
 
     public function testUnsupportedScope()
     {
-        $h = new Request("https://auth.example.org?client_id=token_client&response_type=token&scope=foo&state=xyz", "GET");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
+        $h = new Request('https://auth.example.org?client_id=token_client&response_type=token&scope=foo&state=xyz', 'GET');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals('https://example.org/callback.html#error=invalid_scope&error_description=not+authorized+to+request+this+scope&state=xyz', $response->getHeader('Location'));
@@ -232,9 +232,9 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testUnregisteredClient()
     {
-        $h = new Request("https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz", "GET");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
+        $h = new Request('https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz', 'GET');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
         $this->service->run($h);
     }
 
@@ -244,9 +244,9 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidRequestMethod()
     {
-        $h = new Request("https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz", "DELETE");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
+        $h = new Request('https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz', 'DELETE');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
         $this->service->run($h);
     }
 
@@ -256,11 +256,11 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testCSRFAttack()
     {
-        $h = new Request("https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz", "POST");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
-        $h->setHeader("HTTP_REFERER", "https://evil.site.org/xyz");
-        $h->setPostParameters(array("approval" => "approve"));
+        $h = new Request('https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=xyz', 'POST');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
+        $h->setHeader('HTTP_REFERER', 'https://evil.site.org/xyz');
+        $h->setPostParameters(array('approval' => 'approve'));
         
         $this->service->run($h);
     }
@@ -271,9 +271,9 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testMissingClientId()
     {
-        $h = new Request("https://auth.example.org", "GET");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
+        $h = new Request('https://auth.example.org', 'GET');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
         
         $this->service->run($h);
     }
@@ -284,9 +284,9 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testMissingResponseType()
     {
-        $h = new Request("https://auth.example.org?client_id=token_client", "GET");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
+        $h = new Request('https://auth.example.org?client_id=token_client', 'GET');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
 
         $this->service->run($h);
     }
@@ -297,19 +297,24 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testWrongRedirectUri()
     {
-        $u = urlencode("http://wrong.example.org/foo");
-        $h = new Request("https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=abc&redirect_uri=$u", "GET");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
+        $h = new Request(
+            sprintf(
+                'https://auth.example.org?client_id=token_client&response_type=token&scope=read&state=abc&redirect_uri=%s',
+                urlencode('http://wrong.example.org/foo')
+            ),
+            'GET'
+        );
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
         
         $this->service->run($h);
     }
 
     public function testWrongClientType()
     {
-        $h = new Request("https://auth.example.org?client_id=token_client&scope=read&response_type=code&state=foo", "GET");
-        $h->setBasicAuthUser("admin");
-        $h->setBasicAuthPass("adm1n");
+        $h = new Request('https://auth.example.org?client_id=token_client&scope=read&response_type=code&state=foo', 'GET');
+        $h->setBasicAuthUser('admin');
+        $h->setBasicAuthPass('adm1n');
         
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
