@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.2.2
+- no longer provide CORS headers on introspect endpoint in httpd 
+  config as clients should never use this endpoint
 - restructure code to use a separate IO class for random number and time
   handling
 - increase code coverage by writing better unit tests

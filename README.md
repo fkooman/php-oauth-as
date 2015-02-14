@@ -2,38 +2,27 @@
 
 # Introduction
 This is an OAuth 2.0 Authorization Server written in PHP that is easy to 
-integrate with your existing REST services, written in any language. It will
-require minimal changes to your existing software.
+integrate with your existing REST services, whether or not they are written in
+PHP. It will require minimal changes to your existing software.
 
 Part of the development of this software was made possible by 
 [SURFnet](https://www.surfnet.nl).
 
-# License
-Licensed under the GNU Affero General Public License as published by the Free 
-Software Foundation, either version 3 of the License, or (at your option) any 
-later version.
-
-    https://www.gnu.org/licenses/agpl.html
-
-This roughly means that if you use this software in your service you need to 
-make the source code available to the users of your service (if you modify
-it). Refer to the license for the exact details.
-
 # Features
-* PDO database backend support
 * Authorization Code and Implicit Grant support
-* `BasicAuthenication` Backend (configured in configuration file)
+* `BasicAuthenication` Backend (using username/password)
 * `MellonAuthentication` Backend (SAML)
 * `SimpleSamlAuthentication` Backend (SAML) **DEPRECATED** use 
   `MellonAuthentication` instead
+* PDO database backend support
 * Token Introspection for Resource Servers
-* Management API to manage Client Registration and Authorizations
+* Management API to manage client registration and authorizations
 
 # Screenshot
 ![oauth_consent](https://github.com/fkooman/php-oauth-as/raw/master/docs/oauth_consent.png)
 
 # Installation
-Please use the RPM packages for actually running it on a server. The RPM 
+The prefered method of installation is to use the RPM packages. The RPM 
 packages can for now be found in the 
 [repository](https://copr.fedoraproject.org/coprs/fkooman/php-oauth/). For 
 setting up a development environment, see below.
@@ -50,17 +39,26 @@ Restart Apache:
     $ sudo service httpd restart
 
 You can now configure the OAuth server in `/etc/php-oauth-as/oauth.ini` and set
-the entitlements in `/etc/php-oauth-as/entitlements.json`. After this is done
-you can initialize the database and add some clients:
+up the entitlements in `/etc/php-oauth-as/entitlements.json` for access to the
+management API. After this is done you can initialize the database and add some 
+clients:
 
     $ sudo -u apache php-oauth-as-initdb
+    $ sudo -u apache php-oauth-as-register clients.json
+
+The `clients.json` file contains some information on the installation clients
+you want to install. These could for instance contain the client management and 
+authorization management clients. See below for more information on these 
+clients. If you want to use the hosted management clients on `php-oauth.net` 
+you can run the following:
+
     $ sudo -u apache php-oauth-as-register https://www.php-oauth.net/app/config.json
 
-Now you can use the management applications on 
+This is actually secure because the access token used to access the API never
+leaves the browser. Now you can use the management applications on 
 [https://www.php-oauth.net](https://www.php-oauth.net) to manage your server on
-`https://localhost/php-oauth-as` or install them yourself from the repository,
-see below. Using these management applications you can register new clients 
-and manage the authorizations you gave to clients.
+`https://localhost/php-oauth-as`. The default for the installed RPM packages, 
+and the development environment below.
 
 # Development Requirements
 On Fedora/CentOS:
@@ -69,8 +67,8 @@ On Fedora/CentOS:
 
 You also need to download [Composer](https://getcomposer.org/).
 
-The software is being tested with Fedora 20, CentOS 6 and CentOS 7 and should 
-also work on RHEL 6 and RHEL 7.
+The software is being developed on Fedora 21, but should run on CentOS 6 and 
+CentOS 7 and should also work on RHEL 6 and RHEL 7.
 
 # Development Installation
 *NOTE*: in the `chown` line you need to use your own user account name!
@@ -143,11 +141,6 @@ This is the Apache configuration you use for development. Place it in
             Header set Access-Control-Allow-Methods "POST, PUT, GET, DELETE, OPTIONS"
         </FilesMatch>
 
-        <FilesMatch "introspect.php">
-            Header set Access-Control-Allow-Origin "*"
-            Header set Access-Control-Allow-Methods "GET, OPTIONS"
-        </FilesMatch>
-
         <FilesMatch "authorize.php">
             # CSP: https://developer.mozilla.org/en-US/docs/Security/CSP
             Header set Content-Security-Policy "default-src 'self'"
@@ -173,7 +166,7 @@ HTML and also point to an alternative CSS style to customize it for your
 particular API service.
 
 # Authentication
-There are currently two plugins provided for user authentication:
+There are currently three plugins provided for user authentication:
 
 * `BasicAuthentication` - Simple static username/password authentication 
   configured through `config/oauth.ini` (**DEFAULT**)
@@ -183,7 +176,7 @@ There are currently two plugins provided for user authentication:
 You can configure which plugin to use by modifying the 
 `authenticationPlugin` setting in `config/oauth.ini`.
 
-You do need to configure these authentication backend separately. See the 
+You do need to configure these authentication backends separately. See the 
 respective documentation for those projects.
 
 ## Entitlements
@@ -202,9 +195,8 @@ all users through the API while regular users can only access their own data.
 The API for managing the authorization server supports the 
 `http://php-oauth.net/entitlement/manage` entitlement in order to be able to 
 modify application registrations. If for instance the authentication backend 
-supports the users `admin`, `fkooman` and `demo` and you want to give the user
-with the ID `admin` the entitlement to manage the application registrations, 
-you would put that in `config/entitlements.json`:
+has a user `admin` and you want to give this user the entitlement to manage the 
+application registrations, you would put that in `config/entitlements.json`:
 
     {
         "admin": [
@@ -226,9 +218,9 @@ any (static) web server. See the accompanying READMEs for more information.
 For your convenience they are hosted on 
 [https://www.php-oauth.net](https://www.php-oauth.net) so you do not need to 
 setup the applications yourself and can immediately use the hosted versions. 
-Just specify the endpoint to your Authorization Server to get started. They 
-also work with the Docker image, you can then use 
-`https://localhost/php-oauth-as/` as the URL to connect to.
+The hosted version points to `https://localhost/php-oauth-as/` as the base URL,
+so you can (for now) only use them for development purposes or the Docker 
+image.
 
 # Resource Servers
 If you are writing a resource server (RS) an API is available to verify the 
@@ -273,3 +265,14 @@ A plugin for `fkooman/rest`, `fkooman/rest-plugin-bearer` is available to
 integrate with this OAuth 2.0 AS service using 
 [Composer](https://getcomposer.org). Or see the project 
 [site](https://github.com/fkooman/php-lib-rest-plugin-bearer).
+
+# License
+Licensed under the GNU Affero General Public License as published by the Free 
+Software Foundation, either version 3 of the License, or (at your option) any 
+later version.
+
+    https://www.gnu.org/licenses/agpl.html
+
+This roughly means that if you use this software in your service you need to 
+make the source code available to the users of your service (if you modify
+it). Refer to the license for the exact details.

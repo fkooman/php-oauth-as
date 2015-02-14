@@ -1,7 +1,7 @@
 # Upgrading
 
-## 0.1.8 to 0.2.0
-In order to upgrade from 0.1.8 to 0.2.0 a number of things need to change. The
+## 0.1.8 to 0.2.x
+In order to upgrade from 0.1.8 to 0.2.x a number of things need to change. The
 most important are the configuration file changes and the database changes.
 
 The configuration file changes are easy, but the database changes are more
