@@ -8,7 +8,7 @@ The configuration file changes are easy, but the database changes are more
 extensive and require some fiddling.
 
 If you run from a git checkout you also need to run 
-`php /path/to/composer.phar upgrade` after checking out the new version.
+`php /path/to/composer.phar update` after checking out the new version.
 
 ### Configuration
 The following field are removed from the configuration file and no longer have
