@@ -207,6 +207,17 @@ application registrations, you would put that in `config/entitlements.json`:
 Now, whenever the `admin` user successfully authenticates it can manage clients
 through the API. Users with other IDs will not be able to manage the clients.
 
+# Housekeeping
+In order to delete stale tokens a housekeeping script is available, 
+`php-oauth-as-housekeeping`. It should be ran periodically using `crontab(5)` 
+or a similar mechanism. For example, to run it every night 5 minutes after 
+midnight use the following as a cron entry:
+
+    5 0 * * *     /usr/bin/php-oauth-as-housekeeping
+
+When using SQlite this script should be run as the same user as the web server,
+or as root (not recommended).
+
 # Management Clients
 There are two management clients available:
 
