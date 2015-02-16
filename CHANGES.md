@@ -2,14 +2,6 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased][unreleased]
-### Added
-### Changed
-### Removed
-### Deprecated
-### Fixed
-### Security
-
 ## [0.2.2] - 2015-02-15
 ### Added
 - include support to allow clients to be automatically approved (issue #24)
@@ -101,7 +93,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.1.1] - 2014-08-30
 
-## [0.1.0] - 2014-08-12
+## 0.1.0 - 2014-08-12
 
 [unreleased]: https://github.com/fkooman/php-oauth-as/compare/0.2.2...HEAD
 [0.2.2]: https://github.com/fkooman/php-oauth-as/compare/0.2.1...0.2.2
