@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.3] - 2015-02-17
+### Changed
+- determine the introspect URI automatically for use by the `web/api.php` 
+  script instead of hard coding `http://localhost/php-oauth-as/introspect.php`
+
 ## [0.2.2] - 2015-02-15
 ### Added
 - include support to allow clients to be automatically approved (issue #24)

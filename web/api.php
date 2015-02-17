@@ -23,6 +23,8 @@ use fkooman\OAuth\Server\PdoStorage;
 use fkooman\Http\Exception\HttpException;
 use fkooman\Http\Exception\InternalServerErrorException;
 use fkooman\Rest\Plugin\Bearer\BearerAuthentication;
+use fkooman\Http\Request;
+use fkooman\Http\IncomingRequest;
 
 set_error_handler(
     function ($errno, $errstr, $errfile, $errline) {
@@ -45,9 +47,19 @@ try {
         new PdoStorage($db)
     );
 
+    // we want to automatically determine the 'introspect.php' URI based on
+    // the current request URI. It is a bit of a hack, but it works assuming
+    // a valid TLS certificate is configured on the introspect endpoint in
+    // case the original request URI is over TLS...
+    $request = Request::fromIncomingRequest(
+        new IncomingRequest()
+    );
+    $baseUri = $request->getRequestUri()->getBaseUri();
+    $introspectUri = $baseUri . $request->getAppRoot() . 'introspect.php';
+
     $apiService->registerBeforeEachMatchPlugin(
         new BearerAuthentication(
-            'http://localhost/php-oauth-as/introspect.php',
+            $introspectUri,
             'OAuth Management API'
         )
     );
