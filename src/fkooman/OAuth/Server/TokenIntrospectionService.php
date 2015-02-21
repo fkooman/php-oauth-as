@@ -51,19 +51,19 @@ class TokenIntrospectionService extends Service
         $this->get(
             '/',
             function (Request $request) use ($compatThis) {
-                return $compatThis->getTokenIntrospection($request->getQueryParameter('token'));
+                return $compatThis->getTokenIntrospection($request, $request->getQueryParameter('token'));
             }
         );
 
         $this->post(
             '/',
             function (Request $request) use ($compatThis) {
-                return $compatThis->getTokenIntrospection($request->getPostParameter('token'));
+                return $compatThis->getTokenIntrospection($request, $request->getPostParameter('token'));
             }
         );
     }
 
-    public function getTokenIntrospection($tokenValue)
+    public function getTokenIntrospection(Request $request, $tokenValue)
     {
         if (null === $tokenValue) {
             throw new BadRequestException('invalid_token', 'the token parameter is missing');
@@ -89,13 +89,15 @@ class TokenIntrospectionService extends Service
                 'exp' => intval($accessToken['issue_time'] + $accessToken['expires_in']),
                 'iat' => intval($accessToken['issue_time']),
                 'scope' => $accessToken['scope'],
+                'iss' => $request->getRequestUri()->getBaseUri() . $request->getAppRoot(),
                 'client_id' => $accessToken['client_id'],
                 'sub' => $accessToken['resource_owner_id'],
+                'user_id' => $accessToken['resource_owner_id'],
                 'token_type' => 'bearer'
             );
 
             // as long as we have no RS registration we cannot set the audience...
-            // $tokenInfo['aud' => 'foo';
+            // $tokenInfo['aud'] => 'foo';
 
             // add proprietary 'x-entitlement'
             $entitlement = $this->entitlements->getEntitlement($accessToken['resource_owner_id']);

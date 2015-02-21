@@ -82,6 +82,8 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
                 'scope' => 'foo bar',
                 'client_id' => 'testclient',
                 'sub' => 'fkooman',
+                'user_id' => 'fkooman',
+                'iss' => 'https://auth.example.org',
                 'token_type' => 'bearer',
                 'x-entitlement' => 'urn:x-foo:service:access urn:x-bar:privilege:admin'
             ),
@@ -103,6 +105,8 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
                 'scope' => 'foo bar',
                 'client_id' => 'testclient',
                 'sub' => 'fkooman',
+                'user_id' => 'fkooman',
+                'iss' => 'https://auth.example.org',
                 'token_type' => 'bearer',
                 'x-entitlement' => 'urn:x-foo:service:access urn:x-bar:privilege:admin'
             ),
@@ -124,6 +128,8 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
                 'scope' => 'a b c',
                 'client_id' => 'testclient',
                 'sub' => 'frko',
+                'user_id' => 'frko',
+                'iss' => 'https://auth.example.org',
                 'token_type' => 'bearer'
             ),
             $response->getContent()

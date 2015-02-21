@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [unreleased] - unreleased
+### Changed
+- update to `draft-ietf-oauth-introspection-05`, does not break compatibility
+
 ## [0.2.3] - 2015-02-17
 ### Changed
 - determine the introspect URI automatically for use by the `web/api.php` 
@@ -100,7 +104,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 0.1.0 - 2014-08-12
 
-[unreleased]: https://github.com/fkooman/php-oauth-as/compare/0.2.2...HEAD
+[unreleased]: https://github.com/fkooman/php-oauth-as/compare/0.2.3...HEAD
+[0.2.3]: https://github.com/fkooman/php-oauth-as/compare/0.2.2...0.2.3
 [0.2.2]: https://github.com/fkooman/php-oauth-as/compare/0.2.1...0.2.2
 [0.2.1]: https://github.com/fkooman/php-oauth-as/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/fkooman/php-oauth-as/compare/0.1.8...0.2.0
