@@ -224,4 +224,21 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
         );
         $api->run($h);
     }
+
+
+    /**
+     * @expectedException fkooman\Http\Exception\BadRequestException
+     * @expectedExceptionMessage invalid client data
+     */
+    public function testAddNullApplication()
+    {
+        $api = new ApiService($this->storage);
+        $api->registerBeforeEachMatchPlugin($this->bearerAuthenticationStub);
+
+        $h = new Request('http://www.example.org/api.php');
+        $h->setRequestMethod('POST');
+        $h->setPathInfo('/applications/');
+        $h->setContent(null);
+        $api->run($h);
+    }
 }

@@ -56,8 +56,11 @@ class ClientData
     /** @var string */
     private $contactEmail;
 
-    public function __construct(array $clientData)
+    public function __construct($clientData)
     {
+        if (null === $clientData || !is_array($clientData)) {
+            throw new InvalidArgumentException('data must be array');
+        }
         $supportedFields = array(
             'id',
             'redirect_uri',
