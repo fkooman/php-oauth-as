@@ -64,7 +64,7 @@ try {
         )
     );
 
-    $apiService->run()->sendResponse();
+    $apiService->run($request)->sendResponse();
 } catch (Exception $e) {
     if ($e instanceof HttpException) {
         error_log(
