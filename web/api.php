@@ -25,6 +25,7 @@ use fkooman\Http\Exception\InternalServerErrorException;
 use fkooman\Rest\Plugin\Bearer\BearerAuthentication;
 use fkooman\Http\Request;
 use fkooman\Http\IncomingRequest;
+use Guzzle\Http\Client;
 
 set_error_handler(
     function ($errno, $errstr, $errfile, $errline) {
@@ -47,6 +48,16 @@ try {
         new PdoStorage($db)
     );
 
+    // HTTP CLIENT
+    $disableServerCertCheck = $iniReader->v('disableServerCertCheck', false, false);
+
+    $client = new Client(
+        '',
+        array(
+            'ssl.certificate_authority' => !$disableServerCertCheck
+        )
+    );
+
     // we want to automatically determine the 'introspect.php' URI based on
     // the current request URI. It is a bit of a hack, but it works assuming
     // a valid TLS certificate is configured on the introspect endpoint in
@@ -54,32 +65,17 @@ try {
     $request = Request::fromIncomingRequest(
         new IncomingRequest()
     );
-    $baseUri = $request->getRequestUri()->getBaseUri();
-    $introspectUri = $baseUri . $request->getAppRoot() . 'introspect.php';
 
-    $apiService->registerBeforeEachMatchPlugin(
+    $apiService->registerOnMatchPlugin(
         new BearerAuthentication(
-            $introspectUri,
-            'OAuth Management API'
+            dirname($request->getAbsRoot()) . '/introspect.php',
+            'OAuth Management API',
+            $client
         )
     );
 
     $apiService->run($request)->sendResponse();
 } catch (Exception $e) {
-    if ($e instanceof HttpException) {
-        error_log(
-            sprintf(
-                'M: %s, D: %s',
-                $e->getMessage(),
-                $e->getDescription()
-            )
-        );
-        $response = $e->getJsonResponse();
-    } else {
-        // we catch all other (unexpected) exceptions and return a 500
-        error_log($e->getTraceAsString());
-        $e = new InternalServerErrorException($e->getMessage());
-        $response = $e->getJsonResponse();
-    }
-    $response->sendResponse();
+    error_log($e->getMessage());
+    ApiService::handleException($e)->sendResponse();
 }

@@ -53,26 +53,10 @@ try {
     );
 
     $tokenService = new TokenService($pdoStorage, null, $iniReader->v('accessTokenExpiry'));
-    $tokenService->registerBeforeEachMatchPlugin($basicAuthenticationPlugin);
+    $tokenService->registerOnMatchPlugin($basicAuthenticationPlugin);
 
     $tokenService->run()->sendResponse();
 } catch (Exception $e) {
-    if ($e instanceof HttpException) {
-        error_log(
-            sprintf(
-                'M: %s, D: %s',
-                $e->getMessage(),
-                $e->getDescription()
-            )
-        );
-        $response = $e->getJsonResponse();
-    } else {
-        // we catch all other (unexpected) exceptions and return a 500
-        error_log($e->getTraceAsString());
-        $e = new InternalServerErrorException($e->getMessage());
-        $response = $e->getJsonResponse();
-    }
-    $response->setHeader('Cache-Control', 'no-store');
-    $response->setHeader('Pragma', 'no-cache');
-    $response->sendResponse();
+    error_log($e->getMessage());
+    TokenService::handleException($e)->sendResponse();
 }

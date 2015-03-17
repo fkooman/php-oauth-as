@@ -87,7 +87,7 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
         );
 
         $this->service = new TokenService($this->storage, $ioStub, 5);
-        $this->service->registerBeforeEachMatchPlugin($basicAuthenticationPlugin);
+        $this->service->registerOnMatchPlugin($basicAuthenticationPlugin);
     }
 
     public function testAuthorizationCode()

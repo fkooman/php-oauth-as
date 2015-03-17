@@ -58,7 +58,11 @@ class ApiService extends Service
             function () {
                 return new Response();
             },
-            array('fkooman\Rest\Plugin\Bearer\BearerAuthentication')
+            array(
+                'skipPlugins' => array(
+                    'fkooman\Rest\Plugin\Bearer\BearerAuthentication'
+                )
+            )
         );
 
         $this->post(

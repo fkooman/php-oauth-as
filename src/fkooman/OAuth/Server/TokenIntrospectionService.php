@@ -89,7 +89,7 @@ class TokenIntrospectionService extends Service
                 'exp' => intval($accessToken['issue_time'] + $accessToken['expires_in']),
                 'iat' => intval($accessToken['issue_time']),
                 'scope' => $accessToken['scope'],
-                'iss' => $request->getRequestUri()->getBaseUri() . $request->getAppRoot(),
+                'iss' => $request->getAbsRoot(),
                 'client_id' => $accessToken['client_id'],
                 'sub' => $accessToken['resource_owner_id'],
                 'user_id' => $accessToken['resource_owner_id'],
@@ -107,8 +107,7 @@ class TokenIntrospectionService extends Service
         }
 
         $response = new JsonResponse();
-        $response->setHeader('Cache-Control', 'no-store');
-        $response->setHeader('Pragma', 'no-cache');
+        $response->setHeaders(array('Cache-Control' => 'no-store', 'Pragma' => 'no-cache'));
         $response->setContent($tokenInfo);
         
         return $response;

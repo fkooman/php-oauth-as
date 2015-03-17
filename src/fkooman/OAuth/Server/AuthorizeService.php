@@ -208,7 +208,13 @@ class AuthorizeService extends Service
 
         // CSRF protection
         if ($request->getHeader('HTTP_REFERER') !== $request->getRequestUri()->getUri()) {
-            throw new BadRequestException('CSRF protection triggered');
+            throw new BadRequestException(
+                sprintf(
+                    'CSRF protection triggered. Expected "%s", got "%s"',
+                    $request->getRequestUri()->getUri(),
+                    $request->getHeader('HTTP_REFERER')
+                )
+            );
         }
 
         $clientData = $this->storage->getClient($clientId);

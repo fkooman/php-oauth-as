@@ -18,6 +18,12 @@ entitlementsFile = "/etc/php-oauth-as/entitlements.json"
 ; CONFIGURATION AND USE THE STATE PARAMETER TO KEEP LOCAL STATE
 allowRegExpRedirectUriMatch = false
 
+; Disable the certificate check when contacting the introspection endpoint from
+; the API
+; THIS IS ONLY FOR DEVELOPMENT PURPOSES. DO NOT DISABLE THIS FOR DEPLOYMENT
+; YOU HAVE BEEN WARNED!!!
+;disableServerCertCheck = true
+
 [PdoStorage]
 dsn = "sqlite:/var/lib/php-oauth-as/db.sqlite"
 ;dsn = "mysql:host=localhost;dbname=oauth"

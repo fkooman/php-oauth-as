@@ -50,24 +50,10 @@ try {
         $iniReader->v('accessTokenExpiry'),
         $iniReader->v('allowRegExpRedirectUriMatch')
     );
-    $authorizeService->registerBeforeEachMatchPlugin($authenticationPlugin);
+    $authorizeService->registerOnMatchPlugin($authenticationPlugin);
 
     $authorizeService->run()->sendResponse();
 } catch (Exception $e) {
-    if ($e instanceof HttpException) {
-        error_log(
-            sprintf(
-                'M: %s, D: %s',
-                $e->getMessage(),
-                $e->getDescription()
-            )
-        );
-        $response = $e->getHtmlResponse();
-    } else {
-        // we catch all other (unexpected) exceptions and return a 500
-        error_log($e->getTraceAsString());
-        $e = new InternalServerErrorException($e->getMessage());
-        $response = $e->getHtmlResponse();
-    }
-    $response->sendResponse();
+    error_log($e->getMessage());
+    AuthorizeService::handleException($e)->sendResponse();
 }

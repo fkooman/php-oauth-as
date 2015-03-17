@@ -1,5 +1,13 @@
 # Upgrading
 
+## 0.2.x to 0.3.x
+A new configuration option was added to allow the API script to access the 
+token endpoint without validating the SSL certificate. 
+
+    disableServerCertCheck = true
+
+It defauls to `false`. 
+
 ## 0.1.8 to 0.2.x
 In order to upgrade from 0.1.8 to 0.2.x a number of things need to change. The
 most important are the configuration file changes and the database changes.

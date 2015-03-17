@@ -95,7 +95,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
     public function testRetrieveAuthorizations()
     {
         $api = new ApiService($this->storage);
-        $api->registerBeforeEachMatchPlugin($this->bearerAuthenticationStub);
+        $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
         $h->setPathInfo('/authorizations/');
@@ -124,7 +124,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
     public function testAddAuthorizations()
     {
         $api = new ApiService($this->storage);
-        $api->registerBeforeEachMatchPlugin($this->bearerAuthenticationStub);
+        $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
         $h->setRequestMethod('POST');
@@ -149,7 +149,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
     public function testAddAuthorizationsUnregisteredClient()
     {
         $api = new ApiService($this->storage);
-        $api->registerBeforeEachMatchPlugin($this->bearerAuthenticationStub);
+        $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
         $h->setRequestMethod('POST');
@@ -168,7 +168,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
     public function testGetAuthorization()
     {
         $api = new ApiService($this->storage);
-        $api->registerBeforeEachMatchPlugin($this->bearerAuthenticationStub);
+        $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
         $h->setPathInfo('/authorizations/testclient');
@@ -191,7 +191,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
     public function testDeleteAuthorization()
     {
         $api = new ApiService($this->storage);
-        $api->registerBeforeEachMatchPlugin($this->bearerAuthenticationStub);
+        $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
         $h->setRequestMethod('DELETE');
@@ -205,7 +205,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
     public function testAddApplication()
     {
         $api = new ApiService($this->storage);
-        $api->registerBeforeEachMatchPlugin($this->bearerAuthenticationStub);
+        $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
         $h->setRequestMethod('POST');
@@ -233,7 +233,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
     public function testAddNullApplication()
     {
         $api = new ApiService($this->storage);
-        $api->registerBeforeEachMatchPlugin($this->bearerAuthenticationStub);
+        $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
         $h->setRequestMethod('POST');

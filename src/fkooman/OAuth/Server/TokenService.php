@@ -101,8 +101,7 @@ class TokenService extends Service
         }
 
         $response = new JsonResponse();
-        $response->setHeader('Cache-Control', 'no-store');
-        $response->setHeader('Pragma', 'no-cache');
+        $response->setHeaders(array('Cache-Control' => 'no-store', 'Pragma' => 'no-cache'));
         $response->setContent($accessToken);
 
         return $response;
