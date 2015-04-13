@@ -1,6 +1,9 @@
 # Changes
 
-## 0.3.0 - 2015-xx-xx
+## 0.3.1 - 2015-04-13
+- update `fkooman/rest` and all authentication plugins
+
+## 0.3.0 - 2015-03-17
 - update to `draft-ietf-oauth-introspection-05`, does not break compatibility
 - update to `fkooman/rest` 0.7.4, update all code
 
