@@ -55,10 +55,6 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
         $storage->storeAccessToken('foo', 1111111111, 'testclient', 'fkooman', 'foo bar', 1234);
         $storage->storeAccessToken('bar', 1111111111, 'testclient', 'frko', 'a b c', 1234);
 
-        $entitlements = new Entitlements(
-            dirname(dirname(dirname(__DIR__))) . '/data/entitlements.json'
-        );
-
         $ioStub = $this->getMockBuilder('fkooman\OAuth\Server\IO')->getMock();
         $ioStub->method('getRandomHex')->will(
             $this->onConsecutiveCalls(
@@ -66,7 +62,7 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
             )
         );
         $ioStub->method('getTime')->willReturn(1111111111);
-        $this->service = new TokenIntrospectionService($storage, $entitlements, $ioStub);
+        $this->service = new TokenIntrospectionService($storage, $ioStub);
     }
 
     public function testGetTokenIntrospection()
@@ -84,8 +80,7 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
                 'sub' => 'fkooman',
                 'user_id' => 'fkooman',
                 'iss' => 'https://auth.example.org',
-                'token_type' => 'bearer',
-                'x-entitlement' => 'urn:x-foo:service:access urn:x-bar:privilege:admin'
+                'token_type' => 'bearer'
             ),
             $response->getContent()
         );
@@ -107,8 +102,7 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
                 'sub' => 'fkooman',
                 'user_id' => 'fkooman',
                 'iss' => 'https://auth.example.org',
-                'token_type' => 'bearer',
-                'x-entitlement' => 'urn:x-foo:service:access urn:x-bar:privilege:admin'
+                'token_type' => 'bearer'
             ),
             $response->getContent()
         );

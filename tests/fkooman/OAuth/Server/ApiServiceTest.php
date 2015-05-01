@@ -21,13 +21,15 @@ use PDO;
 use PHPUnit_Framework_TestCase;
 use fkooman\Json\Json;
 use fkooman\Http\Request;
-use fkooman\Rest\Plugin\Bearer\TokenIntrospection;
+use fkooman\Rest\Plugin\Bearer\TokenInfo;
 
 class ApiServiceTest extends PHPUnit_Framework_TestCase
 {
     private $storage;
 
     private $bearerAuthenticationStub;
+
+    private $entitlements;
 
     public function setUp()
     {
@@ -80,21 +82,22 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
                      ->disableOriginalConstructor()
                      ->getMock();
         $stub->method('execute')->willReturn(
-            new TokenIntrospection(
+            new TokenInfo(
                 array(
                     'active' => true,
                     'sub' => 'fkooman',
-                    'scope' => 'http://php-oauth.net/scope/authorize http://php-oauth.net/scope/manage',
-                    'x-entitlement' => 'http://php-oauth.net/entitlement/manage',
+                    'scope' => 'http://php-oauth.net/scope/authorize http://php-oauth.net/scope/manage'
                 )
             )
         );
         $this->bearerAuthenticationStub = $stub;
+
+        $this->entitlements = new Entitlements(dirname(dirname(dirname(__DIR__))).'/data/entitlements.json');
     }
 
     public function testRetrieveAuthorizations()
     {
-        $api = new ApiService($this->storage);
+        $api = new ApiService($this->storage, $this->entitlements);
         $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
@@ -123,7 +126,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
 
     public function testAddAuthorizations()
     {
-        $api = new ApiService($this->storage);
+        $api = new ApiService($this->storage, $this->entitlements);
         $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
@@ -148,7 +151,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testAddAuthorizationsUnregisteredClient()
     {
-        $api = new ApiService($this->storage);
+        $api = new ApiService($this->storage, $this->entitlements);
         $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
@@ -167,7 +170,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
 
     public function testGetAuthorization()
     {
-        $api = new ApiService($this->storage);
+        $api = new ApiService($this->storage, $this->entitlements);
         $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
@@ -190,7 +193,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
 
     public function testDeleteAuthorization()
     {
-        $api = new ApiService($this->storage);
+        $api = new ApiService($this->storage, $this->entitlements);
         $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
@@ -204,7 +207,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
 
     public function testAddApplication()
     {
-        $api = new ApiService($this->storage);
+        $api = new ApiService($this->storage, $this->entitlements);
         $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');
@@ -232,7 +235,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testAddNullApplication()
     {
-        $api = new ApiService($this->storage);
+        $api = new ApiService($this->storage, $this->entitlements);
         $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
 
         $h = new Request('http://www.example.org/api.php');

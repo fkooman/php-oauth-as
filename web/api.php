@@ -20,9 +20,11 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\ApiService;
 use fkooman\OAuth\Server\PdoStorage;
+use fkooman\OAuth\Server\Entitlements;
 use fkooman\Http\Exception\HttpException;
 use fkooman\Http\Exception\InternalServerErrorException;
 use fkooman\Rest\Plugin\Bearer\BearerAuthentication;
+use fkooman\Rest\Plugin\Bearer\IntrospectionBearerValidator;
 use fkooman\Http\Request;
 use fkooman\Http\IncomingRequest;
 use Guzzle\Http\Client;
@@ -45,7 +47,8 @@ try {
     );
 
     $apiService = new ApiService(
-        new PdoStorage($db)
+        new PdoStorage($db),
+        new Entitlements($iniReader->v('entitlementsFile'))
     );
 
     // HTTP CLIENT
@@ -68,14 +71,16 @@ try {
 
     $apiService->registerOnMatchPlugin(
         new BearerAuthentication(
-            dirname($request->getAbsRoot()) . '/introspect.php',
-            'OAuth Management API',
-            $client
+            new IntrospectionBearerValidator(
+                dirname($request->getAbsRoot()) . '/introspect.php',
+                'foo', // introspect currently does not require any authentication
+                $client
+            ),
+            'OAuth Management API'
         )
     );
 
     $apiService->run($request)->sendResponse();
 } catch (Exception $e) {
-    error_log($e->getMessage());
     ApiService::handleException($e)->sendResponse();
 }

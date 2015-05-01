@@ -1,5 +1,11 @@
 # Changes
 
+## 0.3.2
+- update `fkooman/rest-plugin-bearer` 
+- remove `x-entitlement` support from introspection data
+- update API to use entitlements file directly instead of through 
+  introspection
+
 ## 0.3.1 - 2015-04-13
 - update `fkooman/rest` and all authentication plugins
 

@@ -34,12 +34,11 @@ class TokenIntrospectionService extends Service
     /** @var fkooman\OAuth\Server\IO */
     private $io;
 
-    public function __construct(PdoStorage $db, Entitlements $entitlements, IO $io = null)
+    public function __construct(PdoStorage $db, IO $io = null)
     {
         parent::__construct();
 
         $this->db = $db;
-        $this->entitlements = $entitlements;
 
         if (null === $io) {
             $io = new IO();
@@ -98,12 +97,6 @@ class TokenIntrospectionService extends Service
 
             // as long as we have no RS registration we cannot set the audience...
             // $tokenInfo['aud'] => 'foo';
-
-            // add proprietary 'x-entitlement'
-            $entitlement = $this->entitlements->getEntitlement($accessToken['resource_owner_id']);
-            if (0 !== count($entitlement)) {
-                $tokenInfo['x-entitlement'] = implode(' ', $entitlement);
-            }
         }
 
         $response = new JsonResponse();

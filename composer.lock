@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c23f4749fa381378e9a2f9ad87bd0252",
+    "hash": "ce246b325df69eef2388f13a6b4213b7",
     "packages": [
         {
             "name": "fkooman/ini",
@@ -82,16 +82,16 @@
         },
         {
             "name": "fkooman/rest",
-            "version": "0.8.0",
+            "version": "0.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "8cd11d4863f057883ac7009dc8024e609ba13ef6"
+                "reference": "1241007d64f8a103f34e9fbe7598f082e799043f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/8cd11d4863f057883ac7009dc8024e609ba13ef6",
-                "reference": "8cd11d4863f057883ac7009dc8024e609ba13ef6",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/1241007d64f8a103f34e9fbe7598f082e799043f",
+                "reference": "1241007d64f8a103f34e9fbe7598f082e799043f",
                 "shasum": ""
             },
             "require": {
@@ -124,7 +124,7 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2015-04-12 14:03:08"
+            "time": "2015-04-27 09:57:36"
         },
         {
             "name": "fkooman/rest-plugin-basic",
@@ -167,20 +167,20 @@
         },
         {
             "name": "fkooman/rest-plugin-bearer",
-            "version": "0.3.1",
+            "version": "0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest-plugin-bearer.git",
-                "reference": "cf48287253339f2b9264857863640fc3a17695a3"
+                "reference": "f010b34336201399ec0af2eacd30672c2158a862"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/cf48287253339f2b9264857863640fc3a17695a3",
-                "reference": "cf48287253339f2b9264857863640fc3a17695a3",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/f010b34336201399ec0af2eacd30672c2158a862",
+                "reference": "f010b34336201399ec0af2eacd30672c2158a862",
                 "shasum": ""
             },
             "require": {
-                "fkooman/rest": "~0.8.0",
+                "fkooman/rest": "~0.8.1",
                 "guzzle/guzzle": "~3.9",
                 "php": ">=5.3.3"
             },
@@ -202,7 +202,7 @@
                 }
             ],
             "description": "Bearer (OAuth) Authentication plugin for fkooman/rest",
-            "time": "2015-04-12 14:30:15"
+            "time": "2015-04-30 14:23:31"
         },
         {
             "name": "fkooman/rest-plugin-mellon",
@@ -478,20 +478,20 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.18.0",
+            "version": "v1.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "4cf7464348e7f9893a93f7096a90b73722be99cf"
+                "reference": "9f70492f44398e276d1b81c1b43adfe6751c7b7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/4cf7464348e7f9893a93f7096a90b73722be99cf",
-                "reference": "4cf7464348e7f9893a93f7096a90b73722be99cf",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/9f70492f44398e276d1b81c1b43adfe6751c7b7f",
+                "reference": "9f70492f44398e276d1b81c1b43adfe6751c7b7f",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.4"
+                "php": ">=5.2.7"
             },
             "type": "library",
             "extra": {
@@ -531,7 +531,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-01-25 17:32:08"
+            "time": "2015-04-19 08:30:27"
         }
     ],
     "packages-dev": [],

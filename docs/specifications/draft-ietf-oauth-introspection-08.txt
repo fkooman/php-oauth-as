@@ -3,13 +3,13 @@
 
 
 OAuth Working Group                                       J. Richer, Ed.
-Internet-Draft
-Intended status: Standards Track                        February 9, 2015
-Expires: August 13, 2015
+Internet-Draft                                            April 21, 2015
+Intended status: Standards Track
+Expires: October 23, 2015
 
 
                      OAuth 2.0 Token Introspection
-                   draft-ietf-oauth-introspection-05
+                   draft-ietf-oauth-introspection-08
 
 Abstract
 
@@ -41,7 +41,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on August 13, 2015.
+   This Internet-Draft will expire on October 23, 2015.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Richer                   Expires August 13, 2015                [Page 1]
+Richer                  Expires October 23, 2015                [Page 1]
 
-Internet-Draft             oauth-introspection             February 2015
+Internet-Draft             oauth-introspection                April 2015
 
 
    (http://trustee.ietf.org/license-info) in effect on the date of
@@ -73,17 +73,20 @@ Table of Contents
    2.  Introspection Endpoint  . . . . . . . . . . . . . . . . . . .   3
      2.1.  Introspection Request . . . . . . . . . . . . . . . . . .   4
      2.2.  Introspection Response  . . . . . . . . . . . . . . . . .   5
-     2.3.  Error Response  . . . . . . . . . . . . . . . . . . . . .   7
+     2.3.  Error Response  . . . . . . . . . . . . . . . . . . . . .   8
    3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
-   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
-   5.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  10
-   6.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  10
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .  11
-   Appendix A.  Document History . . . . . . . . . . . . . . . . . .  11
-   Appendix B.  Use with Proof of Posession Tokens . . . . . . . . .  12
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
+     3.1.  OAuth Token Introspection Response Registry . . . . . . .   8
+       3.1.1.  Registration Template . . . . . . . . . . . . . . . .   9
+       3.1.2.  Initial Registry Contents . . . . . . . . . . . . . .   9
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
+   5.  Privacy Considerations  . . . . . . . . . . . . . . . . . . .  13
+   6.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  13
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  14
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  14
+   Appendix A.  Use with Proof of Posession Tokens . . . . . . . . .  15
+   Appendix B.  Document History . . . . . . . . . . . . . . . . . .  15
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  16
 
 1.  Introduction
 
@@ -95,25 +98,25 @@ Table of Contents
    about the context in which the token was issued.  These pieces of
    information are often vital to protected resources making
    authorization decisions based on the tokens being presented.  Since
-   OAuth 2.0 [RFC6749] defines no direct relationship between the
-   authorization server and the protected resource, only that they must
-   have an agreement on the tokens themselves, there have been many
-   different approaches to bridging this gap.  These include using
-   structured token formats such as JWT [JWT] or proprietary inter-
-   service communication mechanisms (such as shared databases and
-   protected enterprise service buses) that convey token information.
+   OAuth 2.0 [RFC6749] does not define a protocol for the resource
+   server to learn meta-information about a token that is has received
+   from an authorization server, several different approaches have been
+   developed to bridge this gap.  These include using structured token
+   formats such as JWT [JWT] or proprietary inter-service communication
+   mechanisms (such as shared databases and protected enterprise service
+   buses) that convey token information.
+
+
+
+
+Richer                  Expires October 23, 2015                [Page 2]
+
+Internet-Draft             oauth-introspection                April 2015
+
 
    This specification defines an interoperable web API that allows
    authorized protected resources to query the authorization server to
    determine the set of metadata for a given token that was presented to
-
-
-
-Richer                   Expires August 13, 2015                [Page 2]
-
-Internet-Draft             oauth-introspection             February 2015
-
-
    them by an OAuth 2.0 client.  This metadata includes whether or not
    the token is currently active (or if it has expired or otherwise been
    revoked), what rights of access the token carries (usually conveyed
@@ -152,22 +155,19 @@ Internet-Draft             oauth-introspection             February 2015
    server, is not expired, has not been revoked, and is within the
    purview of the protected resource making the introspection call.
 
-   The introspection endpoint MUST be protected by TLS of at least
-   version 1.2 RFC 5246 [RFC5246] and MAY support additional transport-
-   layer mechanisms meeting its security requirements.  When using TLS,
-   the protected resource MUST perform a TLS/SSL server certificate
-   check, per RFC 6125 [RFC6125].  Implementation security
-   considerations can be found in Recommendations for Secure Use of TLS
-   and DTLS [TLS.BCP].
+   The introspection endpoint MUST be protected by a transport-layer
+   security mechanism as described in Section 4.
 
 
 
 
 
 
-Richer                   Expires August 13, 2015                [Page 3]
+
+
+Richer                  Expires October 23, 2015                [Page 3]
 
-Internet-Draft             oauth-introspection             February 2015
+Internet-Draft             oauth-introspection                April 2015
 
 
 2.1.  Introspection Request
@@ -188,7 +188,6 @@ Internet-Draft             oauth-introspection             February 2015
       this is the "refresh_token" value returned from the token endpoint
       as defined in OAuth 2.0 [RFC6749] section 5.1.  Other token types
       are outside the scope of this specification.
-
    token_type_hint  OPTIONAL.  A hint about the type of the token
       submitted for introspection.  The protected resource MAY pass this
       parameter in order to help the authorization server to optimize
@@ -221,9 +220,10 @@ Internet-Draft             oauth-introspection             February 2015
 
 
 
-Richer                   Expires August 13, 2015                [Page 4]
+
+Richer                  Expires October 23, 2015                [Page 4]
 
-Internet-Draft             oauth-introspection             February 2015
+Internet-Draft             oauth-introspection                April 2015
 
 
    Following is a non-normative example request:
@@ -259,84 +259,90 @@ Internet-Draft             oauth-introspection             February 2015
 
    active
       REQUIRED.  Boolean indicator of whether or not the presented token
-      is currently active.  The authorization server determines whether
-      and when a given token is in an active state.
-
+      is currently active.  The specifics of a token's "active" state
+      will vary depending on the implementation of the authorization
+      server, and the information it keeps about its tokens, but a
+      "true" value return for the "active" property will generally
+      indicate that a given token has been issued by this authorization
+      server, has not been revoked by the resource owner, and is within
+      its given time window of validity (e.g. after its issuance time
+      and before its expiration time).  See Section 4 for information on
+      implementation of such checks.
    scope
       OPTIONAL.  A space-separated list of strings representing the
       scopes associated with this token, in the format described in
       section 3.3 of OAuth 2.0 [RFC6749].
-
    client_id
+
+
+
+
+Richer                  Expires October 23, 2015                [Page 5]
+
+Internet-Draft             oauth-introspection                April 2015
+
+
       OPTIONAL.  Client identifier for the OAuth 2.0 client that
       requested this token.
-
-   user_id
-      OPTIONAL.  Human-readable identifier for the user who authorized
-      this token.
-
-
-
-Richer                   Expires August 13, 2015                [Page 5]
-
-Internet-Draft             oauth-introspection             February 2015
-
-
+   username
+      OPTIONAL.  Human-readable identifier for the resource owner who
+      authorized this token.
    token_type
       OPTIONAL.  Type of the token as defined in section 5.1 of OAuth
       2.0 [RFC6749].
-
-   The response MAY include any claims defined as JWT [JWT] claim names
-   and carry the same semantics and syntax, such as the following:
-
    exp
       OPTIONAL.  Integer timestamp, measured in the number of seconds
-      since January 1 1970 UTC, indicating when this token will expire.
-
+      since January 1 1970 UTC, indicating when this token will expire,
+      as defined in JWT [JWT].
    iat
       OPTIONAL.  Integer timestamp, measured in the number of seconds
       since January 1 1970 UTC, indicating when this token was
-      originally issued.
-
+      originally issued, as defined in JWT [JWT].
    nbf
       OPTIONAL.  Integer timestamp, measured in the number of seconds
       since January 1 1970 UTC, indicating when this token is not to be
-      used before.
-
+      used before, as defined in JWT [JWT].
    sub
-      OPTIONAL.  Subject of the token.  Usually a machine-readable
-      identifier of the resource owner who authorized this token
-
+      OPTIONAL.  Subject of the token, as defined in JWT [JWT].  Usually
+      a machine-readable identifier of the resource owner who authorized
+      this token.
    aud
       OPTIONAL.  Service-specific string identifier or list of string
-      identifiers representing the intended audience for this token.
-
+      identifiers representing the intended audience for this token, as
+      defined in JWT [JWT].
    iss
-      OPTIONAL.  String representing the issuer of this token.
-
+      OPTIONAL.  String representing the issuer of this token, as
+      defined in JWT [JWT].
    jti
-      OPTIONAL.  String identifier for the token.
+      OPTIONAL.  String identifier for the token, as defined in JWT
+      [JWT].
 
    Specific implementations MAY extend this structure with their own
-   service-specific pieces of information as top-level members of this
-   JSON object.
+   service-specific response names as top-level members of this JSON
+   object.  Response names intended to be used across domains MUST be
+   registered in the OAuth Token Introspection Response registry defined
+   in Section 3.1.
 
    The authorization server MAY respond differently to different
    protected resources making the same request.  For instance, an
-   authorization server MAY limit which scopes from a given token for
-   each protected resources in order to prevent protected resources from
-   learning more about the larger network than is necessary for their
-   function.
-
-   The response MAY be cached by the protected resource.
+   authorization server MAY limit which scopes from a given token are
+   returned for each protected resource in order to prevent protected
+   resources from learning more about the larger network than is
+   necessary for their function.
 
 
 
 
-Richer                   Expires August 13, 2015                [Page 6]
+Richer                  Expires October 23, 2015                [Page 6]
 
-Internet-Draft             oauth-introspection             February 2015
+Internet-Draft             oauth-introspection                April 2015
 
+
+   The response MAY be cached by the protected resource to improve
+   performance and reduce load on the introspection endpoint, but at the
+   cost of liveness of the information used by the protected resource.
+   See Section 4 for more information regarding the trade off when the
+   response is cached.
 
    For example, the following response contains a set of information
    about an active token:
@@ -349,7 +355,7 @@ Internet-Draft             oauth-introspection             February 2015
      {
       "active": true,
       "client_id": "l238j323ds-23ij4",
-      "user_id": "jdoe",
+      "username": "jdoe",
       "scope": "read write dolphin",
       "sub": "Z5O3upPC88QrAjx00dis",
       "aud": "https://protected.example.net/resource",
@@ -381,19 +387,17 @@ Internet-Draft             oauth-introspection             February 2015
      }
 
 
+
+
+Richer                  Expires October 23, 2015                [Page 7]
+
+Internet-Draft             oauth-introspection                April 2015
+
+
 2.3.  Error Response
 
    If the protected resource uses OAuth 2.0 client credentials to
    authenticate to the introspection endpoint and its credentials are
-
-
-
-
-Richer                   Expires August 13, 2015                [Page 7]
-
-Internet-Draft             oauth-introspection             February 2015
-
-
    invalid, the authorization server responds with an HTTP 401
    (Unauthorized) as described in section 5.2 of OAuth 2.0 [RFC6749].
 
@@ -413,44 +417,177 @@ Internet-Draft             oauth-introspection             February 2015
 
 3.  IANA Considerations
 
-   This specification requests IANA to register the following values
-   into the IANA JSON Web Token Claims registry for JWT Claim Names.
+3.1.  OAuth Token Introspection Response Registry
 
-   o  Claim Name: "active"
-   o  Claim Description: Token active status
-   o  Change Controller: IESG
-   o  Specification Document(s): Section 2.2 of [[ this document ]].
+   This specification establishes the OAuth Token Introspection Response
+   registry.
 
-   o  Claim Name: "user_id"
-   o  Claim Description: User identifier of the resource owner
-   o  Change Controller: IESG
-   o  Specification Document(s): Section 2.2 of [[ this document ]].
+   OAuth registration client metadata names and descriptions are
+   registered with a Specification Required ([RFC5226]) after a two-week
+   review period on the oauth-ext-review@ietf.org mailing list, on the
+   advice of one or more Designated Experts.  However, to allow for the
+   allocation of names prior to publication, the Designated Expert(s)
+   may approve registration once they are satisfied that such a
+   specification will be published.
 
-   o  Claim Name: "client_id"
-   o  Claim Description: Client identifier of the client
-   o  Change Controller: IESG
-   o  Specification Document(s): Section 2.2 of [[ this document ]].
+   Registration requests sent to the mailing list for review should use
+   an appropriate subject (e.g., "Request to register OAuth Token
+   Introspection Response name: example").
 
-   o  Claim Name: "scope"
-   o  Claim Description: Authorized scopes of the token
-   o  Change Controller: IESG
-   o  Specification Document(s): Section 2.2 of [[ this document ]].
-
-   o  Claim Name: "token_type"
-   o  Claim Description: Type of the token
-   o  Change Controller: IESG
-   o  Specification Document(s): Section 2.2 of [[ this document ]].
+   Within the review period, the Designated Expert(s) will either
+   approve or deny the registration request, communicating this decision
+   to the review list and IANA.  Denials should include an explanation
+   and, if applicable, suggestions as to how to make the request
+   successful.
 
 
 
 
 
-Richer                   Expires August 13, 2015                [Page 8]
+
+Richer                  Expires October 23, 2015                [Page 8]
 
-Internet-Draft             oauth-introspection             February 2015
+Internet-Draft             oauth-introspection                April 2015
+
+
+   IANA must only accept registry updates from the Designated Expert(s)
+   and should direct all requests for registration to the review mailing
+   list.
+
+3.1.1.  Registration Template
+
+   Name:
+      The name requested (e.g., "example").  This name is case
+      sensitive.  Names that match other registered names in a case
+      insensitive manner SHOULD NOT be accepted.  Names that match
+      claims registered in the JSON Web Token Claims registry
+      established by [JWT] SHOULD have comparable definitions and
+      semantics.
+
+   Description:
+      Brief description of the metadata value (e.g., "Example
+      description").
+
+   Change controller:
+      For Standards Track RFCs, state "IESG".  For others, give the name
+      of the responsible party.  Other details (e.g., postal address,
+      email address, home page URI) may also be included.
+
+   Specification document(s):
+      Reference to the document(s) that specify the token endpoint
+      authorization method, preferably including a URI that can be used
+      to retrieve a copy of the document(s).  An indication of the
+      relevant sections may also be included but is not required.
+
+3.1.2.  Initial Registry Contents
+
+   The initial contents of the OAuth Token Introspection Response
+   registry are:
+
+   o  Name: "active"
+   o  Description: Token active status
+   o  Change Controller: IESG
+   o  Specification Document(s): Section 2.2 of [[ this document ]].
+
+   o  Name: "username"
+   o  Description: User identifier of the resource owner
+   o  Change Controller: IESG
+   o  Specification Document(s): Section 2.2 of [[ this document ]].
+
+   o  Name: "client_id"
+   o  Description: Client identifier of the client
+   o  Change Controller: IESG
+   o  Specification Document(s): Section 2.2 of [[ this document ]].
+
+
+
+Richer                  Expires October 23, 2015                [Page 9]
+
+Internet-Draft             oauth-introspection                April 2015
+
+
+   o  Name: "scope"
+   o  Description: Authorized scopes of the token
+   o  Change Controller: IESG
+   o  Specification Document(s): Section 2.2 of [[ this document ]].
+
+   o  Name: "token_type"
+   o  Description: Type of the token
+   o  Change Controller: IESG
+   o  Specification Document(s): Section 2.2 of [[ this document ]].
+
+   o  Name: "exp"
+   o  Description: Expiration timestamp of the token
+   o  Change Controller: IESG
+   o  Specification Document(s): Section 2.2 of [[ this document ]].
+
+   o  Name: "iat"
+   o  Description: Issuance timestamp of the token
+   o  Change Controller: IESG
+   o  Specification Document(s): Section 2.2 of [[ this document ]].
+
+   o  Name: "nbf"
+   o  Description: Timestamp which the token is not valid before
+   o  Change Controller: IESG
+   o  Specification Document(s): Section 2.2 of [[ this document ]].
+
+   o  Name: "sub"
+   o  Description: Subject of the token
+   o  Change Controller: IESG
+   o  Specification Document(s): Section 2.2 of [[ this document ]].
+
+   o  Name: "aud"
+   o  Description: Audience of the token
+   o  Change Controller: IESG
+   o  Specification Document(s): Section 2.2 of [[ this document ]].
+
+   o  Name: "iss"
+   o  Description: Issuer of the token
+   o  Change Controller: IESG
+   o  Specification Document(s): Section 2.2 of [[ this document ]].
+
+   o  Name: "jti"
+   o  Description: Unique identifier of the token
+   o  Change Controller: IESG
+   o  Specification Document(s): Section 2.2 of [[ this document ]].
+
+
+
+
+
+
+
+Richer                  Expires October 23, 2015               [Page 10]
+
+Internet-Draft             oauth-introspection                April 2015
 
 
 4.  Security Considerations
+
+   Since there are many different and valid ways to implement an OAuth
+   2.0 system, there are consequently many ways for an authorization
+   server to determine whether or not a token is currently "active" or
+   not.  However, since resource servers using token introspection rely
+   on the authorization server to determine the state of a token, the
+   authorization server MUST perform all applicable checks against a
+   token's state.  For instance:
+
+   o  If the token can expire, the authorization server MUST determine
+      whether or not the token has expired.
+   o  If the token can be issued before it is able to be used, the
+      authorization server MUST determine whether or not a token's valid
+      period has started yet.
+   o  If the token can be revoked after it was issued, the authorization
+      server MUST determine whether or not such a revocation has taken
+      place.
+   o  If the token has been signed, the authorization server MUST
+      validate the signature.
+
+   If an authorization server fails to perform any applicable check, the
+   resource server could make an errant security decision based on that
+   response.  Note that not all of these checks will be applicable to
+   all OAuth 2.0 deployments and it is up to the authorization server to
+   determine which of these checks (and any other checks) apply.
 
    If left unprotected and un-throttled, the introspection endpoint
    could present a means for an attacker to poll a series of possible
@@ -471,22 +608,54 @@ Internet-Draft             oauth-introspection             February 2015
    separate credentials for each mode.
 
    Since the introspection endpoint takes in OAuth 2.0 tokens as
-   parameters, the server MUST support TLS 1.2 RFC 5246 [RFC5246] and
-   MAY support additional transport-layer mechanisms meeting its
-   security requirements.  When using TLS, the client or protected
-   resource MUST perform a TLS/SSL server certificate check, per RFC
-   6125 [RFC6125].  Implementation security considerations can be found
-   in Recommendations for Secure Use of TLS and DTLS [TLS.BCP].
+   parameters and responds with information used to make authorization
+   decisions, the server MUST support TLS 1.2 RFC 5246 [RFC5246] and MAY
 
-   In order to prevent the values of access tokens being from leaking
-   into server-side logs via query parameters, an authorization server
+
+
+Richer                  Expires October 23, 2015               [Page 11]
+
+Internet-Draft             oauth-introspection                April 2015
+
+
+   support additional transport-layer mechanisms meeting its security
+   requirements.  When using TLS, the client or protected resource MUST
+   perform a TLS/SSL server certificate check, per RFC 6125 [RFC6125].
+   Implementation security considerations can be found in
+   Recommendations for Secure Use of TLS and DTLS [TLS.BCP].
+
+   In order to prevent the values of access tokens from leaking into
+   server-side logs via query parameters, an authorization server
    offering token introspection MAY disallow HTTP GET and instead
-   require an HTTP POST method only to the introspection endpoint.
+   require an HTTP POST method to be used at the introspection endpoint.
 
    In order to avoid disclosing internal server state, an introspection
    response for an inactive token SHOULD NOT contain any additional
    claims beyond the required "active" claim (with its value set to
    "false").
+
+   Since a protected resource MAY cache the response of the
+   introspection endpoint, designers of an OAuth 2.0 system using this
+   protocol MUST consider the performance and security trade-offs
+   inherent in caching security information such as this.  A less
+   aggressive cache with a short timeout will provide the protected
+   resource with more up to date information (due to it needing to query
+   the introspection endpoint more often) at the cost of increased
+   network traffic and load on the introspection endpoint.  A more
+   aggressive cache with a longer duration will minimize network traffic
+   and load on the introspection endpoint, but at the risk of stale
+   information about the token.  For example, the token may be revoked
+   while the protected resource is relying on the value of the cached
+   response to make authorization decisions.  This creates a window
+   during which a revoked token could be used at the protected resource.
+   Consequently, an acceptable cache validity duration needs to be
+   carefully considered given the concerns and sensitivities of the
+   protected resource being accessed and the likelihood of a token being
+   revoked or invalidated in the interim period.  Highly sensitive
+   environments can opt to disable caching entirely on the protected
+   resource in order to eliminate the risk of stale cached information
+   entirely, again at the cost of increased network traffic and server
+   load.
 
    An authorization server offering token introspection MUST be able to
    understand the token values being presented to it during this call.
@@ -500,10 +669,9 @@ Internet-Draft             oauth-introspection             February 2015
 
 
 
-
-Richer                   Expires August 13, 2015                [Page 9]
+Richer                  Expires October 23, 2015               [Page 12]
 
-Internet-Draft             oauth-introspection             February 2015
+Internet-Draft             oauth-introspection                April 2015
 
 
    to the protected resource (allowing the protected resource to be
@@ -527,14 +695,40 @@ Internet-Draft             oauth-introspection             February 2015
    to only registered and trusted protected resource servers.  Another
    method is to transmit user identifiers as opaque service-specific
    strings, potentially returning different identifiers to each
-   protected resource.  Omitting privacy-sensitive information from an
-   introspection response is the simplest way of minimizing privacy
-   issues.
+   protected resource.
+
+   If the protected resource sends additional information about the
+   client's request to the authorization server (such as the client's IP
+   address) using an extension of this specification, such information
+   could have additional privacy considerations.  However, the nature
+   and implications of such extensions are outside the scope of this
+   specification.
+
+   Omitting privacy-sensitive information from an introspection response
+   is the simplest way of minimizing privacy issues.
 
 6.  Acknowledgements
 
-   Thanks to the OAuth Working Group and the UMA Working Group for
-   feedback.
+   Thanks to the OAuth Working Group and the User Managed Access Working
+   Group for feedback and review of this document, and to the various
+   implementors of both the client and server components of this
+   specification.  In particular, the author would like to thank Amanda
+   Anganes, John Bradley, Thomas Broyer, Brian Campbell, George
+   Fletcher, Paul Freemantle, Thomas Hardjono, Eve Maler, Josh Mandel,
+   Steve Moore, Mike Schwartz, Prabath Siriwardena, Sarah Squire, and
+   Hannes Tschofennig,
+
+
+
+
+
+
+
+
+Richer                  Expires October 23, 2015               [Page 13]
+
+Internet-Draft             oauth-introspection                April 2015
+
 
 7.  References
 
@@ -542,6 +736,10 @@ Internet-Draft             oauth-introspection             February 2015
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
+              IANA Considerations Section in RFCs", BCP 26, RFC 5226,
+              May 2008.
 
    [RFC5246]  Dierks, T. and E. Rescorla, "The Transport Layer Security
               (TLS) Protocol Version 1.2", RFC 5246, August 2008.
@@ -554,13 +752,6 @@ Internet-Draft             oauth-introspection             February 2015
 
    [RFC6749]  Hardt, D., "The OAuth 2.0 Authorization Framework", RFC
               6749, October 2012.
-
-
-
-Richer                   Expires August 13, 2015               [Page 10]
-
-Internet-Draft             oauth-introspection             February 2015
-
 
    [RFC6750]  Jones, M. and D. Hardt, "The OAuth 2.0 Authorization
               Framework: Bearer Token Usage", RFC 6750, October 2012.
@@ -587,71 +778,19 @@ Internet-Draft             oauth-introspection             February 2015
               (JWT)", draft-ietf-oauth-json-web-token (work in
               progress), July 2014.
 
+
+
+
+Richer                  Expires October 23, 2015               [Page 14]
+
+Internet-Draft             oauth-introspection                April 2015
+
+
    [TLS.BCP]  Sheffer, Y., Holz, R., and P. Saint-Andre,
               "Recommendations for Secure Use of TLS and DTLS", November
               2014.
 
-Appendix A.  Document History
-
-   [[ To be removed by the RFC Editor. ]]
-
-   -05
-
-   o  Typo fix.
-
-   o  Updated author information.
-
-   o  Removed extraneous "linewrap" note from examples.
-
-   - 04
-
-   o  Removed "resource_id" from request.
-
-   o  Added examples.
-
-   - 03
-
-
-
-Richer                   Expires August 13, 2015               [Page 11]
-
-Internet-Draft             oauth-introspection             February 2015
-
-
-   o  Updated HTML and HTTP references.
-
-   o  Call for registration of parameters in the JWT registry.
-
-   - 02
-
-   o  Removed SAML pointer.
-
-   o  Clarified what an "active" token could be.
-
-   o  Explicitly declare introspection request as x-www-form-urlencoded
-      format.
-
-   o  Added extended example.
-
-   o  Made protected resource authentication a MUST.
-
-   - 01
-
-   o  Fixed casing and consistent term usage.
-
-   o  Incorporated working group comments.
-
-   o  Clarified that authorization servers need to be able to understand
-      the token if they're to introspect it.
-
-   o  Various editorial cleanups.
-
-   - 00
-
-   o  Created initial IETF drafted based on draft-richer-oauth-
-      introspection-06 with no normative changes.
-
-Appendix B.  Use with Proof of Posession Tokens
+Appendix A.  Use with Proof of Posession Tokens
 
    With bearer tokens such as those defined by OAuth 2.0 Bearer Token
    Usage [RFC6750], the protected resource will have in its possession
@@ -663,16 +802,77 @@ Appendix B.  Use with Proof of Posession Tokens
    identifier to the authorization server's token endpoint in order to
    obtain the necessary key information needed to validate the signature
    on the request.  The details of this usage are outside the scope of
-   this specification and should be defined in an extension to this
+   this specification and will be defined in an extension to this
    specification.
 
+Appendix B.  Document History
+
+   [[ To be removed by the RFC Editor. ]]
+
+   -08
+
+   o  Added privacy considerations note about extensions.
+   o  Added acknowledgements (finally).
+
+   -07
+
+   o  Created a separate IANA registry for introspection responses,
+      importing the values from JWT.
+
+   -06
+
+   o  Clarified relationship between AS and RS in introduction.
+   o  Used updated TLS text imported from Dyn-Reg drafts.
+   o  Clarified definition of active state.
+   o  Added some advice on caching responses.
+   o  Added security considerations on active state implementation.
+   o  Changed user_id to username based on WG feedback.
+
+   -05
+
+   o  Typo fix.
+   o  Updated author information.
+   o  Removed extraneous "linewrap" note from examples.
 
 
 
-Richer                   Expires August 13, 2015               [Page 12]
+
+Richer                  Expires October 23, 2015               [Page 15]
 
-Internet-Draft             oauth-introspection             February 2015
+Internet-Draft             oauth-introspection                April 2015
 
+
+   - 04
+
+   o  Removed "resource_id" from request.
+   o  Added examples.
+
+   - 03
+
+   o  Updated HTML and HTTP references.
+   o  Call for registration of parameters in the JWT registry.
+
+   - 02
+
+   o  Removed SAML pointer.
+   o  Clarified what an "active" token could be.
+   o  Explicitly declare introspection request as x-www-form-urlencoded
+      format.
+   o  Added extended example.
+   o  Made protected resource authentication a MUST.
+
+   - 01
+
+   o  Fixed casing and consistent term usage.
+   o  Incorporated working group comments.
+   o  Clarified that authorization servers need to be able to understand
+      the token if they're to introspect it.
+   o  Various editorial cleanups.
+
+   - 00
+
+   o  Created initial IETF drafted based on draft-richer-oauth-
+      introspection-06 with no normative changes.
 
 Author's Address
 
@@ -693,36 +893,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Richer                   Expires August 13, 2015               [Page 13]
+Richer                  Expires October 23, 2015               [Page 16]
