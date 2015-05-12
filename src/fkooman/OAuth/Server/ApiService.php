@@ -154,8 +154,8 @@ class ApiService extends Service
         $refreshToken = (array_key_exists('refresh_token', $data) && $data['refresh_token']) ? $this->io->getRandomHex() : null;
 
         // check to see if an authorization for this client/resource_owner already exists
-        if (false === $this->storage->getApprovalByResourceOwnerId($clientId, $tokenInfo)) {
-            if (false === $this->storage->addApproval($clientId, $tokenInfo, $data['scope'], $refreshToken)) {
+        if (false === $this->storage->getApprovalByResourceOwnerId($clientId, $tokenInfo->get('sub'))) {
+            if (false === $this->storage->addApproval($clientId, $tokenInfo->get('sub'), $data['scope'], $refreshToken)) {
                 throw new InternalServerErrorException('unable to add authorization');
             }
         } else {
@@ -173,7 +173,7 @@ class ApiService extends Service
     public function getAuthorization(Request $request, TokenInfo $tokenInfo, $id)
     {
         $this->requireScope($tokenInfo->getScope(), 'http://php-oauth.net/scope/authorize');
-        $data = $this->storage->getApprovalByResourceOwnerId($id, $tokenInfo);
+        $data = $this->storage->getApprovalByResourceOwnerId($id, $tokenInfo->get('sub'));
         if (false === $data) {
             throw new NotFoundException('authorization not found');
         }
@@ -186,7 +186,7 @@ class ApiService extends Service
     public function deleteAuthorization(Request $request, TokenInfo $tokenInfo, $id)
     {
         $this->requireScope($tokenInfo->getScope(), 'http://php-oauth.net/scope/authorize');
-        if (false === $this->storage->deleteApproval($id, $tokenInfo)) {
+        if (false === $this->storage->deleteApproval($id, $tokenInfo->get('sub'))) {
             throw new NotFoundException('authorization not found');
         }
         $response = new JsonResponse(200);
@@ -198,7 +198,7 @@ class ApiService extends Service
     public function getAuthorizations(Request $request, TokenInfo $tokenInfo)
     {
         $this->requireScope($tokenInfo->getScope(), 'http://php-oauth.net/scope/authorize');
-        $data = $this->storage->getApprovals($tokenInfo);
+        $data = $this->storage->getApprovals($tokenInfo->get('sub'));
 
         $response = new JsonResponse(200);
         $response->setContent($data);

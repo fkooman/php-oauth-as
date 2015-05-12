@@ -28,7 +28,8 @@ class EntitlementsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(
             array(
                 'urn:x-foo:service:access',
-                'urn:x-bar:privilege:admin'
+                'urn:x-bar:privilege:admin',
+                'http://php-oauth.net/entitlement/manage'
             ),
             $e->getEntitlement('fkooman')
         );
