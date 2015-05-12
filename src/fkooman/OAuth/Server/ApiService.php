@@ -320,7 +320,7 @@ class ApiService extends Service
     private function requireEntitlement($userId, $entitlementValue)
     {
         $entitlements = $this->entitlements->getEntitlement($userId);
-        if (array_key_exists($entitlementValue, $entitlements)) {
+        if (!array_key_exists($entitlementValue, $entitlements)) {
             throw new ForbiddenException('insufficient_entitlement', sprintf('need entitlement "%s"', $entitlementValue));
         }
     }
