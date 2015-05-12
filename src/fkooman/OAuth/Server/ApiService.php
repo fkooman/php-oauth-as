@@ -154,8 +154,8 @@ class ApiService extends Service
         $refreshToken = (array_key_exists('refresh_token', $data) && $data['refresh_token']) ? $this->io->getRandomHex() : null;
 
         // check to see if an authorization for this client/resource_owner already exists
-        if (false === $this->storage->getApprovalByResourceOwnerId($clientId, $tokenInfo->get('sub'))) {
-            if (false === $this->storage->addApproval($clientId, $tokenInfo->get('sub'), $data['scope'], $refreshToken)) {
+        if (false === $this->storage->getApprovalByResourceOwnerId($clientId, $tokenInfo)) {
+            if (false === $this->storage->addApproval($clientId, $tokenInfo, $data['scope'], $refreshToken)) {
                 throw new InternalServerErrorException('unable to add authorization');
             }
         } else {
@@ -173,7 +173,7 @@ class ApiService extends Service
     public function getAuthorization(Request $request, TokenInfo $tokenInfo, $id)
     {
         $this->requireScope($tokenInfo->getScope(), 'http://php-oauth.net/scope/authorize');
-        $data = $this->storage->getApprovalByResourceOwnerId($id, $tokenInfo->get('sub'));
+        $data = $this->storage->getApprovalByResourceOwnerId($id, $tokenInfo);
         if (false === $data) {
             throw new NotFoundException('authorization not found');
         }
@@ -186,7 +186,7 @@ class ApiService extends Service
     public function deleteAuthorization(Request $request, TokenInfo $tokenInfo, $id)
     {
         $this->requireScope($tokenInfo->getScope(), 'http://php-oauth.net/scope/authorize');
-        if (false === $this->storage->deleteApproval($id, $tokenInfo->get('sub'))) {
+        if (false === $this->storage->deleteApproval($id, $tokenInfo)) {
             throw new NotFoundException('authorization not found');
         }
         $response = new JsonResponse(200);
@@ -198,7 +198,7 @@ class ApiService extends Service
     public function getAuthorizations(Request $request, TokenInfo $tokenInfo)
     {
         $this->requireScope($tokenInfo->getScope(), 'http://php-oauth.net/scope/authorize');
-        $data = $this->storage->getApprovals($tokenInfo->get('sub'));
+        $data = $this->storage->getApprovals($tokenInfo);
 
         $response = new JsonResponse(200);
         $response->setContent($data);
@@ -209,7 +209,7 @@ class ApiService extends Service
     public function getApplications(Request $request, TokenInfo $tokenInfo)
     {
         $this->requireScope($tokenInfo->getScope(), 'http://php-oauth.net/scope/manage');
-        $this->requireEntitlement($tokenInfo->get('sub'), 'http://php-oauth.net/entitlement/manage');
+        $this->requireEntitlement($tokenInfo, 'http://php-oauth.net/entitlement/manage');
 
         $data = $this->storage->getClients();
         $response = new JsonResponse(200);
@@ -221,7 +221,7 @@ class ApiService extends Service
     public function deleteApplication(Request $request, TokenInfo $tokenInfo, $id)
     {
         $this->requireScope($tokenInfo->getScope(), 'http://php-oauth.net/scope/manage');
-        $this->requireEntitlement($tokenInfo->get('sub'), 'http://php-oauth.net/entitlement/manage');
+        $this->requireEntitlement($tokenInfo, 'http://php-oauth.net/entitlement/manage');
 
         if (false === $this->storage->deleteClient($id)) {
             throw new NotFoundException('application not found');
@@ -235,7 +235,7 @@ class ApiService extends Service
     public function getApplication(Request $request, TokenInfo $tokenInfo, $id)
     {
         $this->requireScope($tokenInfo->getScope(), 'http://php-oauth.net/scope/manage');
-        $this->requireEntitlement($tokenInfo->get('sub'), 'http://php-oauth.net/entitlement/manage');
+        $this->requireEntitlement($tokenInfo, 'http://php-oauth.net/entitlement/manage');
 
         $data = $this->storage->getClient($id);
         if (false === $data) {
@@ -250,7 +250,7 @@ class ApiService extends Service
     public function postApplication(Request $request, TokenInfo $tokenInfo)
     {
         $this->requireScope($tokenInfo->getScope(), 'http://php-oauth.net/scope/manage');
-        $this->requireEntitlement($tokenInfo->get('sub'), 'http://php-oauth.net/entitlement/manage');
+        $this->requireEntitlement($tokenInfo, 'http://php-oauth.net/entitlement/manage');
 
         $clientData = null;
         try {
@@ -276,7 +276,7 @@ class ApiService extends Service
     public function putApplication(Request $request, TokenInfo $tokenInfo, $id)
     {
         $this->requireScope($tokenInfo->getScope(), 'http://php-oauth.net/scope/manage');
-        $this->requireEntitlement($tokenInfo->get('sub'), 'http://php-oauth.net/entitlement/manage');
+        $this->requireEntitlement($tokenInfo, 'http://php-oauth.net/entitlement/manage');
 
         $clientData = null;
         try {
@@ -300,7 +300,7 @@ class ApiService extends Service
     public function getStats(Request $request, TokenInfo $tokenInfo)
     {
         $this->requireScope($tokenInfo->getScope(), 'http://php-oauth.net/scope/manage');
-        $this->requireEntitlement($tokenInfo->get('sub'), 'http://php-oauth.net/entitlement/manage');
+        $this->requireEntitlement($tokenInfo, 'http://php-oauth.net/entitlement/manage');
 
         $data = $this->storage->getStats();
 
@@ -317,11 +317,18 @@ class ApiService extends Service
         }
     }
 
-    private function requireEntitlement($userId, $entitlementValue)
+    private function requireEntitlement(TokenInfo $tokenInfo, $entitlementValue)
     {
-        $entitlements = $this->entitlements->getEntitlement($userId);
-        if (!array_key_exists($entitlementValue, $entitlements)) {
-            throw new ForbiddenException('insufficient_entitlement', sprintf('need entitlement "%s"', $entitlementValue));
+        $entitlements = $this->entitlements->getEntitlement($tokenInfo->get('sub'));
+        if (!in_array($entitlementValue, $entitlements)) {
+            throw new ForbiddenException(
+                'insufficient_entitlement',
+                sprintf(
+                    'need entitlement "%s" for user "%s"',
+                    $entitlementValue,
+                    $tokenInfo->get('sub')
+                )
+            );
         }
     }
 }
