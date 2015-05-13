@@ -1,6 +1,7 @@
 # Changes
 
 ## 0.3.2
+- add some more (missing) entitlement tests regarding the API (issue #36)
 - update `fkooman/rest`
 - update `fkooman/rest-plugin-bearer` 
 - remove `x-entitlement` support from introspection data

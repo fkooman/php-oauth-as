@@ -31,6 +31,10 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
 
     private $entitlements;
 
+    private $noEntitlements;
+
+    private $missingEntitlements;
+
     public function setUp()
     {
         $this->storage = new PdoStorage(
@@ -93,6 +97,8 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
         $this->bearerAuthenticationStub = $stub;
 
         $this->entitlements = new Entitlements(dirname(dirname(dirname(__DIR__))).'/data/entitlements.json');
+        $this->noEntitlements = new Entitlements(dirname(dirname(dirname(__DIR__))).'/data/no_entitlements.json');
+        $this->missingEntitlements = new Entitlements(dirname(dirname(dirname(__DIR__))).'/data/missing_entitlements.json');
     }
 
     public function testRetrieveAuthorizations()
@@ -225,7 +231,9 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
                 )
             )
         );
-        $api->run($h);
+        $response = $api->run($h);
+        $this->assertEquals(201, $response->getStatusCode());
+        $this->assertEquals(array('status' => 'ok'), $response->getContent());
     }
 
 
@@ -243,5 +251,59 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
         $h->setPathInfo('/applications/');
         $h->setContent(null);
         $api->run($h);
+    }
+    
+    /**
+     * @expectedException fkooman\Http\Exception\ForbiddenException
+     * @expectedExceptionMessage insufficient_entitlement
+     */
+    public function testAddApplicationNoEntitlement()
+    {
+        $api = new ApiService($this->storage, $this->noEntitlements);
+        $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
+
+        $h = new Request('http://www.example.org/api.php');
+        $h->setRequestMethod('POST');
+        $h->setPathInfo('/applications/');
+        $h->setContent(
+            Json::encode(
+                array(
+                    'id' => 'foo',
+                    'scope' => 'read write',
+                    'type' => 'token',
+                    'secret' => null,
+                    'redirect_uri' => 'http://www.example.org/redirect',
+                    'name' => 'Foo',
+                )
+            )
+        );
+        $response = $api->run($h);
+    }
+
+    /**
+     * @expectedException fkooman\Http\Exception\ForbiddenException
+     * @expectedExceptionMessage insufficient_entitlement
+     */
+    public function testAddApplicationMissingCorrectEntitlement()
+    {
+        $api = new ApiService($this->storage, $this->missingEntitlements);
+        $api->registerOnMatchPlugin($this->bearerAuthenticationStub);
+
+        $h = new Request('http://www.example.org/api.php');
+        $h->setRequestMethod('POST');
+        $h->setPathInfo('/applications/');
+        $h->setContent(
+            Json::encode(
+                array(
+                    'id' => 'foo',
+                    'scope' => 'read write',
+                    'type' => 'token',
+                    'secret' => null,
+                    'redirect_uri' => 'http://www.example.org/redirect',
+                    'name' => 'Foo',
+                )
+            )
+        );
+        $response = $api->run($h);
     }
 }
