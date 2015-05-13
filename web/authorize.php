@@ -54,6 +54,5 @@ try {
 
     $authorizeService->run()->sendResponse();
 } catch (Exception $e) {
-    error_log($e->getMessage());
     AuthorizeService::handleException($e)->sendResponse();
 }

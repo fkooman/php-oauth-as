@@ -57,6 +57,5 @@ try {
 
     $tokenService->run()->sendResponse();
 } catch (Exception $e) {
-    error_log($e->getMessage());
     TokenService::handleException($e)->sendResponse();
 }

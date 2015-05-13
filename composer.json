@@ -18,7 +18,7 @@
         "ext-openssl": "*",
         "fkooman/ini": "~0.2.0",
         "fkooman/json": "~0.6.0",
-        "fkooman/rest": "~0.8.1",
+        "fkooman/rest": "~0.8.5",
         "fkooman/rest-plugin-basic": "~0.5.1",
         "fkooman/rest-plugin-bearer": "~0.4.1",
         "fkooman/rest-plugin-mellon": "~0.3.1",
