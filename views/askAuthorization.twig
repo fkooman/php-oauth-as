@@ -11,25 +11,9 @@
 
 <body>
     <div id="container">
-        <h1 title="You are authenticated as '{{ resourceOwnerId|e }}'">My API</h1>
-        <div class="clientInfo">
-            <h3 title="{{ clientId|e }}">{{ clientName|e }}</h3>
-            <p class="clientDescription">
-                {{ clientDescription|e }}
-            </p>
-        </div> <!-- /clientInfo -->
-
-        <div class="clientPermissions">
-          This application wants the following permissions:
-          <ul>
-              {% for scope in scopes %}
-                <li><code>{{ scope|e }}</code></li>
-              {% endfor %}
-          </ul>
-        </div> <!-- /clientScope -->
 
         {% if not sslEnabled %}
-        <p class="warning">
+        <p class="warn">
             <strong>INSECURE</strong> connection to this service, TLS <strong>MUST</strong> be used!
             {% if contactEmail %}
                 Please <a href="mailto:{{ contactEmail|e }}">inform</a> the application provider.
@@ -37,9 +21,27 @@
         </p>
         {% endif %}
 
-        <form method="post" action="">
-            <button class="reject" type="submit" name="approval" value="reject">Reject</button>
-            <button class="approve" type="submit" name="approval" value="approve">Approve</button>
+        <h1 title="You are authenticated as '{{ resourceOwnerId|e }}'">My API</h1>
+
+        <h3 title="{{ clientId|e }}">{{ clientName|e }}</h3>
+
+        <blockquote>
+            {{ clientDescription|e }}
+        </blockquote>
+
+        <p>
+          This application wants the following permissions:
+        </p>
+
+        <ul>
+          {% for scope in scopes %}
+            <li><code>{{ scope|e }}</code></li>
+          {% endfor %}
+        </ul>
+
+        <form class="askConfirmation" method="post" action="">
+            <button class="err" type="submit" name="approval" value="reject">Reject</button>
+            <button class="info" type="submit" name="approval" value="approve">Approve</button>
         </form>
     </div> <!-- /container -->
 </body>

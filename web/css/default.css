@@ -1,44 +1,60 @@
 body {
-    font-family: sans-serif;
+    text-align: justify;
 }
 
 div#container {
     max-width: 600px;
-    margin: 2em auto 2em auto;
-}
-
-code {
-    background: hsl(220, 80%, 90%);
-}
-
-p.clientDescription {
-    font-size: 85%;
-    color: #888;
-    padding-left: 1em;
-}
-
-p.warning {
-    color: #d00;
+    margin: 0 auto;
+    line-height: 1.4;
 }
 
 h1 {
     border-bottom: 1px solid #000;
-    padding-bottom: 10px;
 }
 
-form {
+code {
+    font-family: monospace;
+    font-size: 120%;
+    background-color: #eee;
+    padding: 0.2em;
+}
+
+p.warn {
+    background-color: #fc0;
+    border: 1px solid #da0;
+    color: #000;
+    padding: 1em;
+}
+
+p.warn a {
+    color: #000;
+}
+
+form.askConfirmation {
     text-align: center;
+    padding: 1em;
     margin: 1em auto;
 }
 
+form.askConfirmation button {
+    margin: 0 1em;
+}
+
 button {
-    margin: 1em;
+    padding: 0.4em;
+    background-color: #ddd;
+    border: 1px solid #bbb;
+    color: #000; 
 }
 
-button.approve {
-    color: green;
+button.info {
+    background-color: #063;
+    border: 1px solid #041;
+    color: #fff; 
 }
 
-button.reject {
-    color: #c00;
+button.err {
+    background-color: #c00;
+    border: 1px solid #a00;
+    color: #fff; 
 }
