@@ -59,3 +59,60 @@ button.err {
     border: 1px solid #a00;
     color: #fff; 
 }
+
+p.block {
+    background-color: #eee; 
+    border: 1px solid #ccc;
+    color: #000;
+    padding: 1em;
+}
+
+p.block a {
+    color: #000;
+}
+
+p.info {
+    background-color: #063;
+    border: 1px solid #041;
+    color: #fff;
+    padding: 1em;
+}
+
+p.info a {
+    color: #fff;
+}
+
+p.warn {
+    background-color: #fc0;
+    border: 1px solid #da0;
+    color: #000;
+    padding: 1em;
+}
+
+p.warn a {
+    color: #000;
+}
+
+p.err {
+    background-color: #c00;
+    border: 1px solid #a00;
+    color: #000;
+    padding: 1em;
+}
+
+p.err a {
+    color: #000;
+}
+
+table.approvals {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.approvals th {
+    border-bottom: 1px solid #bbb;
+}
+
+table.approvals th, table.approvals td {
+    padding: 0.4em;
+}

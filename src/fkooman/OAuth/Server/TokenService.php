@@ -38,6 +38,7 @@ class TokenService extends Service
     public function __construct(PdoStorage $db, IO $io = null, $accessTokenExpiry = 3600)
     {
         parent::__construct();
+        $this->setPathInfoRedirect(false);
 
         $this->db = $db;
 
@@ -51,7 +52,7 @@ class TokenService extends Service
         $compatThis = &$this;
 
         $this->post(
-            '/',
+            '*',
             function (Request $request, UserInfo $userInfo) use ($compatThis) {
                 return $compatThis->postToken($request, $userInfo);
             }

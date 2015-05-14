@@ -1,6 +1,9 @@
 # Changes
 
 ## 0.3.2
+- implement an 'approvals.php' script to manage the approvals per user, so
+  no separate client is needed for this. Step one in making the server 
+  self-managable, next up is the application registration
 - add some more (missing) entitlement tests regarding the API (issue #36)
 - update `fkooman/rest`
 - update `fkooman/rest-plugin-bearer` 

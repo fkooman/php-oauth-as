@@ -37,6 +37,7 @@ class TokenIntrospectionService extends Service
     public function __construct(PdoStorage $db, IO $io = null)
     {
         parent::__construct();
+        $this->setPathInfoRedirect(false);
 
         $this->db = $db;
 
@@ -48,14 +49,14 @@ class TokenIntrospectionService extends Service
         $compatThis = &$this;
 
         $this->get(
-            '/',
+            '*',
             function (Request $request) use ($compatThis) {
                 return $compatThis->getTokenIntrospection($request, $request->getQueryParameter('token'));
             }
         );
 
         $this->post(
-            '/',
+            '*',
             function (Request $request) use ($compatThis) {
                 return $compatThis->getTokenIntrospection($request, $request->getPostParameter('token'));
             }

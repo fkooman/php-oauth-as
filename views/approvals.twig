@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Approvals</title>
+  <link rel="stylesheet" type="text/css" href="../css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../css/default.css">
+</head>
+
+<body>
+    <div id="container">
+        <h1>Approvals</h1>
+        <p>
+            This page is used to revoke permission from applications that you
+            granted access to your data.
+        </p>
+
+        {% if not approvals %}
+            <p class="block">No permissions granted to applications, nothing to revoke <strong>:-)</strong></p>
+        {% else %}
+        <table class="approvals">
+            <tr>
+                <th>Name</th>
+                <th>Scope</th>
+                <th>Actions</th>
+            </tr>
+
+            {% for approval in approvals %}
+                <tr>
+                    <td><span title="{{ approval.id|e }}">{{ approval.name|e }}</span></td>
+                    <td><code>{{ approval.scope|e }}</code></td>
+                    <td>
+                        <form method="post" action="{{ approval.id|e }}">
+                            <input type="hidden" name="_METHOD" value="DELETE">
+                            <button class="err" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        {% endif %}
+    </div>
+</body>
+</html>

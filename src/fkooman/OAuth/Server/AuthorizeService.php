@@ -17,13 +17,11 @@
 
 namespace fkooman\OAuth\Server;
 
-use Twig_Loader_Filesystem;
-use Twig_Environment;
-use fkooman\Rest\Service;
-use fkooman\Http\Request;
 use fkooman\Http\Exception\BadRequestException;
 use fkooman\Http\RedirectResponse;
+use fkooman\Http\Request;
 use fkooman\Rest\Plugin\UserInfo;
+use fkooman\Rest\Service;
 
 class AuthorizeService extends Service
 {
@@ -32,6 +30,9 @@ class AuthorizeService extends Service
 
     /** @var fkooman\OAuth\Server\IO */
     private $io;
+
+    /** @var fkooman\OAuth\Server\TemplateManager */
+    private $templateManager;
 
     /** @var int */
     private $accessTokenExpiry;
@@ -42,6 +43,7 @@ class AuthorizeService extends Service
     public function __construct(PdoStorage $storage, IO $io = null, $accessTokenExpiry = 3600, $allowRegExpRedirectUriMatch = false)
     {
         parent::__construct();
+        $this->setPathInfoRedirect(false);
 
         $this->storage = $storage;
 
@@ -49,6 +51,8 @@ class AuthorizeService extends Service
             $io = new IO();
         }
         $this->io = $io;
+        
+        $this->templateManager = new TemplateManager();
 
         $this->accessTokenExpiry = $accessTokenExpiry;
         $this->allowRegExpRedirectUriMatch = (bool) $allowRegExpRedirectUriMatch;
@@ -56,14 +60,14 @@ class AuthorizeService extends Service
         $compatThis = &$this;
 
         $this->get(
-            '/',
+            '*',
             function (Request $request, UserInfo $userInfo) use ($compatThis) {
                 return $compatThis->getAuthorization($request, $userInfo);
             }
         );
 
         $this->post(
-            '/',
+            '*',
             function (Request $request, UserInfo $userInfo) use ($compatThis) {
                 return $compatThis->postAuthorization($request, $userInfo);
             }
@@ -133,9 +137,8 @@ class AuthorizeService extends Service
         if (false === $approval || false === $scopeObj->hasOnlyScope($approvedScopeObj)) {
             // we do not yet have an approval at all, or client wants more
             // permissions, so we ask the user for approval
-            $twig = $this->getTwig();
-            return $twig->render(
-                'askAuthorization.twig',
+            return $this->templateManager->render(
+                'askAuthorization',
                 array(
                     'resourceOwnerId' => $userInfo->getUserId(),
                     'sslEnabled' => 'https' === $request->getRequestUri()->getScheme(),
@@ -258,19 +261,5 @@ class AuthorizeService extends Service
             // update it if needed keeping the same refresh_token
             $this->storage->updateApproval($clientData->getId(), $userId, $scope);
         }
-    }
-
-    private function getTwig()
-    {
-        $configTemplateDir = dirname(dirname(dirname(dirname(__DIR__)))).'/config/views';
-        $defaultTemplateDir = dirname(dirname(dirname(dirname(__DIR__)))).'/views';
-        $templateDirs = array();
-        if (false !== is_dir($configTemplateDir)) {
-            $templateDirs[] = $configTemplateDir;
-        }
-        $templateDirs[] = $defaultTemplateDir;
-        return new Twig_Environment(
-            new Twig_Loader_Filesystem($templateDirs)
-        );
     }
 }
