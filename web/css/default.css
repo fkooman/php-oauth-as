@@ -116,3 +116,16 @@ table.approvals th {
 table.approvals th, table.approvals td {
     padding: 0.4em;
 }
+
+div.footer {
+    border-top: 1px solid #bbb;
+    margin: 1em 0;
+    padding: 0.5em 0;
+    font-size: 85%;
+    color: #999;
+    text-align: right;
+}
+
+div.footer a {
+    color: #999;
+}

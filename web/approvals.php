@@ -46,7 +46,6 @@ try {
         new PdoStorage($db)
     );
     $approvalsService->registerOnMatchPlugin($authenticationPlugin);
-    $approvalsService->setReferrerCheck(true);
 
     $approvalsService->run()->sendResponse();
 } catch (Exception $e) {

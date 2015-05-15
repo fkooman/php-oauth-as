@@ -33,6 +33,7 @@ class ApprovalsService extends Service
     public function __construct(PdoStorage $db, TemplateManager $templateManager = null)
     {
         parent::__construct();
+        $this->setReferrerCheck(true);
 
         $this->db = $db;
 
@@ -42,8 +43,6 @@ class ApprovalsService extends Service
         $this->templateManager = $templateManager;
 
         $compatThis = &$this;
-
-        $this->setDefaultRoute('/');
 
         $this->get(
             '/',
