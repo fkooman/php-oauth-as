@@ -19,6 +19,7 @@ namespace fkooman\OAuth\Server;
 use PDO;
 use PHPUnit_Framework_TestCase;
 use fkooman\Rest\Plugin\Basic\BasicAuthentication;
+use fkooman\Rest\PluginRegistry;
 use fkooman\Http\Request;
 
 class TokenServiceTest extends PHPUnit_Framework_TestCase
@@ -86,21 +87,37 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
         );
 
         $this->service = new TokenService($this->storage, $ioStub, 5);
-        $this->service->registerOnMatchPlugin($basicAuthenticationPlugin);
+        $pluginRegistry = new PluginRegistry();
+        $pluginRegistry->registerDefaultPlugin($basicAuthenticationPlugin);
+        $this->service->setPluginRegistry($pluginRegistry);
     }
 
     public function testAuthorizationCode()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
             array(
                 'code' => '4uth0r1z4t10n',
                 'grant_type' => 'authorization_code',
             )
         );
-
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(
+#            array(
+#                'code' => '4uth0r1z4t10n',
+#                'grant_type' => 'authorization_code',
+#            )
+#        );
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
@@ -111,7 +128,7 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
                 'refresh_token' => 'r3fr3sh',
                 'token_type' => 'bearer',
             ),
-            $response->getContent()
+            $response->getBody()
         );
     }
 
@@ -121,17 +138,32 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testAuthorizationCodeWithoutRedirectUri()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        // fail because redrect_uri was part of the authorize request, so must also be
-        // there at token request
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
             array(
                 'code' => 'authorizeRequestWithRedirectUri',
                 'grant_type' => 'authorization_code',
             )
         );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        // fail because redrect_uri was part of the authorize request, so must also be
+#        // there at token request
+#        $h->setPostParameters(
+#            array(
+#                'code' => 'authorizeRequestWithRedirectUri',
+#                'grant_type' => 'authorization_code',
+#            )
+#        );
         $this->service->run($h);
     }
 
@@ -141,31 +173,62 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testAuthorizationCodeWithInvalidRedirectUri()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
             array(
                 'redirect_uri' => 'http://example.org/invalid',
                 'code' => 'authorizeRequestWithRedirectUri',
-                'grant_type' => 'authorization_code', )
+                'grant_type' => 'authorization_code',
+            )
         );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(
+#            array(
+#                'redirect_uri' => 'http://example.org/invalid',
+#                'code' => 'authorizeRequestWithRedirectUri',
+#                'grant_type' => 'authorization_code', )
+#        );
         $this->service->run($h);
     }
 
     public function testAuthorizationCodeWithRedirectUri()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
             array(
                 'redirect_uri' => 'http://localhost/php-oauth/unit/test.html',
                 'code' => 'authorizeRequestWithRedirectUri',
                 'grant_type' => 'authorization_code',
             )
         );
-
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(
+#            array(
+#                'redirect_uri' => 'http://localhost/php-oauth/unit/test.html',
+#                'code' => 'authorizeRequestWithRedirectUri',
+#                'grant_type' => 'authorization_code',
+#            )
+#        );
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
@@ -176,22 +239,36 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
                 'refresh_token' => 'r3fr3sh',
                 'token_type' => 'bearer',
             ),
-            $response->getContent()
+            $response->getBody()
         );
     }
 
     public function testRefreshToken()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
             array(
                 'refresh_token' => 'r3fr3sh',
                 'grant_type' => 'refresh_token',
             )
         );
-
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(
+#            array(
+#                'refresh_token' => 'r3fr3sh',
+#                'grant_type' => 'refresh_token',
+#            )
+#        );
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
@@ -201,7 +278,7 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
                 'scope' => 'read write foo',
                 'token_type' => 'bearer',
             ),
-            $response->getContent()
+            $response->getBody()
         );
     }
 
@@ -211,10 +288,19 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
     public function testInvalidRequestMethod()
     {
         $h = new Request(
-            'https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz',
-            'GET'
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=foo&response_type=token&scope=read&state=xyz',
+                'REQUEST_URI' => '/token.php?client_id=foo&response_type=token&scope=read&state=xyz',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'GET',
+            )
         );
-
+#        $h = new Request(
+#            'https://auth.example.org?client_id=foo&response_type=token&scope=read&state=xyz',
+#            'GET'
+#        );
         $this->service->run($h);
         $this->assertEquals(405, $response->getStatusCode());
     }
@@ -225,32 +311,60 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testWithoutGrantType()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
             array(
                 'code' => '4uth0r1z4t10n',
             )
         );
-
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(
+#            array(
+#                'code' => '4uth0r1z4t10n',
+#            )
+#        );
         $this->service->run($h);
     }
 
     /**
      * @expectedException fkooman\Http\Exception\UnauthorizedException
-     * @expectedExceptionMessage invalid_credentials
+     * @expectedExceptionMessage no_credentials
      */
     public function testWithoutCredentials()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+            ),
             array(
                 'client_id' => 'code_client',
                 'code' => '4uth0r1z4t10n',
                 'grant_type' => 'authorization_code',
             )
         );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setPostParameters(
+#            array(
+#                'client_id' => 'code_client',
+#                'code' => '4uth0r1z4t10n',
+#                'grant_type' => 'authorization_code',
+#            )
+#        );
         $this->service->run($h);
     }
 
@@ -260,10 +374,24 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testWithInvalidClient()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('NONEXISTINGCLIENT');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(array('code' => '4uth0r1z4t10n'));
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('NONEXISTINGCLIENT:abcdef')),
+            ),
+            array(
+                'code' => '4uth0r1z4t10n',
+            )
+        );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('NONEXISTINGCLIENT');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(array('code' => '4uth0r1z4t10n'));
         $this->service->run($h);
     }
 
@@ -273,10 +401,24 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testWithInvalidPassword()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('WRONGPASSWORD');
-        $h->setPostParameters(array('code' => '4uth0r1z4t10n'));
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:WRONGPASSWORD')),
+            ),
+            array(
+                'code' => '4uth0r1z4t10n',
+            )
+        );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('WRONGPASSWORD');
+#        $h->setPostParameters(array('code' => '4uth0r1z4t10n'));
         $this->service->run($h);
     }
 
@@ -286,16 +428,32 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testClientIdUserMismatch()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
             array(
                 'code' => '4uth0r1z4t10n',
                 'grant_type' => 'authorization_code',
                 'client_id' => 'MISMATCH_CLIENT_ID',
             )
         );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(
+#            array(
+#                'code' => '4uth0r1z4t10n',
+#                'grant_type' => 'authorization_code',
+#                'client_id' => 'MISMATCH_CLIENT_ID',
+#            )
+#        );
         $this->service->run($h);
     }
 
@@ -305,15 +463,30 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testExpiredAuthorization()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
             array(
                 'code' => '3xp1r3d4uth0r1z4t10n',
                 'grant_type' => 'authorization_code',
             )
         );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(
+#            array(
+#                'code' => '3xp1r3d4uth0r1z4t10n',
+#                'grant_type' => 'authorization_code',
+#            )
+#        );
         $this->service->run($h);
     }
 
@@ -323,15 +496,30 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidCode()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
             array(
                 'code' => '1nv4l1d4uth0r1z4t10n',
                 'grant_type' => 'authorization_code',
             )
         );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(
+#            array(
+#                'code' => '1nv4l1d4uth0r1z4t10n',
+#                'grant_type' => 'authorization_code',
+#            )
+#        );
         $this->service->run($h);
     }
 
@@ -341,15 +529,30 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testCodeNotBoundToUsedClient()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
             array(
                 'code' => 'n4t1v34uth0r1z4t10n',
                 'grant_type' => 'authorization_code',
             )
         );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(
+#            array(
+#                'code' => 'n4t1v34uth0r1z4t10n',
+#                'grant_type' => 'authorization_code',
+#            )
+#        );
         $this->service->run($h);
     }
 
@@ -359,15 +562,30 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testCheckReuseAuthorizationCode()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
             array(
                 'code' => '4uth0r1z4t10n',
                 'grant_type' => 'authorization_code',
             )
         );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(
+#            array(
+#                'code' => '4uth0r1z4t10n',
+#                'grant_type' => 'authorization_code',
+#            )
+#        );
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
@@ -378,18 +596,33 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
                 'refresh_token' => 'r3fr3sh',
                 'token_type' => 'bearer',
             ),
-            $response->getContent()
+            $response->getBody()
         );
         $this->service->run($h);
     }
 
     public function testRefreshTokenSubScope()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(array('refresh_token' => 'r3fr3sh', 'scope' => 'foo', 'grant_type' => 'refresh_token'));
-
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
+            array(
+                'refresh_token' => 'r3fr3sh',
+                'scope' => 'foo',
+                'grant_type' => 'refresh_token',
+            )
+        );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(array('refresh_token' => 'r3fr3sh', 'scope' => 'foo', 'grant_type' => 'refresh_token'));
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
@@ -399,17 +632,32 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
                 'scope' => 'foo',
                 'token_type' => 'bearer',
             ),
-            $response->getContent()
+            $response->getBody()
         );
     }
 
     public function testRefreshTokenNoSubScope()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('code_client');
-        $h->setBasicAuthPass('abcdef');
-        $h->setPostParameters(array('refresh_token' => 'r3fr3sh', 'scope' => 'we want no sub scope', 'grant_type' => 'refresh_token'));
-
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('code_client:abcdef')),
+            ),
+            array(
+                'refresh_token' => 'r3fr3sh',
+                'scope' => 'we want no sub scope',
+                'grant_type' => 'refresh_token',
+            )
+        );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('code_client');
+#        $h->setBasicAuthPass('abcdef');
+#        $h->setPostParameters(array('refresh_token' => 'r3fr3sh', 'scope' => 'we want no sub scope', 'grant_type' => 'refresh_token'));
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
@@ -419,7 +667,7 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
                 'scope' => 'read write foo',
                 'token_type' => 'bearer',
             ),
-            $response->getContent()
+            $response->getBody()
         );
     }
 
@@ -429,15 +677,30 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testTryTokenClient()
     {
-        $h = new Request('https://auth.example.org/token', 'POST');
-        $h->setBasicAuthUser('token_client');
-        $h->setBasicAuthPass('whynot');
-        $h->setPostParameters(
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/token.php',
+                'SCRIPT_NAME' => '/token.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('token_client:whynot')),
+            ),
             array(
                 'code' => 'non_existing_code',
                 'grant_type' => 'authorization_code',
             )
         );
+#        $h = new Request('https://auth.example.org/token', 'POST');
+#        $h->setBasicAuthUser('token_client');
+#        $h->setBasicAuthPass('whynot');
+#        $h->setPostParameters(
+#            array(
+#                'code' => 'non_existing_code',
+#                'grant_type' => 'authorization_code',
+#            )
+#        );
         $this->service->run($h);
     }
 }

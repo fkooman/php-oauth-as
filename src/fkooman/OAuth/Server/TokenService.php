@@ -37,8 +37,6 @@ class TokenService extends Service
     public function __construct(PdoStorage $db, IO $io = null, $accessTokenExpiry = 3600)
     {
         parent::__construct();
-        $this->setPathInfoRedirect(false);
-
         $this->db = $db;
 
         if (null === $io) {
@@ -102,7 +100,7 @@ class TokenService extends Service
 
         $response = new JsonResponse();
         $response->setHeaders(array('Cache-Control' => 'no-store', 'Pragma' => 'no-cache'));
-        $response->setContent($accessToken);
+        $response->setBody($accessToken);
 
         return $response;
     }
