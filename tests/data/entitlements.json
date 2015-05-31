@@ -1,7 +1,0 @@
-{
-    "fkooman": [
-        "urn:x-foo:service:access",
-        "urn:x-bar:privilege:admin",
-	"http://php-oauth.net/entitlement/manage"
-    ]
-}
