@@ -143,12 +143,13 @@ Now in order to verify it, the RS can send a request to the OAuth service:
     {
         "active": true,
         "client_id": "2352ea44-612d-448b-be10-6e29562e5130",
-        "exp": 1409564548,
-        "iat": 1409560948,
+        "exp": 1433112094,
+        "iat": 1433108494,
+        "iss": "localhost",
         "scope": "http://php-oauth.net/scope/manage",
         "sub": "admin",
-        "token_type": "bearer"
-        ]
+        "token_type": "bearer",
+        "user_id": "admin"
     }
     
 This way the RS can figure out more about the resource owner who authorized 
