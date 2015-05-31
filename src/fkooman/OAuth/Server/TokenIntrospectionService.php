@@ -35,8 +35,6 @@ class TokenIntrospectionService extends Service
     public function __construct(PdoStorage $db, IO $io = null)
     {
         parent::__construct();
-        $this->setPathInfoRedirect(false);
-
         $this->db = $db;
 
         if (null === $io) {
@@ -49,7 +47,7 @@ class TokenIntrospectionService extends Service
         $this->get(
             '*',
             function (Request $request) use ($compatThis) {
-                return $compatThis->getTokenIntrospection($request, $request->getQueryParameter('token'));
+                return $compatThis->getTokenIntrospection($request, $request->getUrl()->getQueryParameter('token'));
             }
         );
 
@@ -87,7 +85,7 @@ class TokenIntrospectionService extends Service
                 'exp' => intval($accessToken['issue_time'] + $accessToken['expires_in']),
                 'iat' => intval($accessToken['issue_time']),
                 'scope' => $accessToken['scope'],
-                'iss' => $request->getAbsRoot(),
+                'iss' => $request->getUrl()->getHost(),
                 'client_id' => $accessToken['client_id'],
                 'sub' => $accessToken['resource_owner_id'],
                 'user_id' => $accessToken['resource_owner_id'],
@@ -100,7 +98,7 @@ class TokenIntrospectionService extends Service
 
         $response = new JsonResponse();
         $response->setHeaders(array('Cache-Control' => 'no-store', 'Pragma' => 'no-cache'));
-        $response->setContent($tokenInfo);
+        $response->setBody($tokenInfo);
 
         return $response;
     }
