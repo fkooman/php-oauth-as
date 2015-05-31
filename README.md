@@ -9,14 +9,12 @@ Part of the development of this software was made possible by
 [SURFnet](https://www.surfnet.nl).
 
 # Features
-* Authorization Code and Implicit Grant support
+* Authorization code and implicit grant profile support
 * `BasicAuthenication` Backend (using username/password)
 * `MellonAuthentication` Backend (SAML)
-* `SimpleSamlAuthentication` Backend (SAML) **DEPRECATED** use 
-  `MellonAuthentication` instead
 * PDO database backend support
-* Token Introspection for Resource Servers
-* Management API to manage client registration and authorizations
+* Token introspection for resource servers
+* Management interfaces to manage client registration and authorized clients
 
 # Screenshot
 ![oauth_consent](https://github.com/fkooman/php-oauth-as/raw/master/docs/oauth_consent.png)
@@ -119,41 +117,11 @@ This is the Apache configuration you use for development. Place it in
 
     <Directory /var/www/php-oauth-as/web>
         AllowOverride None
-        Options FollowSymLinks
 
-        <IfModule mod_authz_core.c>
-          # Apache 2.4
-          Require local
-        </IfModule>
-        <IfModule !mod_authz_core.c>
-          # Apache 2.2
-          Order Deny,Allow
-          Deny from All
-          Allow from 127.0.0.1
-          Allow from ::1
-        </IfModule>
-        
-        # CORS
-        <FilesMatch "api.php">
-            Header set Access-Control-Allow-Origin "*"
-            Header set Access-Control-Allow-Headers "Authorization, Content-Type"
-            Header set Access-Control-Allow-Methods "POST, PUT, GET, DELETE, OPTIONS"
-        </FilesMatch>
+        Require local
+        #Require all granted
 
-        <FilesMatch "authorize.php">
-            # CSP: https://developer.mozilla.org/en-US/docs/Security/CSP
-            Header set Content-Security-Policy "default-src 'self'"
-
-            # X-Frame-Options: https://developer.mozilla.org/en-US/docs/HTTP/X-Frame-Options
-            Header set X-Frame-Options DENY
-        </FilesMatch>
-
-        RewriteEngine On
-        RewriteCond %{HTTP:Authorization} ^(.+)$
-        RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
-        # HSTS: https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security
-        #Header set Strict-Transport-Security max-age=604800
+        SetEnvIfNoCase ^Authorization$ "(.+)" HTTP_AUTHORIZATION=$1
     </Directory>
 
 Restart Apache with `service httpd restart`.
@@ -170,7 +138,6 @@ There are currently three plugins provided for user authentication:
 * `BasicAuthentication` - Simple static username/password authentication 
   configured through `config/oauth.ini` (**DEFAULT**)
 * `MellonAuthentication` - Plugin for SAML authentication
-* `SimpleSamlAuthentication` - Plugin for SAML authentication (**DEPRECATED**)
 
 You can configure which plugin to use by modifying the 
 `authenticationPlugin` setting in `config/oauth.ini`.

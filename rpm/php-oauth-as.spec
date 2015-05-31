@@ -32,8 +32,6 @@ Requires:   php-composer(fkooman/rest-plugin-basic) >= 0.5.1
 Requires:   php-composer(fkooman/rest-plugin-basic) < 0.6.0
 Requires:   php-composer(fkooman/rest-plugin-mellon) >= 0.3.1
 Requires:   php-composer(fkooman/rest-plugin-mellon) < 0.4.0
-Requires:   php-composer(fkooman/rest-plugin-simplesaml) >= 0.2.1
-Requires:   php-composer(fkooman/rest-plugin-simplesaml) < 0.3.0
 Requires:   php-pear(pear.twig-project.org/Twig) >= 1.15
 Requires:   php-pear(pear.twig-project.org/Twig) < 2.0
 
@@ -78,7 +76,6 @@ cp -pr bin/* ${RPM_BUILD_ROOT}%{_bindir}
 # Config
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as
 cp -p config/oauth.ini.defaults ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as/oauth.ini
-cp -p config/entitlements.json.example ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as/entitlements.json
 ln -s ../../../etc/php-oauth-as ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as/config
 
 # Data

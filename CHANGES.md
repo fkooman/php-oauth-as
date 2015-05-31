@@ -1,5 +1,14 @@
 # Changes
 
+## 0.4.0
+- remove entitlements completely, this is up to the resource server
+- update `fkooman/rest`
+- remove REST API for client management and client authorizations, use built in
+  management interfaces instead
+- remove the config option to disable certificate check, no longer relevant
+- simplify the httpd config to the bare minimum
+- remove simpleSAMLphp support, deprecated
+
 ## 0.3.2
 - implement an 'approvals.php' script to manage the approvals per user, so
   no separate client is needed for this. Step one in making the server 
