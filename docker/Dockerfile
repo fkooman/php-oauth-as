@@ -25,12 +25,9 @@ USER apache
 # Init Database
 RUN php-oauth-as-initdb
 
-# Register Default Clients
-RUN php-oauth-as-register https://www.php-oauth.net/app/config.json
-
 USER root
 
-# Expose port 443 and set httpd as our entrypoint
+# Expose port 80 and 443 and set httpd as our entrypoint
 EXPOSE 80
 EXPOSE 443
 ENTRYPOINT ["/usr/sbin/httpd"]
