@@ -14,17 +14,15 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace fkooman\OAuth\Server;
 
 use fkooman\Rest\Service;
 use fkooman\Http\JsonResponse;
 use fkooman\Http\Request;
-use fkooman\Json\Json;
 use fkooman\Http\Exception\BadRequestException;
 
 /**
- * Implementation of https://tools.ietf.org/html/draft-richer-oauth-introspection
+ * Implementation of https://tools.ietf.org/html/draft-richer-oauth-introspection.
  */
 class TokenIntrospectionService extends Service
 {
@@ -75,12 +73,12 @@ class TokenIntrospectionService extends Service
         if (false === $accessToken) {
             // token does not exist
             $tokenInfo = array(
-                'active' => false
+                'active' => false,
             );
         } elseif ($this->io->getTime() > $accessToken['issue_time'] + $accessToken['expires_in']) {
             // token expired
             $tokenInfo = array(
-                'active' => false
+                'active' => false,
             );
         } else {
             // token exists and did not expire
@@ -93,7 +91,7 @@ class TokenIntrospectionService extends Service
                 'client_id' => $accessToken['client_id'],
                 'sub' => $accessToken['resource_owner_id'],
                 'user_id' => $accessToken['resource_owner_id'],
-                'token_type' => 'bearer'
+                'token_type' => 'bearer',
             );
 
             // as long as we have no RS registration we cannot set the audience...
@@ -103,7 +101,7 @@ class TokenIntrospectionService extends Service
         $response = new JsonResponse();
         $response->setHeaders(array('Cache-Control' => 'no-store', 'Pragma' => 'no-cache'));
         $response->setContent($tokenInfo);
-        
+
         return $response;
     }
 }

@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace fkooman\OAuth\Server;
 
 use fkooman\Ini\IniReader;
@@ -24,7 +23,6 @@ use fkooman\Rest\Plugin\SimpleSaml\SimpleSamlAuthentication;
 
 class Authenticator
 {
-
     /** @var fkooman\Ini\IniReader */
     private $iniReader;
 
@@ -51,11 +49,13 @@ class Authenticator
     private function getBasicAuthenticationPlugin()
     {
         $userList = $this->iniReader->v('BasicAuthentication');
+
         return new BasicAuthentication(
             function ($userId) use ($userList) {
                 if (!array_key_exists($userId, $userList)) {
                     return false;
                 }
+
                 return password_hash($userList[$userId], PASSWORD_DEFAULT);
             },
             'OAuth Server'

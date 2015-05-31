@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace fkooman\OAuth\Server;
 
 use fkooman\Http\Request;
@@ -78,11 +77,11 @@ class AuthorizeRequest
     {
         return $this->clientId;
     }
-    
+
     public function setResponseType($responseType)
     {
         $this->checkString($responseType, 'response_type');
-        
+
         if (!in_array($responseType, array('code', 'token'))) {
             throw new BadRequestException('response_type contains unsupported response_type');
         }
@@ -93,7 +92,7 @@ class AuthorizeRequest
     {
         return $this->responseType;
     }
-        
+
     public function setRedirectUri($redirectUri)
     {
         if (empty($redirectUri)) {

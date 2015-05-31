@@ -14,10 +14,8 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace fkooman\OAuth\Server;
 
-use fkooman\Json\Json;
 use PDO;
 
 /**
@@ -54,6 +52,7 @@ class PdoStorage
         if (false !== $data && array_key_exists('disable_user_consent', $data)) {
             $data['disable_user_consent'] = (bool) $data['disable_user_consent'];
         }
+
         return false !== $data ? new ClientData($data) : false;
     }
 

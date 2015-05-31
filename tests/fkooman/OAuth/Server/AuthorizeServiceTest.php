@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace fkooman\OAuth\Server;
 
 use PDO;
@@ -44,7 +43,7 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
                     'name' => 'Token Client',
                     'allowed_scope' => 'read',
                     'redirect_uri' => 'https://example.org/callback.html',
-                    'type' => 'token'
+                    'type' => 'token',
                 )
             )
         );
@@ -57,7 +56,7 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
                     'secret' => 'foobar',
                     'allowed_scope' => 'read',
                     'redirect_uri' => 'https://example.org/callback',
-                    'type' => 'code'
+                    'type' => 'code',
                 )
             )
         );
@@ -261,7 +260,7 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
         $h->setBasicAuthPass('adm1n');
         $h->setHeaders(array('HTTP_REFERER' => 'https://evil.site.org/xyz'));
         $h->setPostParameters(array('approval' => 'approve'));
-        
+
         $this->service->run($h);
     }
 
@@ -274,7 +273,7 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
         $h = new Request('https://auth.example.org', 'GET');
         $h->setBasicAuthUser('admin');
         $h->setBasicAuthPass('adm1n');
-        
+
         $this->service->run($h);
     }
 
@@ -306,7 +305,7 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
         );
         $h->setBasicAuthUser('admin');
         $h->setBasicAuthPass('adm1n');
-        
+
         $this->service->run($h);
     }
 
@@ -315,7 +314,7 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
         $h = new Request('https://auth.example.org/?client_id=token_client&scope=read&response_type=code&state=foo', 'GET');
         $h->setBasicAuthUser('admin');
         $h->setBasicAuthPass('adm1n');
-        
+
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals('https://example.org/callback.html#error=unsupported_response_type&error_description=response_type+not+supported+by+client+profile&state=foo', $response->getHeader('Location'));

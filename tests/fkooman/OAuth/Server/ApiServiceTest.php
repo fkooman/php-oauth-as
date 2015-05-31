@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace fkooman\OAuth\Server;
 
 use PDO;
@@ -58,7 +57,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
                     'disable_user_consent' => false,
                     'contact_email' => 'foo@example.org',
                     'redirect_uri' => 'http://localhost/php-oauth/unit/test.html',
-                    'type' => 'token'
+                    'type' => 'token',
                 )
             )
         );
@@ -75,7 +74,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
                     'disable_user_consent' => false,
                     'contact_email' => null,
                     'redirect_uri' => 'http://localhost/php-oauth/unit/test.html',
-                    'type' => 'code'
+                    'type' => 'code',
                 )
             )
         );
@@ -90,7 +89,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
                 array(
                     'active' => true,
                     'sub' => 'fkooman',
-                    'scope' => 'http://php-oauth.net/scope/authorize http://php-oauth.net/scope/manage'
+                    'scope' => 'http://php-oauth.net/scope/authorize http://php-oauth.net/scope/manage',
                 )
             )
         );
@@ -236,7 +235,6 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array('status' => 'ok'), $response->getContent());
     }
 
-
     /**
      * @expectedException fkooman\Http\Exception\BadRequestException
      * @expectedExceptionMessage invalid client data
@@ -252,7 +250,7 @@ class ApiServiceTest extends PHPUnit_Framework_TestCase
         $h->setContent(null);
         $api->run($h);
     }
-    
+
     /**
      * @expectedException fkooman\Http\Exception\ForbiddenException
      * @expectedExceptionMessage insufficient_entitlement

@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace fkooman\OAuth\Server;
 
 use fkooman\Http\Exception\BadRequestException;
@@ -51,7 +50,7 @@ class AuthorizeService extends Service
             $io = new IO();
         }
         $this->io = $io;
-        
+
         $this->templateManager = new TemplateManager();
 
         $this->accessTokenExpiry = $accessTokenExpiry;
@@ -106,11 +105,11 @@ class AuthorizeService extends Service
                 $redirectUri,
                 array(
                     'error' => 'unsupported_response_type',
-                    'error_description' => 'response_type not supported by client profile'
+                    'error_description' => 'response_type not supported by client profile',
                 )
             );
         }
-        
+
         $scopeObj = new Scope($scope);
         $allowedScopeObj = new Scope($clientData->getAllowedScope());
 
@@ -121,11 +120,11 @@ class AuthorizeService extends Service
                 $redirectUri,
                 array(
                     'error' => 'invalid_scope',
-                    'error_description' => 'not authorized to request this scope'
+                    'error_description' => 'not authorized to request this scope',
                 )
             );
         }
-        
+
         if ($clientData->getDisableUserConsent()) {
             // we do not require approval by the user, add implicit approval
             $this->addApproval($clientData, $userInfo->getUserId(), $scope);
@@ -146,7 +145,7 @@ class AuthorizeService extends Service
                     'scopes' => $scopeObj->toArray(),
                     'clientName' => $clientData->getName(),
                     'clientId' => $clientData->getId(),
-                    'clientDescription' => $clientData->getDescription()
+                    'clientDescription' => $clientData->getDescription(),
                 )
             );
         } else {
@@ -163,6 +162,7 @@ class AuthorizeService extends Service
                     $scope,
                     $this->accessTokenExpiry
                 );
+
                 return new ClientResponse(
                     $clientData,
                     $request,
@@ -171,7 +171,7 @@ class AuthorizeService extends Service
                         'access_token' => $accessToken,
                         'expires_in' => $this->accessTokenExpiry,
                         'token_type' => 'bearer',
-                        'scope' => $scope
+                        'scope' => $scope,
                     )
                 );
             } else {
@@ -187,12 +187,13 @@ class AuthorizeService extends Service
                     $authorizeRequest->getRedirectUri(),
                     $scope
                 );
+
                 return new ClientResponse(
                     $clientData,
                     $request,
                     $redirectUri,
                     array(
-                        'code' => $authorizationCode
+                        'code' => $authorizationCode,
                     )
                 );
             }
@@ -238,7 +239,7 @@ class AuthorizeService extends Service
                 $redirectUri,
                 array(
                     'error' => 'access_denied',
-                    'error_description' => 'not authorized by resource owner'
+                    'error_description' => 'not authorized by resource owner',
                 )
             );
         }

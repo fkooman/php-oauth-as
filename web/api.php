@@ -14,15 +14,12 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\ApiService;
 use fkooman\OAuth\Server\PdoStorage;
 use fkooman\OAuth\Server\Entitlements;
-use fkooman\Http\Exception\HttpException;
-use fkooman\Http\Exception\InternalServerErrorException;
 use fkooman\Rest\Plugin\Bearer\BearerAuthentication;
 use fkooman\Rest\Plugin\Bearer\IntrospectionBearerValidator;
 use fkooman\Http\Request;
@@ -57,7 +54,7 @@ try {
     $client = new Client(
         '',
         array(
-            'ssl.certificate_authority' => !$disableServerCertCheck
+            'ssl.certificate_authority' => !$disableServerCertCheck,
         )
     );
 
@@ -72,7 +69,7 @@ try {
     $apiService->registerOnMatchPlugin(
         new BearerAuthentication(
             new IntrospectionBearerValidator(
-                dirname($request->getAbsRoot()) . '/introspect.php',
+                dirname($request->getAbsRoot()).'/introspect.php',
                 'foo', // introspect currently does not require any authentication
                 $client
             ),

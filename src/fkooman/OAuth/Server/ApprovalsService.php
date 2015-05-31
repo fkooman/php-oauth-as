@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace fkooman\OAuth\Server;
 
 use fkooman\Http\Request;
@@ -62,10 +61,11 @@ class ApprovalsService extends Service
     public function getApprovals(Request $request, UserInfo $userInfo)
     {
         $approvals = $this->db->getApprovals($userInfo->getUserId());
+
         return $this->templateManager->render(
             'approvals',
             array(
-                'approvals' => $approvals
+                'approvals' => $approvals,
             )
         );
     }

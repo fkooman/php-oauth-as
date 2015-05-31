@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4093f465cd23848158edca5ffd1dd06c",
+    "hash": "d60d0a3165e89fca89a52b2f1b60665d",
     "packages": [
         {
             "name": "fkooman/ini",
@@ -82,21 +82,24 @@
         },
         {
             "name": "fkooman/rest",
-            "version": "0.8.9",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "461d49e1f03807293007375b2ebc34af82990dc8"
+                "reference": "6b53cec8b23f7561a6bbd8646fea3449bcc1d964"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/461d49e1f03807293007375b2ebc34af82990dc8",
-                "reference": "461d49e1f03807293007375b2ebc34af82990dc8",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/6b53cec8b23f7561a6bbd8646fea3449bcc1d964",
+                "reference": "6b53cec8b23f7561a6bbd8646fea3449bcc1d964",
                 "shasum": ""
             },
             "require": {
                 "fkooman/json": "~0.6.0",
                 "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "ext-xdebug": "*"
             },
             "suggest": {
                 "fkooman/rest-plugin-basic": "Basic Authentication plugin",
@@ -124,24 +127,24 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2015-05-28 11:51:36"
+            "time": "2015-05-31 08:41:59"
         },
         {
             "name": "fkooman/rest-plugin-basic",
-            "version": "0.5.1",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest-plugin-basic.git",
-                "reference": "934ba8ff65f2f41ca62d0cb0560ecb89e5d1cccc"
+                "reference": "7e0fff23ea74fe8f74dcff0dd9c7e89e63a65f67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-basic/zipball/934ba8ff65f2f41ca62d0cb0560ecb89e5d1cccc",
-                "reference": "934ba8ff65f2f41ca62d0cb0560ecb89e5d1cccc",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-basic/zipball/7e0fff23ea74fe8f74dcff0dd9c7e89e63a65f67",
+                "reference": "7e0fff23ea74fe8f74dcff0dd9c7e89e63a65f67",
                 "shasum": ""
             },
             "require": {
-                "fkooman/rest": "~0.8.0",
+                "fkooman/rest": "dev-develop",
                 "ircmaxell/password-compat": "~1.0",
                 "php": ">=5.3.3"
             },
@@ -163,24 +166,24 @@
                 }
             ],
             "description": "Basic Authentication plugin for fkooman/rest",
-            "time": "2015-04-12 14:20:48"
+            "time": "2015-05-31 09:52:29"
         },
         {
             "name": "fkooman/rest-plugin-bearer",
-            "version": "0.4.1",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest-plugin-bearer.git",
-                "reference": "f010b34336201399ec0af2eacd30672c2158a862"
+                "reference": "e1bfdd9916aa9a893b009a85393228d3dcd56034"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/f010b34336201399ec0af2eacd30672c2158a862",
-                "reference": "f010b34336201399ec0af2eacd30672c2158a862",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/e1bfdd9916aa9a893b009a85393228d3dcd56034",
+                "reference": "e1bfdd9916aa9a893b009a85393228d3dcd56034",
                 "shasum": ""
             },
             "require": {
-                "fkooman/rest": "~0.8.1",
+                "fkooman/rest": "dev-develop",
                 "guzzle/guzzle": "~3.9",
                 "php": ">=5.3.3"
             },
@@ -202,24 +205,24 @@
                 }
             ],
             "description": "Bearer (OAuth) Authentication plugin for fkooman/rest",
-            "time": "2015-04-30 14:23:31"
+            "time": "2015-05-31 11:16:47"
         },
         {
             "name": "fkooman/rest-plugin-mellon",
-            "version": "0.3.1",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest-plugin-mellon.git",
-                "reference": "0055a02dfec11eea079923fdbcf3dc77c3e12d8b"
+                "reference": "2c7157afd6fc2152c5c9e01fba39ca4d7016e158"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-mellon/zipball/0055a02dfec11eea079923fdbcf3dc77c3e12d8b",
-                "reference": "0055a02dfec11eea079923fdbcf3dc77c3e12d8b",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-mellon/zipball/2c7157afd6fc2152c5c9e01fba39ca4d7016e158",
+                "reference": "2c7157afd6fc2152c5c9e01fba39ca4d7016e158",
                 "shasum": ""
             },
             "require": {
-                "fkooman/rest": "~0.8.0",
+                "fkooman/rest": "dev-develop",
                 "php": ">=5.3.3"
             },
             "type": "library",
@@ -240,45 +243,7 @@
                 }
             ],
             "description": "Mellon (SAML) Authentication plugin for fkooman/rest",
-            "time": "2015-04-12 15:43:00"
-        },
-        {
-            "name": "fkooman/rest-plugin-simplesaml",
-            "version": "0.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fkooman/php-lib-rest-plugin-simplesaml.git",
-                "reference": "9cd2497fffc89fbdad89e5988e16519e45f7c3b3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-simplesaml/zipball/9cd2497fffc89fbdad89e5988e16519e45f7c3b3",
-                "reference": "9cd2497fffc89fbdad89e5988e16519e45f7c3b3",
-                "shasum": ""
-            },
-            "require": {
-                "fkooman/rest": "~0.8.0",
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "fkooman\\Rest\\Plugin\\SimpleSaml": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "François Kooman",
-                    "email": "fkooman@tuxed.net",
-                    "role": "Developer"
-                }
-            ],
-            "description": "simpleSAMLphp (SAML) Authentication plugin for fkooman/rest",
-            "time": "2015-04-12 15:44:47"
+            "time": "2015-05-31 11:18:06"
         },
         {
             "name": "guzzle/guzzle",
@@ -536,7 +501,12 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "fkooman/rest": 20,
+        "fkooman/rest-plugin-basic": 20,
+        "fkooman/rest-plugin-bearer": 20,
+        "fkooman/rest-plugin-mellon": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

@@ -14,14 +14,12 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace fkooman\OAuth\Server;
 
 use PHPUnit_Framework_TestCase;
 
 class EntitlementsTest extends PHPUnit_Framework_TestCase
 {
-
     public function testGoodCase()
     {
         $e = new Entitlements(dirname(dirname(dirname(__DIR__))).'/data/entitlements.json');
@@ -29,12 +27,12 @@ class EntitlementsTest extends PHPUnit_Framework_TestCase
             array(
                 'urn:x-foo:service:access',
                 'urn:x-bar:privilege:admin',
-                'http://php-oauth.net/entitlement/manage'
+                'http://php-oauth.net/entitlement/manage',
             ),
             $e->getEntitlement('fkooman')
         );
     }
-    
+
     /**
      * @expectedException RuntimeException
      * @expectedExceptionMessage unable to read file

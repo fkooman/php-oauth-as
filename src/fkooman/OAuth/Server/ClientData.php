@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace fkooman\OAuth\Server;
 
 use InvalidArgumentException;
@@ -71,7 +70,7 @@ class ClientData
             'description',
             'disable_user_consent',
             'icon',
-            'contact_email'
+            'contact_email',
         );
 
         foreach ($supportedFields as $supportedField) {
@@ -96,7 +95,7 @@ class ClientData
             throw new InvalidArgumentException('for type code a secret must be set');
         }
     }
-    
+
     private function checkString($str, $name)
     {
         if (null === $str || !is_string($str) || 0 >= strlen($str) || 255 < strlen($str)) {
@@ -109,7 +108,7 @@ class ClientData
             );
         }
     }
-    
+
     public function setId($id)
     {
         $this->checkString($id, 'id');
@@ -296,7 +295,7 @@ class ClientData
             'description' => $this->getDescription(),
             'disable_user_consent' => $this->getDisableUserConsent(),
             'icon' => $this->getIcon(),
-            'contact_email' => $this->getContactEmail()
+            'contact_email' => $this->getContactEmail(),
         );
     }
 }

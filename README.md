@@ -83,8 +83,7 @@ CentOS 7 and should also work on RHEL 6 and RHEL 7.
     $ sudo chown apache.apache data
     $ sudo semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/php-oauth-as/data(/.*)?'
     $ sudo restorecon -R /var/www/php-oauth-as/data
-    $ cd config
-    $ cp oauth.ini.defaults oauth.ini
+    $ cp config/oauth.ini.defaults config/oauth.ini
 
 Edit `oauth.ini` to match the configuration. You need to at least modify the
 following lines, and set them to the values shown here:

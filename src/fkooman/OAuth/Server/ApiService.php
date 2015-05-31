@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace fkooman\OAuth\Server;
 
 use fkooman\Json\Json;
@@ -26,7 +25,6 @@ use fkooman\Http\Exception\BadRequestException;
 use fkooman\Http\Exception\InternalServerErrorException;
 use fkooman\Http\Exception\NotFoundException;
 use fkooman\Http\Exception\ForbiddenException;
-use fkooman\Rest\Plugin\Bearer\BearerAuthentication;
 use fkooman\Rest\Plugin\Bearer\TokenInfo;
 use fkooman\Rest\Plugin\Bearer\Scope;
 use InvalidArgumentException;
@@ -60,8 +58,8 @@ class ApiService extends Service
             },
             array(
                 'skipPlugins' => array(
-                    'fkooman\Rest\Plugin\Bearer\BearerAuthentication'
-                )
+                    'fkooman\Rest\Plugin\Bearer\BearerAuthentication',
+                ),
             )
         );
 

@@ -18,11 +18,10 @@
         "ext-openssl": "*",
         "fkooman/ini": "~0.2.0",
         "fkooman/json": "~0.6.0",
-        "fkooman/rest": "~0.8.8",
-        "fkooman/rest-plugin-basic": "~0.5.1",
-        "fkooman/rest-plugin-bearer": "~0.4.1",
-        "fkooman/rest-plugin-mellon": "~0.3.1",
-        "fkooman/rest-plugin-simplesaml": "~0.2.1",
+        "fkooman/rest": "dev-develop",
+        "fkooman/rest-plugin-basic": "dev-develop",
+        "fkooman/rest-plugin-bearer": "dev-develop",
+        "fkooman/rest-plugin-mellon": "dev-develop",
         "php": ">=5.3.3",
         "twig/twig": "~1.15"
     }

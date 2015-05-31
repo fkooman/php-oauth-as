@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 namespace fkooman\OAuth\Server;
 
 use PDO;
@@ -48,7 +47,7 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
                     'disable_user_consent' => false,
                     'contact_email' => 'foo@example.org',
                     'redirect_uri' => 'http://localhost/php-oauth/unit/test.html',
-                    'type' => 'token'
+                    'type' => 'token',
                 )
             )
         );
@@ -80,7 +79,7 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
                 'sub' => 'fkooman',
                 'user_id' => 'fkooman',
                 'iss' => 'https://auth.example.org',
-                'token_type' => 'bearer'
+                'token_type' => 'bearer',
             ),
             $response->getContent()
         );
@@ -102,7 +101,7 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
                 'sub' => 'fkooman',
                 'user_id' => 'fkooman',
                 'iss' => 'https://auth.example.org',
-                'token_type' => 'bearer'
+                'token_type' => 'bearer',
             ),
             $response->getContent()
         );
@@ -124,7 +123,7 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
                 'sub' => 'frko',
                 'user_id' => 'frko',
                 'iss' => 'https://auth.example.org',
-                'token_type' => 'bearer'
+                'token_type' => 'bearer',
             ),
             $response->getContent()
         );
@@ -137,7 +136,7 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
             array(
-                'active' => false
+                'active' => false,
             ),
             $response->getContent()
         );
