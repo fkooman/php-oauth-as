@@ -24,7 +24,7 @@ class ClientResponse extends RedirectResponse
     public function __construct(ClientData $clientData, Request $request, $redirectUri, array $urlParams)
     {
         $clientType = $clientData->getType();
-        $urlParams['state'] = $request->getQueryParameter('state');
+        $urlParams['state'] = $request->getUrl()->getQueryParameter('state');
 
         // remove empty parameters
         foreach ($urlParams as $key => $value) {

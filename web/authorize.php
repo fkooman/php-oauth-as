@@ -20,36 +20,31 @@ use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\PdoStorage;
 use fkooman\OAuth\Server\AuthorizeService;
 use fkooman\OAuth\Server\Authenticator;
+use fkooman\Rest\PluginRegistry;
+use fkooman\Rest\Plugin\ReferrerCheckPlugin;
 
-set_error_handler(
-    function ($errno, $errstr, $errfile, $errline) {
-        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-    }
+$iniReader = IniReader::fromFile(
+    dirname(__DIR__).'/config/oauth.ini'
 );
 
-try {
-    $iniReader = IniReader::fromFile(
-        dirname(__DIR__).'/config/oauth.ini'
-    );
+$db = new PDO(
+    $iniReader->v('PdoStorage', 'dsn'),
+    $iniReader->v('PdoStorage', 'username', false),
+    $iniReader->v('PdoStorage', 'password', false)
+);
 
-    $db = new PDO(
-        $iniReader->v('PdoStorage', 'dsn'),
-        $iniReader->v('PdoStorage', 'username', false),
-        $iniReader->v('PdoStorage', 'password', false)
-    );
+$auth = new Authenticator($iniReader);
+$authenticationPlugin = $auth->getAuthenticationPlugin();
 
-    $auth = new Authenticator($iniReader);
-    $authenticationPlugin = $auth->getAuthenticationPlugin();
+$service = new AuthorizeService(
+    new PdoStorage($db),
+    null,
+    $iniReader->v('accessTokenExpiry'),
+    $iniReader->v('allowRegExpRedirectUriMatch')
+);
 
-    $authorizeService = new AuthorizeService(
-        new PdoStorage($db),
-        null,
-        $iniReader->v('accessTokenExpiry'),
-        $iniReader->v('allowRegExpRedirectUriMatch')
-    );
-    $authorizeService->registerOnMatchPlugin($authenticationPlugin);
-
-    $authorizeService->run()->sendResponse();
-} catch (Exception $e) {
-    AuthorizeService::handleException($e)->sendResponse();
-}
+$pluginRegistry = new PluginRegistry();
+$pluginRegistry->registerDefaultPlugin(new ReferrerCheckPlugin());
+$pluginRegistry->registerDefaultPlugin($authenticationPlugin);
+$service->setPluginRegistry($pluginRegistry);
+$service->run()->send();

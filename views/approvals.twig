@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>OAuth</title>
-  <link rel="stylesheet" type="text/css" href="../css/normalize.css">
-  <link rel="stylesheet" type="text/css" href="../css/default.css">
+  <link rel="stylesheet" type="text/css" href="css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="css/default.css">
 </head>
 <body>
     <div id="container">
@@ -31,7 +31,7 @@
                     <td><span title="{{ approval.id|e }}">{{ approval.name|e }}</span></td>
                     <td><code>{{ approval.scope|e }}</code></td>
                     <td>
-                        <form method="post" action="{{ approval.id|e }}">
+                        <form method="post" action="?id={{ approval.id|e }}">
                             <input type="hidden" name="_METHOD" value="DELETE">
                             <button class="err" type="submit">Delete</button>
                         </form>

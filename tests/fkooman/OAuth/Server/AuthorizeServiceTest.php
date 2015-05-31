@@ -20,6 +20,8 @@ use PDO;
 use PHPUnit_Framework_TestCase;
 use fkooman\Http\Request;
 use fkooman\Rest\Plugin\Basic\BasicAuthentication;
+use fkooman\Rest\PluginRegistry;
+use fkooman\Rest\Plugin\ReferrerCheckPlugin;
 
 class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 {
@@ -78,18 +80,33 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
             'OAuth Server Authentication'
         );
 
+        $pluginRegistry = new PluginRegistry();
+        $pluginRegistry->registerDefaultPlugin($basicAuthenticationPlugin);
+        $pluginRegistry->registerDefaultPlugin(new ReferrerCheckPlugin());
+
         $this->service = new AuthorizeService($this->storage, $ioStub, 5, false);
-        $this->service->registerOnMatchPlugin($basicAuthenticationPlugin);
+        $this->service->setPluginRegistry($pluginRegistry);
     }
 
     public function testGetAuthorizeToken()
     {
-        $h = new Request('https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz', 'GET');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=token_client&response_type=token&scope=read&state=xyz',
+                'REQUEST_URI' => '/authorize.php?client_id=token_client&response_type=token&scope=read&state=xyz',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'GET',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz', 'GET');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('text/html', $response->getContentType());
+        $this->assertEquals('text/html;charset=UTF-8', $response->getHeader('Content-Type'));
         // FIXME: use a file compare
         //$this->assertEquals('', $response->getContent());
     }
@@ -99,9 +116,21 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
         // we already store an approval so we should get a redirect
         $this->storage->addApproval('token_client', 'admin', 'read', null);
 
-        $h = new Request('https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz', 'GET');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=token_client&response_type=token&scope=read&state=xyz',
+                'REQUEST_URI' => '/authorize.php?client_id=token_client&response_type=token&scope=read&state=xyz',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'GET',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+            )
+        );
+
+#        $h = new Request('https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz', 'GET');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(
@@ -115,9 +144,20 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
         // we already store an approval so we should get a redirect
         $this->storage->addApproval('code_client', 'admin', 'read', '12345');
 
-        $h = new Request('https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz', 'GET');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=code_client&response_type=code&scope=read&state=xyz',
+                'REQUEST_URI' => '/authorize.php?client_id=code_client&response_type=code&scope=read&state=xyz',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'GET',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz', 'GET');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(
@@ -128,34 +168,73 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 
     public function testGetAuthorizeCode()
     {
-        $h = new Request('https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz', 'GET');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=code_client&response_type=code&scope=read&state=xyz',
+                'REQUEST_URI' => '/authorize.php?client_id=code_client&response_type=code&scope=read&state=xyz',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'GET',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz', 'GET');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
         $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testPostAuthorizeTokenClientApprove()
     {
-        $h = new Request('https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz', 'POST');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
-        $h->setHeaders(array('HTTP_REFERER' => 'https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz'));
-        $h->setPostParameters(array('approval' => 'approve'));
-
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=token_client&response_type=token&scope=read&state=xyz',
+                'REQUEST_URI' => '/authorize.php?client_id=token_client&response_type=token&scope=read&state=xyz',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+                'HTTP_REFERER' => 'http://www.example.org/authorize.php?client_id=token_client&response_type=token&scope=read&state=xyz',
+            ),
+            array(
+                'approval' => 'approve',
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz', 'POST');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
+#        $h->setHeaders(array('HTTP_REFERER' => 'https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz'));
+#        $h->setPostParameters(array('approval' => 'approve'));
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
-        //$this->assertEquals('', $response->getHeader('Location'));
+        $this->assertEquals('http://www.example.org/authorize.php?client_id=token_client&response_type=token&scope=read&state=xyz', $response->getHeader('Location'));
     }
 
     public function testPostAuthorizeTokenClientReject()
     {
-        $h = new Request('https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz', 'POST');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
-        $h->setHeaders(array('HTTP_REFERER' => 'https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz'));
-        $h->setPostParameters(array('approval' => 'reject'));
-
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=token_client&response_type=token&scope=read&state=xyz',
+                'REQUEST_URI' => '/authorize.php?client_id=token_client&response_type=token&scope=read&state=xyz',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+                'HTTP_REFERER' => 'http://www.example.org/authorize.php?client_id=token_client&response_type=token&scope=read&state=xyz',
+            ),
+            array(
+                'approval' => 'reject',
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz', 'POST');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
+#        $h->setHeaders(array('HTTP_REFERER' => 'https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz'));
+#        $h->setPostParameters(array('approval' => 'reject'));
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(
@@ -166,25 +245,53 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 
     public function testPostAuthorizeCodeClientApprove()
     {
-        $h = new Request('https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz', 'POST');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
-        $h->setHeaders(array('HTTP_REFERER' => 'https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz'));
-        $h->setPostParameters(array('approval' => 'approve'));
-
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=code_client&response_type=code&scope=read&state=xyz',
+                'REQUEST_URI' => '/authorize.php?client_id=code_client&response_type=code&scope=read&state=xyz',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+                'HTTP_REFERER' => 'http://www.example.org/authorize.php?client_id=code_client&response_type=code&scope=read&state=xyz',
+            ),
+            array(
+                'approval' => 'approve',
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz', 'POST');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
+#        $h->setHeaders(array('HTTP_REFERER' => 'https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz'));
+#        $h->setPostParameters(array('approval' => 'approve'));
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
-        //$this->assertEquals('', $response->getHeader('Location'));
+        $this->assertEquals('http://www.example.org/authorize.php?client_id=code_client&response_type=code&scope=read&state=xyz', $response->getHeader('Location'));
     }
 
     public function testPostAuthorizeCodeClientReject()
     {
-        $h = new Request('https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz', 'POST');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
-        $h->setHeaders(array('HTTP_REFERER' => 'https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz'));
-        $h->setPostParameters(array('approval' => 'reject'));
-
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=code_client&response_type=code&scope=read&state=xyz',
+                'REQUEST_URI' => '/authorize.php?client_id=code_client&response_type=code&scope=read&state=xyz',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+                'HTTP_REFERER' => 'http://www.example.org/authorize.php?client_id=code_client&response_type=code&scope=read&state=xyz',
+            ),
+            array(
+                'approval' => 'reject',
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz', 'POST');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
+#        $h->setHeaders(array('HTTP_REFERER' => 'https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz'));
+#        $h->setPostParameters(array('approval' => 'reject'));
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(
@@ -217,9 +324,20 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 
     public function testUnsupportedScope()
     {
-        $h = new Request('https://auth.example.org/?client_id=token_client&response_type=token&scope=foo&state=xyz', 'GET');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=token_client&response_type=token&scope=foo&state=xyz',
+                'REQUEST_URI' => '/authorize.php?client_id=token_client&response_type=token&scope=foo&state=xyz',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'GET',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=token_client&response_type=token&scope=foo&state=xyz', 'GET');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals('https://example.org/callback.html#error=invalid_scope&error_description=not+authorized+to+request+this+scope&state=xyz', $response->getHeader('Location'));
@@ -231,9 +349,20 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testUnregisteredClient()
     {
-        $h = new Request('https://auth.example.org/?client_id=foo&response_type=token&scope=read&state=xyz', 'GET');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=foo&response_type=token&scope=read&state=xyz',
+                'REQUEST_URI' => '/authorize.php?client_id=foo&response_type=token&scope=read&state=xyz',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'GET',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=foo&response_type=token&scope=read&state=xyz', 'GET');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
         $this->service->run($h);
     }
 
@@ -243,24 +372,49 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidRequestMethod()
     {
-        $h = new Request('https://auth.example.org/?client_id=foo&response_type=token&scope=read&state=xyz', 'DELETE');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=foo&response_type=token&scope=read&state=xyz',
+                'REQUEST_URI' => '/authorize.php?client_id=foo&response_type=token&scope=read&state=xyz',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'DELETE',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=foo&response_type=token&scope=read&state=xyz', 'DELETE');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
         $this->service->run($h);
     }
 
     /**
      * @expectedException fkooman\Http\Exception\BadRequestException
-     * @expectedExceptionMessage CSRF protection triggered
+     * @expectedExceptionMessage HTTP_REFERER has unexpected value
      */
     public function testCSRFAttack()
     {
-        $h = new Request('https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz', 'POST');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
-        $h->setHeaders(array('HTTP_REFERER' => 'https://evil.site.org/xyz'));
-        $h->setPostParameters(array('approval' => 'approve'));
-
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=token_client&response_type=token&scope=read&state=xyz',
+                'REQUEST_URI' => '/authorize.php?client_id=token_client&response_type=token&scope=read&state=xyz',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'POST',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+                'HTTP_REFERER' => 'https://evil.site.org/xyz',
+            ),
+            array(
+                'approval' => 'approve',
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz', 'POST');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
+#        $h->setHeaders(array('HTTP_REFERER' => 'https://evil.site.org/xyz'));
+#        $h->setPostParameters(array('approval' => 'approve'));
         $this->service->run($h);
     }
 
@@ -270,10 +424,20 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testMissingClientId()
     {
-        $h = new Request('https://auth.example.org', 'GET');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
-
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/authorize.php',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'GET',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+            )
+        );
+#        $h = new Request('https://auth.example.org', 'GET');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
         $this->service->run($h);
     }
 
@@ -283,10 +447,20 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testMissingResponseType()
     {
-        $h = new Request('https://auth.example.org/?client_id=token_client', 'GET');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
-
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=token_client',
+                'REQUEST_URI' => '/authorize.php?client_id=token_client',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'GET',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=token_client', 'GET');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
         $this->service->run($h);
     }
 
@@ -297,24 +471,44 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
     public function testWrongRedirectUri()
     {
         $h = new Request(
-            sprintf(
-                'https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=abc&redirect_uri=%s',
-                urlencode('http://wrong.example.org/foo')
-            ),
-            'GET'
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => sprintf('client_id=token_client&response_type=token&scope=read&state=abc&redirect_uri=%s', urlencode('http://wrong.example.org/foo')),
+                'REQUEST_URI' => sprintf('/authorize.php?client_id=token_client&response_type=token&scope=read&state=abc&redirect_uri=%s', urlencode('http://wrong.example.org/foo')),
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'GET',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+            )
         );
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
-
+#        $h = new Request(
+#            sprintf(
+#                'https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=abc&redirect_uri=%s',
+#                urlencode('http://wrong.example.org/foo')
+#            ),
+#            'GET'
+#        );
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
         $this->service->run($h);
     }
 
     public function testWrongClientType()
     {
-        $h = new Request('https://auth.example.org/?client_id=token_client&scope=read&response_type=code&state=foo', 'GET');
-        $h->setBasicAuthUser('admin');
-        $h->setBasicAuthPass('adm1n');
-
+        $h = new Request(
+            array(
+                'SERVER_NAME' => 'www.example.org',
+                'SERVER_PORT' => 80,
+                'QUERY_STRING' => 'client_id=token_client&scope=read&response_type=code&state=foo',
+                'REQUEST_URI' => '/authorize.php?client_id=token_client&scope=read&response_type=code&state=foo',
+                'SCRIPT_NAME' => '/authorize.php',
+                'REQUEST_METHOD' => 'GET',
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode('admin:adm1n')),
+            )
+        );
+#        $h = new Request('https://auth.example.org/?client_id=token_client&scope=read&response_type=code&state=foo', 'GET');
+#        $h->setBasicAuthUser('admin');
+#        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals('https://example.org/callback.html#error=unsupported_response_type&error_description=response_type+not+supported+by+client+profile&state=foo', $response->getHeader('Location'));

@@ -21,6 +21,7 @@ use fkooman\Http\RedirectResponse;
 use fkooman\Http\Request;
 use fkooman\Rest\Plugin\UserInfo;
 use fkooman\Rest\Service;
+use fkooman\Http\Response;
 
 class AuthorizeService extends Service
 {
@@ -42,8 +43,6 @@ class AuthorizeService extends Service
     public function __construct(PdoStorage $storage, IO $io = null, $accessTokenExpiry = 3600, $allowRegExpRedirectUriMatch = false)
     {
         parent::__construct();
-        $this->setPathInfoRedirect(false);
-
         $this->storage = $storage;
 
         if (null === $io) {
@@ -136,18 +135,23 @@ class AuthorizeService extends Service
         if (false === $approval || false === $scopeObj->hasOnlyScope($approvedScopeObj)) {
             // we do not yet have an approval at all, or client wants more
             // permissions, so we ask the user for approval
-            return $this->templateManager->render(
-                'askAuthorization',
-                array(
-                    'resourceOwnerId' => $userInfo->getUserId(),
-                    'sslEnabled' => 'https' === $request->getRequestUri()->getScheme(),
-                    'contactEmail' => $clientData->getContactEmail(),
-                    'scopes' => $scopeObj->toArray(),
-                    'clientName' => $clientData->getName(),
-                    'clientId' => $clientData->getId(),
-                    'clientDescription' => $clientData->getDescription(),
+            $response = new Response();
+            $response->setBody(
+                $this->templateManager->render(
+                    'askAuthorization',
+                    array(
+                        'resourceOwnerId' => $userInfo->getUserId(),
+                        'sslEnabled' => 'https' === $request->getUrl()->getScheme(),
+                        'contactEmail' => $clientData->getContactEmail(),
+                        'scopes' => $scopeObj->toArray(),
+                        'clientName' => $clientData->getName(),
+                        'clientId' => $clientData->getId(),
+                        'clientDescription' => $clientData->getDescription(),
+                    )
                 )
             );
+
+            return $response;
         } else {
             // we already have approval
             if ('token' === $responseType) {
@@ -210,17 +214,6 @@ class AuthorizeService extends Service
         $scope = $authorizeRequest->getScope();
         $state = $authorizeRequest->getState();
 
-        // CSRF protection
-        if ($request->getHeader('HTTP_REFERER') !== $request->getRequestUri()->getUri()) {
-            throw new BadRequestException(
-                sprintf(
-                    'CSRF protection triggered. Expected "%s", got "%s"',
-                    $request->getRequestUri()->getUri(),
-                    $request->getHeader('HTTP_REFERER')
-                )
-            );
-        }
-
         $clientData = $this->storage->getClient($clientId);
         if (false === $clientData) {
             throw new BadRequestException('client not registered');
@@ -247,7 +240,7 @@ class AuthorizeService extends Service
         $this->addApproval($clientData, $userInfo->getUserId(), $scope);
 
         // redirect to self
-        return new RedirectResponse($request->getRequestUri()->getUri(), 302);
+        return new RedirectResponse($request->getUrl()->toString(), 302);
     }
 
     private function addApproval(ClientData $clientData, $userId, $scope)

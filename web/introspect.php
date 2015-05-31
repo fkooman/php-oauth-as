@@ -20,27 +20,17 @@ use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\TokenIntrospectionService;
 use fkooman\OAuth\Server\PdoStorage;
 
-set_error_handler(
-    function ($errno, $errstr, $errfile, $errline) {
-        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-    }
+$iniReader = IniReader::fromFile(
+    dirname(__DIR__).'/config/oauth.ini'
 );
 
-try {
-    $iniReader = IniReader::fromFile(
-        dirname(__DIR__).'/config/oauth.ini'
-    );
+$db = new PDO(
+    $iniReader->v('PdoStorage', 'dsn'),
+    $iniReader->v('PdoStorage', 'username', false),
+    $iniReader->v('PdoStorage', 'password', false)
+);
 
-    $db = new PDO(
-        $iniReader->v('PdoStorage', 'dsn'),
-        $iniReader->v('PdoStorage', 'username', false),
-        $iniReader->v('PdoStorage', 'password', false)
-    );
-
-    $tokenIntrospectionService = new TokenIntrospectionService(
-        new PdoStorage($db)
-    );
-    $tokenIntrospectionService->run()->sendResponse();
-} catch (Exception $e) {
-    TokenIntrospectionService::handleException($e)->sendResponse();
-}
+$service = new TokenIntrospectionService(
+    new PdoStorage($db)
+);
+$service->run()->send();
