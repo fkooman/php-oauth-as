@@ -21,7 +21,6 @@ use fkooman\OAuth\Server\PdoStorage;
 use fkooman\OAuth\Server\TokenService;
 use fkooman\Rest\Plugin\Basic\BasicAuthentication;
 use fkooman\Rest\PluginRegistry;
-use fkooman\Rest\Plugin\ReferrerCheckPlugin;
 
 $iniReader = IniReader::fromFile(
     dirname(__DIR__).'/config/oauth.ini'
@@ -46,7 +45,6 @@ $basicAuthenticationPlugin = new BasicAuthentication(
 
 $service = new TokenService($pdoStorage, null, $iniReader->v('accessTokenExpiry'));
 $pluginRegistry = new PluginRegistry();
-$pluginRegistry->registerDefaultPlugin(new ReferrerCheckPlugin());
 $pluginRegistry->registerDefaultPlugin($basicAuthenticationPlugin);
 $service->setPluginRegistry($pluginRegistry);
 $service->run()->send();

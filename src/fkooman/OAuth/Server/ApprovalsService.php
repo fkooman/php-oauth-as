@@ -82,6 +82,6 @@ class ApprovalsService extends Service
             $userInfo->getUserId()
         );
 
-        return new RedirectResponse($request->getRootUrl(), 302);
+        return new RedirectResponse($request->getUrl()->getRootUrl(), 302);
     }
 }
