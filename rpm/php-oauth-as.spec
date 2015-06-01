@@ -24,14 +24,14 @@ Requires:   php-composer(fkooman/json) >= 0.6.0
 Requires:   php-composer(fkooman/json) < 0.7.0
 Requires:   php-composer(fkooman/ini) >= 0.2.0
 Requires:   php-composer(fkooman/ini) < 0.3.0
-Requires:   php-composer(fkooman/rest) >= 0.8.8
-Requires:   php-composer(fkooman/rest) < 0.9.0
-Requires:   php-composer(fkooman/rest-plugin-bearer) >= 0.4.1
-Requires:   php-composer(fkooman/rest-plugin-bearer) < 0.5.0
-Requires:   php-composer(fkooman/rest-plugin-basic) >= 0.5.1
-Requires:   php-composer(fkooman/rest-plugin-basic) < 0.6.0
-Requires:   php-composer(fkooman/rest-plugin-mellon) >= 0.3.1
-Requires:   php-composer(fkooman/rest-plugin-mellon) < 0.4.0
+Requires:   php-composer(fkooman/rest) >= 0.9.0
+Requires:   php-composer(fkooman/rest) < 0.10.0
+Requires:   php-composer(fkooman/rest-plugin-bearer) >= 0.5.0
+Requires:   php-composer(fkooman/rest-plugin-bearer) < 0.6.0
+Requires:   php-composer(fkooman/rest-plugin-basic) >= 0.6.0
+Requires:   php-composer(fkooman/rest-plugin-basic) < 0.7.0
+Requires:   php-composer(fkooman/rest-plugin-mellon) >= 0.4.0
+Requires:   php-composer(fkooman/rest-plugin-mellon) < 0.5.0
 Requires:   php-pear(pear.twig-project.org/Twig) >= 1.15
 Requires:   php-pear(pear.twig-project.org/Twig) < 2.0
 
