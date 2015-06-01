@@ -16,9 +16,6 @@ Part of the development of this software was made possible by
 * Token introspection for resource servers
 * Management interfaces to manage client registration and authorized clients
 
-# Screenshot
-![oauth_consent](https://github.com/fkooman/php-oauth-as/raw/master/docs/oauth_consent.png)
-
 # Installation
 The prefered method of installation is to use the RPM packages. The RPM 
 packages can for now be found in the 
