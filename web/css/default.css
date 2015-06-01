@@ -31,6 +31,16 @@ p.warn a {
     color: #000;
 }
 
+form.client label {
+    display: block;
+    margin-bottom: 1em;
+}
+
+form.client input {
+    display: block;
+    width: 100%;
+}
+
 form.askConfirmation {
     text-align: center;
     padding: 1em;

@@ -28,7 +28,8 @@
                 <tr>
                     <td><span title="{{ client.id|e }}">{{ client.name|e }}</span></td>
                     <td>
-                        <form method="get" action="?id={{ client.id|e }}">
+                        <form method="get">
+                            <input type="hidden" name="id" value="{{ client.id|e }}">
                             <button class="info" type="submit">Edit</button>
                         </form>
                         <form method="post" action="?id={{ client.id|e }}">

@@ -45,19 +45,64 @@ class ManageService extends Service
         $this->get(
             '*',
             function (Request $request, UserInfo $userInfo) use ($compatThis) {
+                $id = $request->getUrl()->getQueryParameter('id');
+                if (null !== $id) {
+                    // specific client requested
+                    return $compatThis->getClient($id);
+                }
+
                 return $compatThis->getClients($request, $userInfo);
+            }
+        );
+
+        $this->put(
+            '*',
+            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+                $id = $request->getUrl()->getQueryParameter('id');
+                $redirectTo = $request->getUrl()->getRootUrl();
+
+                return $compatThis->updateClient($id, $request->getPostParameters(), $redirectTo);
+            }
+        );
+
+        $this->post(
+            '*',
+            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+                $redirectTo = $request->getUrl()->getRootUrl();
+
+                return $compatThis->addClient($request->getPostParameters(), $redirectTo);
             }
         );
 
         $this->delete(
             '*',
             function (Request $request, UserInfo $userInfo) use ($compatThis) {
-                return $compatThis->deleteClient($request, $userInfo);
+                $id = $request->getUrl()->getQueryParameter('id');
+                $redirectTo = $request->getUrl()->getRootUrl();
+
+                return $compatThis->deleteClient($id, $redirectTo);
             }
         );
     }
 
-    public function getClients(Request $request, UserInfo $userInfo)
+    public function getClient($id)
+    {
+        $client = $this->db->getClient($id);
+
+        $response = new Response();
+        $response->setBody(
+            $this->templateManager->render(
+                'editClient',
+                array(
+                    'client' => $client,
+                )
+            )
+        );
+
+        return $response;
+    }
+
+    public function getClients()
     {
         $clients = $this->db->getClients();
 
@@ -74,13 +119,24 @@ class ManageService extends Service
         return $response;
     }
 
-    public function deleteClient(Request $request, UserInfo $userInfo)
+    public function addClient(array $clientData, $redirectTo)
     {
-        $id = $request->getUrl()->getQueryParameter('id');
-        $this->db->deleteClient(
-            $id
-        );
+        $this->db->addClient(new ClientData($clientData));
 
-        return new RedirectResponse($request->getUrl()->getRootUrl(), 302);
+        return new RedirectResponse($redirectTo, 302);
+    }
+
+    public function updateClient($id, array $clientData, $redirectTo)
+    {
+        $this->db->updateClient($id, new ClientData($clientData));
+
+        return new RedirectResponse($redirectTo, 302);
+    }
+
+    public function deleteClient($id, $redirectTo)
+    {
+        $this->db->deleteClient($id);
+
+        return new RedirectResponse($redirectTo, 302);
     }
 }

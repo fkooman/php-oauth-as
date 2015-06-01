@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OAuth</title>
+  <link rel="stylesheet" type="text/css" href="css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Client</h1>
+        <p>
+            Add or modify client configuration.
+        </p>
+
+        <form class="client" method="post" action="">
+            <label>ID <input type="text" name="id" value="{{ client.id|e }}"></label>
+            <label>Name <input type="text" name="name" value="{{ client.name|e }}"></label>
+            <label>Redirect URI <input type="text" name="redirect_uri" value="{{ client.redirectUri|e }}"></label>
+            <label>Scope <input type="text" name="allowed_scope" value="{{ client.allowedScope|e }}"></label>
+            <label>Type <input type="text" name="type" value="{{ client.type|e }}"></label>
+            <label>Secret <input type="text" name="secret" value="{{ client.secret|e }}"></label>
+            <button class="info" type="submit">Add</button>
+        </form>
+
+        <div class="footer">
+            php-oauth-as
+        </div>
+    </div> <!-- /container -->
+</body>
+</html>
