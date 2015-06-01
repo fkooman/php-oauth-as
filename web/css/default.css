@@ -104,16 +104,20 @@ p.err a {
     color: #000;
 }
 
-table.approvals {
+table.approvals form, table.clients form {
+    display: inline;
+}
+
+table.approvals, table.clients {
     width: 100%;
     border-collapse: collapse;
 }
 
-table.approvals th {
+table.approvals th, table.clients th {
     border-bottom: 1px solid #bbb;
 }
 
-table.approvals th, table.approvals td {
+table.approvals th, table.approvals td, table.clients th, table.clients td {
     padding: 0.4em;
 }
 

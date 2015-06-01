@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OAuth</title>
+  <link rel="stylesheet" type="text/css" href="css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+    <div id="container">
+        <h1>Clients</h1>
+        <p>
+            This page can be used to manage client registrations.
+        </p>
+
+        {% if not clients %}
+            <p class="block">No registered clients. Feel free to add some <strong>:-)</strong></p>
+        {% else %}
+        <table class="clients">
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+
+            {% for client in clients %}
+                <tr>
+                    <td><span title="{{ client.id|e }}">{{ client.name|e }}</span></td>
+                    <td>
+                        <form method="get" action="?id={{ client.id|e }}">
+                            <button class="info" type="submit">Edit</button>
+                        </form>
+                        <form method="post" action="?id={{ client.id|e }}">
+                            <input type="hidden" name="_METHOD" value="DELETE">
+                            <button class="err" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+
+        <div class="footer">
+            php-oauth-as
+        </div>
+    </div> <!-- /container -->
+</body>
+</html>
