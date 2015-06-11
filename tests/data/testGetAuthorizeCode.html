@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OAuth</title>
+  <link rel="stylesheet" type="text/css" href="css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+    <div id="container">
+
+                <p class="warn">
+            <strong>INSECURE</strong> connection to this service, TLS <strong>MUST</strong> be used!
+                    </p>
+        
+        <h1 title="You are authenticated as 'admin'">My API</h1>
+
+        <h3 title="code_client">Code Client</h3>
+
+        <blockquote>
+            
+        </blockquote>
+
+        <p>
+          This application wants the following permissions:
+        </p>
+
+        <ul>
+                      <li><code>read</code></li>
+                  </ul>
+
+        <form class="askConfirmation" method="post" action="">
+            <button class="err" type="submit" name="approval" value="reject">Reject</button>
+            <button class="info" type="submit" name="approval" value="approve">Approve</button>
+        </form>
+
+        <div class="footer">
+            php-oauth-as
+        </div>
+
+    </div> <!-- /container -->
+</body>
+</html>
