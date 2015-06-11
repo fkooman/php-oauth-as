@@ -21,6 +21,9 @@ use fkooman\OAuth\Server\PdoStorage;
 use fkooman\OAuth\Server\TokenService;
 use fkooman\Rest\Plugin\Basic\BasicAuthentication;
 use fkooman\Rest\PluginRegistry;
+use fkooman\Rest\ExceptionHandler;
+
+ExceptionHandler::register();
 
 $iniReader = IniReader::fromFile(
     dirname(__DIR__).'/config/oauth.ini'

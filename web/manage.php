@@ -21,7 +21,10 @@ use fkooman\OAuth\Server\ManageService;
 use fkooman\OAuth\Server\Authenticator;
 use fkooman\Rest\PluginRegistry;
 use fkooman\OAuth\Server\PdoStorage;
-use fkooman\Rest\Plugin\ReferrerCheckPlugin;
+use fkooman\Rest\Plugin\ReferrerCheck\ReferrerCheckPlugin;
+use fkooman\Rest\ExceptionHandler;
+
+ExceptionHandler::register();
 
 $iniReader = IniReader::fromFile(
     dirname(__DIR__).'/config/oauth.ini'

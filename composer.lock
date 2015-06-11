@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d60d0a3165e89fca89a52b2f1b60665d",
+    "hash": "3957dfef6d63e89edfd2776121ec3e2b",
     "packages": [
         {
             "name": "fkooman/ini",
@@ -86,15 +86,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "e33d95bee053b4e341b28365a8a3532dd8b085e1"
+                "reference": "a8795dd0866a1af8cfb7b23539827623f28b2ab2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/e33d95bee053b4e341b28365a8a3532dd8b085e1",
-                "reference": "e33d95bee053b4e341b28365a8a3532dd8b085e1",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/a8795dd0866a1af8cfb7b23539827623f28b2ab2",
+                "reference": "a8795dd0866a1af8cfb7b23539827623f28b2ab2",
                 "shasum": ""
             },
             "require": {
+                "ext-mbstring": "*",
                 "fkooman/json": "~0.6.0",
                 "php": ">=5.3.3"
             },
@@ -106,7 +107,7 @@
                 "fkooman/rest-plugin-bearer": "Bearer (OAuth) Authentication plugin",
                 "fkooman/rest-plugin-indieauth": "IndieAuth Authentication plugin",
                 "fkooman/rest-plugin-mellon": "Mellon (SAML) Authentication plugin",
-                "fkooman/rest-plugin-simplesaml": "simpleSAMLphp (SAML) Authentication plugin"
+                "fkooman/rest-plugin-tls": "TLS Client Certificate Authentication plugin"
             },
             "type": "library",
             "autoload": {
@@ -127,7 +128,7 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2015-06-01 22:01:42"
+            "time": "2015-06-11 11:55:48"
         },
         {
             "name": "fkooman/rest-plugin-basic",
@@ -174,12 +175,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest-plugin-bearer.git",
-                "reference": "e1bfdd9916aa9a893b009a85393228d3dcd56034"
+                "reference": "d6a722f703b0bc074f7ecae48e8ece9e45ba2394"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/e1bfdd9916aa9a893b009a85393228d3dcd56034",
-                "reference": "e1bfdd9916aa9a893b009a85393228d3dcd56034",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/d6a722f703b0bc074f7ecae48e8ece9e45ba2394",
+                "reference": "d6a722f703b0bc074f7ecae48e8ece9e45ba2394",
                 "shasum": ""
             },
             "require": {
@@ -205,7 +206,7 @@
                 }
             ],
             "description": "Bearer (OAuth) Authentication plugin for fkooman/rest",
-            "time": "2015-05-31 11:16:47"
+            "time": "2015-06-06 16:06:37"
         },
         {
             "name": "fkooman/rest-plugin-mellon",
@@ -442,16 +443,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.18.1",
+            "version": "v1.18.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "9f70492f44398e276d1b81c1b43adfe6751c7b7f"
+                "reference": "e8e6575abf6102af53ec283f7f14b89e304fa602"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/9f70492f44398e276d1b81c1b43adfe6751c7b7f",
-                "reference": "9f70492f44398e276d1b81c1b43adfe6751c7b7f",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/e8e6575abf6102af53ec283f7f14b89e304fa602",
+                "reference": "e8e6575abf6102af53ec283f7f14b89e304fa602",
                 "shasum": ""
             },
             "require": {
@@ -495,7 +496,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-04-19 08:30:27"
+            "time": "2015-06-06 23:31:24"
         }
     ],
     "packages-dev": [],
@@ -511,6 +512,7 @@
     "prefer-lowest": false,
     "platform": {
         "ext-openssl": "*",
+        "ext-pdo": "*",
         "php": ">=5.3.3"
     },
     "platform-dev": []

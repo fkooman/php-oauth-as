@@ -36,7 +36,7 @@ form.client label {
     margin-bottom: 1em;
 }
 
-form.client input {
+form.client input[type="text"] {
     display: block;
     width: 100%;
 }

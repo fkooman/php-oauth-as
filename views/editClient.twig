@@ -20,7 +20,13 @@
             <label>Name <input type="text" name="name" value="{{ client.name|e }}"></label>
             <label>Redirect URI <input type="text" name="redirect_uri" value="{{ client.redirectUri|e }}"></label>
             <label>Scope <input type="text" name="allowed_scope" value="{{ client.allowedScope|e }}"></label>
-            <label>Type <input type="text" name="type" value="{{ client.type|e }}"></label>
+<!--            <label>Type <input type="text" name="type" value="{{ client.type|e }}"></label> -->
+            <label>Type
+                <select name="type">
+                    <option value="token" {% if 'token' == client.type %} selected="selected"{% endif %} >Token</option>
+                    <option value="code" {% if 'code' == client.type %} selected="selected"{% endif %} >Code</option>
+                </select>
+            </label>
             <label>Secret <input type="text" name="secret" value="{{ client.secret|e }}"></label>
             <button class="info" type="submit">Add</button>
         </form>

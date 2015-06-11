@@ -16,6 +16,7 @@
     "name": "fkooman/php-oauth-as",
     "require": {
         "ext-openssl": "*",
+        "ext-pdo": "*",
         "fkooman/ini": "~0.2.0",
         "fkooman/json": "~0.6.0",
         "fkooman/rest": "dev-develop",

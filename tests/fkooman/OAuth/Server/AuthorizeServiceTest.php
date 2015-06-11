@@ -21,7 +21,7 @@ use PHPUnit_Framework_TestCase;
 use fkooman\Http\Request;
 use fkooman\Rest\Plugin\Basic\BasicAuthentication;
 use fkooman\Rest\PluginRegistry;
-use fkooman\Rest\Plugin\ReferrerCheckPlugin;
+use fkooman\Rest\Plugin\ReferrerCheck\ReferrerCheckPlugin;
 
 class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 {
@@ -105,8 +105,17 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 #        $h->setBasicAuthUser('admin');
 #        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('text/html;charset=UTF-8', $response->getHeader('Content-Type'));
+        $this->assertEquals(
+            array(
+                'HTTP/1.1 200 OK',
+                'Content-Type: text/html;charset=UTF-8',
+                '',
+                file_get_contents(dirname(dirname(dirname(__DIR__))).'/data/testGetAuthorizeToken.html'),
+            ),
+            $response->toArray()
+        );
+#        $this->assertEquals(200, $response->getStatusCode());
+#        $this->assertEquals('text/html;charset=UTF-8', $response->getHeader('Content-Type'));
         // FIXME: use a file compare
         //$this->assertEquals('', $response->getContent());
     }
@@ -132,11 +141,21 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 #        $h->setBasicAuthUser('admin');
 #        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
-        $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(
-            'https://example.org/callback.html#access_token=11111111&expires_in=5&token_type=bearer&scope=read&state=xyz',
-            $response->getHeader('Location')
+            array(
+                'HTTP/1.1 302 Found',
+                'Content-Type: text/html;charset=UTF-8',
+                'Location: https://example.org/callback.html#access_token=11111111&expires_in=5&token_type=bearer&scope=read&state=xyz',
+                '',
+                '',
+            ),
+            $response->toArray()
         );
+#        $this->assertEquals(302, $response->getStatusCode());
+#        $this->assertEquals(
+#            'https://example.org/callback.html#access_token=11111111&expires_in=5&token_type=bearer&scope=read&state=xyz',
+#            $response->getHeader('Location')
+#        );
     }
 
     public function testGetAuthorizeCodeWithApproval()
@@ -159,11 +178,21 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 #        $h->setBasicAuthUser('admin');
 #        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
-        $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(
-            'https://example.org/callback?code=11111111&state=xyz',
-            $response->getHeader('Location')
+            array(
+                'HTTP/1.1 302 Found',
+                'Content-Type: text/html;charset=UTF-8',
+                'Location: https://example.org/callback?code=11111111&state=xyz',
+                '',
+                '',
+            ),
+            $response->toArray()
         );
+#        $this->assertEquals(302, $response->getStatusCode());
+#        $this->assertEquals(
+#            'https://example.org/callback?code=11111111&state=xyz',
+#            $response->getHeader('Location')
+#        );
     }
 
     public function testGetAuthorizeCode()
@@ -183,7 +212,16 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 #        $h->setBasicAuthUser('admin');
 #        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(
+            array(
+                'HTTP/1.1 200 OK',
+                'Content-Type: text/html;charset=UTF-8',
+                '',
+                file_get_contents(dirname(dirname(dirname(__DIR__))).'/data/testGetAuthorizeCode.html'),
+            ),
+            $response->toArray()
+        );
+#        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testPostAuthorizeTokenClientApprove()
@@ -209,8 +247,19 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 #        $h->setHeaders(array('HTTP_REFERER' => 'https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz'));
 #        $h->setPostParameters(array('approval' => 'approve'));
         $response = $this->service->run($h);
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('http://www.example.org/authorize.php?client_id=token_client&response_type=token&scope=read&state=xyz', $response->getHeader('Location'));
+
+        $this->assertEquals(
+            array(
+                'HTTP/1.1 302 Found',
+                'Content-Type: text/html;charset=UTF-8',
+                'Location: http://www.example.org/authorize.php?client_id=token_client&response_type=token&scope=read&state=xyz',
+                '',
+                '',
+            ),
+            $response->toArray()
+        );
+#        $this->assertEquals(302, $response->getStatusCode());
+#        $this->assertEquals('http://www.example.org/authorize.php?client_id=token_client&response_type=token&scope=read&state=xyz', $response->getHeader('Location'));
     }
 
     public function testPostAuthorizeTokenClientReject()
@@ -236,11 +285,23 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 #        $h->setHeaders(array('HTTP_REFERER' => 'https://auth.example.org/?client_id=token_client&response_type=token&scope=read&state=xyz'));
 #        $h->setPostParameters(array('approval' => 'reject'));
         $response = $this->service->run($h);
-        $this->assertEquals(302, $response->getStatusCode());
+
         $this->assertEquals(
-            'https://example.org/callback.html#error=access_denied&error_description=not+authorized+by+resource+owner&state=xyz',
-            $response->getHeader('Location')
+            array(
+                'HTTP/1.1 302 Found',
+                'Content-Type: text/html;charset=UTF-8',
+                'Location: https://example.org/callback.html#error=access_denied&error_description=not+authorized+by+resource+owner&state=xyz',
+                '',
+                '',
+            ),
+            $response->toArray()
         );
+
+#        $this->assertEquals(302, $response->getStatusCode());
+#        $this->assertEquals(
+#            'https://example.org/callback.html#error=access_denied&error_description=not+authorized+by+resource+owner&state=xyz',
+#            $response->getHeader('Location')
+#        );
     }
 
     public function testPostAuthorizeCodeClientApprove()
@@ -266,8 +327,19 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 #        $h->setHeaders(array('HTTP_REFERER' => 'https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz'));
 #        $h->setPostParameters(array('approval' => 'approve'));
         $response = $this->service->run($h);
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('http://www.example.org/authorize.php?client_id=code_client&response_type=code&scope=read&state=xyz', $response->getHeader('Location'));
+
+        $this->assertEquals(
+            array(
+                'HTTP/1.1 302 Found',
+                'Content-Type: text/html;charset=UTF-8',
+                'Location: http://www.example.org/authorize.php?client_id=code_client&response_type=code&scope=read&state=xyz',
+                '',
+                '',
+            ),
+            $response->toArray()
+        );
+#        $this->assertEquals(302, $response->getStatusCode());
+#        $this->assertEquals('http://www.example.org/authorize.php?client_id=code_client&response_type=code&scope=read&state=xyz', $response->getHeader('Location'));
     }
 
     public function testPostAuthorizeCodeClientReject()
@@ -293,11 +365,22 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 #        $h->setHeaders(array('HTTP_REFERER' => 'https://auth.example.org/?client_id=code_client&response_type=code&scope=read&state=xyz'));
 #        $h->setPostParameters(array('approval' => 'reject'));
         $response = $this->service->run($h);
-        $this->assertEquals(302, $response->getStatusCode());
+
         $this->assertEquals(
-            'https://example.org/callback?error=access_denied&error_description=not+authorized+by+resource+owner&state=xyz',
-            $response->getHeader('Location')
+            array(
+                'HTTP/1.1 302 Found',
+                'Content-Type: text/html;charset=UTF-8',
+                'Location: https://example.org/callback?error=access_denied&error_description=not+authorized+by+resource+owner&state=xyz',
+                '',
+                '',
+            ),
+            $response->toArray()
         );
+#        $this->assertEquals(302, $response->getStatusCode());
+#        $this->assertEquals(
+#            'https://example.org/callback?error=access_denied&error_description=not+authorized+by+resource+owner&state=xyz',
+#            $response->getHeader('Location')
+#        );
     }
 
 #    public function testPostAuthorize()
@@ -339,8 +422,19 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 #        $h->setBasicAuthUser('admin');
 #        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('https://example.org/callback.html#error=invalid_scope&error_description=not+authorized+to+request+this+scope&state=xyz', $response->getHeader('Location'));
+        $this->assertEquals(
+            array(
+                'HTTP/1.1 302 Found',
+                'Content-Type: text/html;charset=UTF-8',
+                'Location: https://example.org/callback.html#error=invalid_scope&error_description=not+authorized+to+request+this+scope&state=xyz',
+                '',
+                '',
+            ),
+            $response->toArray()
+        );
+
+#        $this->assertEquals(302, $response->getStatusCode());
+#        $this->assertEquals('https://example.org/callback.html#error=invalid_scope&error_description=not+authorized+to+request+this+scope&state=xyz', $response->getHeader('Location'));
     }
 
     /**
@@ -368,7 +462,7 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException fkooman\Http\Exception\MethodNotAllowedException
-     * @expectedExceptionMessage unsupported method
+     * @expectedExceptionMessage method DELETE not supported
      */
     public function testInvalidRequestMethod()
     {
@@ -510,7 +604,17 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
 #        $h->setBasicAuthUser('admin');
 #        $h->setBasicAuthPass('adm1n');
         $response = $this->service->run($h);
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals('https://example.org/callback.html#error=unsupported_response_type&error_description=response_type+not+supported+by+client+profile&state=foo', $response->getHeader('Location'));
+        $this->assertEquals(
+            array(
+                'HTTP/1.1 302 Found',
+                'Content-Type: text/html;charset=UTF-8',
+                'Location: https://example.org/callback.html#error=unsupported_response_type&error_description=response_type+not+supported+by+client+profile&state=foo',
+                '',
+                '',
+            ),
+            $response->toArray()
+        );
+#        $this->assertEquals(302, $response->getStatusCode());
+#        $this->assertEquals('https://example.org/callback.html#error=unsupported_response_type&error_description=response_type+not+supported+by+client+profile&state=foo', $response->getHeader('Location'));
     }
 }

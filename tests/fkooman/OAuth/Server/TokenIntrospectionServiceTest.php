@@ -78,21 +78,34 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
         );
 #        $h = new Request('https://auth.example.org/introspect?token=foo', 'GET');
         $response = $this->service->run($h);
-        $this->assertEquals(200, $response->getStatusCode());
+
         $this->assertEquals(
             array(
-                'active' => true,
-                'exp' => 1111112345,
-                'iat' => 1111111111,
-                'scope' => 'foo bar',
-                'client_id' => 'testclient',
-                'sub' => 'fkooman',
-                'user_id' => 'fkooman',
-                'iss' => 'www.example.org',
-                'token_type' => 'bearer',
+                'HTTP/1.1 200 OK',
+                'Content-Type: application/json',
+                'Cache-Control: no-store',
+                'Pragma: no-cache',
+                '',
+                '{"active":true,"exp":1111112345,"iat":1111111111,"scope":"foo bar","iss":"www.example.org","client_id":"testclient","sub":"fkooman","user_id":"fkooman","token_type":"bearer"}',
             ),
-            $response->getBody()
+            $response->toArray()
         );
+
+#        $this->assertEquals(200, $response->getStatusCode());
+#        $this->assertEquals(
+#            array(
+#                'active' => true,
+#                'exp' => 1111112345,
+#                'iat' => 1111111111,
+#                'scope' => 'foo bar',
+#                'client_id' => 'testclient',
+#                'sub' => 'fkooman',
+#                'user_id' => 'fkooman',
+#                'iss' => 'www.example.org',
+#                'token_type' => 'bearer',
+#            ),
+#            $response->getBody()
+#        );
     }
 
     public function testPostTokenIntrospection()
@@ -113,21 +126,34 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
 #        $h = new Request('https://auth.example.org/introspect', 'POST');
 #        $h->setPostParameters(array('token' => 'foo'));
         $response = $this->service->run($h);
-        $this->assertEquals(200, $response->getStatusCode());
+
         $this->assertEquals(
             array(
-                'active' => true,
-                'exp' => 1111112345,
-                'iat' => 1111111111,
-                'scope' => 'foo bar',
-                'client_id' => 'testclient',
-                'sub' => 'fkooman',
-                'user_id' => 'fkooman',
-                'iss' => 'www.example.org',
-                'token_type' => 'bearer',
+                'HTTP/1.1 200 OK',
+                'Content-Type: application/json',
+                'Cache-Control: no-store',
+                'Pragma: no-cache',
+                '',
+                '{"active":true,"exp":1111112345,"iat":1111111111,"scope":"foo bar","iss":"www.example.org","client_id":"testclient","sub":"fkooman","user_id":"fkooman","token_type":"bearer"}',
             ),
-            $response->getBody()
+            $response->toArray()
         );
+
+#        $this->assertEquals(200, $response->getStatusCode());
+#        $this->assertEquals(
+#            array(
+#                'active' => true,
+#                'exp' => 1111112345,
+#                'iat' => 1111111111,
+#                'scope' => 'foo bar',
+#                'client_id' => 'testclient',
+#                'sub' => 'fkooman',
+#                'user_id' => 'fkooman',
+#                'iss' => 'www.example.org',
+#                'token_type' => 'bearer',
+#            ),
+#            $response->getBody()
+#        );
     }
 
     public function testPostTokenIntrospectionNoEntitlement()
@@ -149,21 +175,32 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
 #        $h = new Request('https://auth.example.org/introspect', 'POST');
 #        $h->setPostParameters(array('token' => 'bar'));
         $response = $this->service->run($h);
-        $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
             array(
-                'active' => true,
-                'exp' => 1111112345,
-                'iat' => 1111111111,
-                'scope' => 'a b c',
-                'client_id' => 'testclient',
-                'sub' => 'frko',
-                'user_id' => 'frko',
-                'iss' => 'www.example.org',
-                'token_type' => 'bearer',
+                'HTTP/1.1 200 OK',
+                'Content-Type: application/json',
+                'Cache-Control: no-store',
+                'Pragma: no-cache',
+                '',
+                '{"active":true,"exp":1111112345,"iat":1111111111,"scope":"a b c","iss":"www.example.org","client_id":"testclient","sub":"frko","user_id":"frko","token_type":"bearer"}',
             ),
-            $response->getBody()
+            $response->toArray()
         );
+#        $this->assertEquals(200, $response->getStatusCode());
+#        $this->assertEquals(
+#            array(
+#                'active' => true,
+#                'exp' => 1111112345,
+#                'iat' => 1111111111,
+#                'scope' => 'a b c',
+#                'client_id' => 'testclient',
+#                'sub' => 'frko',
+#                'user_id' => 'frko',
+#                'iss' => 'www.example.org',
+#                'token_type' => 'bearer',
+#            ),
+#            $response->getBody()
+#        );
     }
 
     public function testMissingGetTokenIntrospection()
@@ -180,18 +217,29 @@ class TokenIntrospectionServiceTest extends PHPUnit_Framework_TestCase
         );
 #        $h = new Request('https://auth.example.org/introspect?token=foobar', 'GET');
         $response = $this->service->run($h);
-        $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(
             array(
-                'active' => false,
+                'HTTP/1.1 200 OK',
+                'Content-Type: application/json',
+                'Cache-Control: no-store',
+                'Pragma: no-cache',
+                '',
+                '{"active":false}',
             ),
-            $response->getBody()
+            $response->toArray()
         );
+#        $this->assertEquals(200, $response->getStatusCode());
+#        $this->assertEquals(
+#            array(
+#                'active' => false,
+#            ),
+#            $response->getBody()
+#        );
     }
 
     /**
      * @expectedException fkooman\Http\Exception\MethodNotAllowedException
-     * @expectedExceptionMessage unsupported method
+     * @expectedExceptionMessage method DELETE not supported
      */
     public function testUnsupportedMethod()
     {

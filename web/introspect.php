@@ -19,6 +19,9 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\TokenIntrospectionService;
 use fkooman\OAuth\Server\PdoStorage;
+use fkooman\Rest\ExceptionHandler;
+
+ExceptionHandler::register();
 
 $iniReader = IniReader::fromFile(
     dirname(__DIR__).'/config/oauth.ini'
