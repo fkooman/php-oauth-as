@@ -86,12 +86,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "a8795dd0866a1af8cfb7b23539827623f28b2ab2"
+                "reference": "3d4fef9f9c3ddad57ef6a611316ef803b82250fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/a8795dd0866a1af8cfb7b23539827623f28b2ab2",
-                "reference": "a8795dd0866a1af8cfb7b23539827623f28b2ab2",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/3d4fef9f9c3ddad57ef6a611316ef803b82250fd",
+                "reference": "3d4fef9f9c3ddad57ef6a611316ef803b82250fd",
                 "shasum": ""
             },
             "require": {
@@ -128,7 +128,7 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2015-06-11 11:55:48"
+            "time": "2015-06-11 18:54:42"
         },
         {
             "name": "fkooman/rest-plugin-basic",
@@ -385,16 +385,16 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.7.0",
+            "version": "v2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "687039686d0e923429ba6e958d0baa920cd5d458"
+                "reference": "be3c5ff8d503c46768aeb78ce6333051aa6f26d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/687039686d0e923429ba6e958d0baa920cd5d458",
-                "reference": "687039686d0e923429ba6e958d0baa920cd5d458",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/be3c5ff8d503c46768aeb78ce6333051aa6f26d9",
+                "reference": "be3c5ff8d503c46768aeb78ce6333051aa6f26d9",
                 "shasum": ""
             },
             "require": {
@@ -439,7 +439,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2015-05-02 15:21:08"
+            "time": "2015-06-08 09:37:21"
         },
         {
             "name": "twig/twig",
