@@ -14,11 +14,13 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace fkooman\OAuth\Server;
 
 use fkooman\Ini\IniReader;
 use fkooman\Rest\Plugin\Basic\BasicAuthentication;
 use fkooman\Rest\Plugin\Mellon\MellonAuthentication;
+use fkooman\Rest\Plugin\IndieAuth\IndieAuthAuthentication;
 
 class Authenticator
 {
@@ -38,6 +40,8 @@ class Authenticator
                 return $this->getBasicAuthenticationPlugin();
             case 'MellonAuthentication':
                 return $this->getMellonAuthenticationPlugin();
+            case 'IndieAuthAuthentication':
+                return $this->getIndieAuthAuthenticationPlugin();
             default:
                 throw new RuntimeException('unsupported authentication plugin');
         }
@@ -64,5 +68,10 @@ class Authenticator
         return new MellonAuthentication(
             $this->iniReader->v('MellonAuthentication', 'mellonAttribute')
         );
+    }
+
+    private function getIndieAuthAuthenticationPlugin()
+    {
+        return new IndieAuthAuthentication();
     }
 }

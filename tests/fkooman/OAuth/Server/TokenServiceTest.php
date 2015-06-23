@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace fkooman\OAuth\Server;
 
 use PDO;
@@ -83,7 +84,7 @@ class TokenServiceTest extends PHPUnit_Framework_TestCase
 
                 return false !== $clientData ? password_hash($clientData->getSecret(), PASSWORD_DEFAULT, array('cost' => 4)) : false;
             },
-            'OAuth Server'
+            array('realm' => 'OAuth Server')
         );
 
         $this->service = new TokenService($this->storage, $ioStub, 5);

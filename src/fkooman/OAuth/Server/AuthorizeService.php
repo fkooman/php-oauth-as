@@ -14,12 +14,13 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace fkooman\OAuth\Server;
 
 use fkooman\Http\Exception\BadRequestException;
 use fkooman\Http\RedirectResponse;
 use fkooman\Http\Request;
-use fkooman\Rest\Plugin\UserInfo;
+use fkooman\Rest\Plugin\Authentication\UserInfoInterface;
 use fkooman\Rest\Service;
 use fkooman\Http\Response;
 
@@ -59,20 +60,20 @@ class AuthorizeService extends Service
 
         $this->get(
             '*',
-            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+            function (Request $request, UserInfoInterface $userInfo) use ($compatThis) {
                 return $compatThis->getAuthorization($request, $userInfo);
             }
         );
 
         $this->post(
             '*',
-            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+            function (Request $request, UserInfoInterface $userInfo) use ($compatThis) {
                 return $compatThis->postAuthorization($request, $userInfo);
             }
         );
     }
 
-    public function getAuthorization(Request $request, UserInfo $userInfo)
+    public function getAuthorization(Request $request, UserInfoInterface $userInfo)
     {
         $authorizeRequest = new AuthorizeRequest($request);
 
@@ -204,7 +205,7 @@ class AuthorizeService extends Service
         }
     }
 
-    public function postAuthorization(Request $request, UserInfo $userInfo)
+    public function postAuthorization(Request $request, UserInfoInterface $userInfo)
     {
         $authorizeRequest = new AuthorizeRequest($request);
 

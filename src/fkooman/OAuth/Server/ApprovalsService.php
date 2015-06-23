@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace fkooman\OAuth\Server;
 
 use fkooman\Http\Request;
@@ -82,6 +83,6 @@ class ApprovalsService extends Service
             $userInfo->getUserId()
         );
 
-        return new RedirectResponse($request->getUrl()->getRootUrl(), 302);
+        return new RedirectResponse($request->getUrl()->getRootUrl().'approvals.php', 302);
     }
 }

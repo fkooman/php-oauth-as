@@ -14,10 +14,11 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace fkooman\OAuth\Server;
 
 use fkooman\Rest\Service;
-use fkooman\Rest\Plugin\UserInfo;
+use fkooman\Rest\Plugin\Authentication\UserInfoInterface;
 use fkooman\Http\Request;
 use fkooman\Http\Exception\BadRequestException;
 use fkooman\Http\JsonResponse;
@@ -50,13 +51,13 @@ class TokenService extends Service
 
         $this->post(
             '*',
-            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+            function (Request $request, UserInfoInterface $userInfo) use ($compatThis) {
                 return $compatThis->postToken($request, $userInfo);
             }
         );
     }
 
-    public function postToken(Request $request, UserInfo $userInfo)
+    public function postToken(Request $request, UserInfoInterface $userInfo)
     {
         $tokenRequest = new TokenRequest($request);
 

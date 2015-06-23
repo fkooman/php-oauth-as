@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace fkooman\OAuth\Server;
 
 use PDO;
@@ -77,7 +78,7 @@ class AuthorizeServiceTest extends PHPUnit_Framework_TestCase
             function ($userId) use ($compatStorage) {
                 return 'admin' === $userId ? password_hash('adm1n', PASSWORD_DEFAULT, array('cost' => 4)) : false;
             },
-            'OAuth Server Authentication'
+            array('realm' => 'OAuth Server Authentication')
         );
 
         $pluginRegistry = new PluginRegistry();

@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/fkooman/php-oauth-as.png?branch=master)](https://travis-ci.org/fkooman/php-oauth-as)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/fkooman/php-oauth-as/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/fkooman/php-oauth-as/?branch=master)
 
 # Introduction
 This is an OAuth 2.0 Authorization Server written in PHP that is easy to 

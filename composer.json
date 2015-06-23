@@ -19,10 +19,11 @@
         "ext-pdo": "*",
         "fkooman/ini": "~0.2.0",
         "fkooman/json": "~0.6.0",
-        "fkooman/rest": "dev-develop",
-        "fkooman/rest-plugin-basic": "dev-develop",
-        "fkooman/rest-plugin-bearer": "dev-develop",
-        "fkooman/rest-plugin-mellon": "dev-develop",
+        "fkooman/rest": "dev-master",
+        "fkooman/rest-plugin-basic": "dev-master",
+        "fkooman/rest-plugin-bearer": "dev-master",
+        "fkooman/rest-plugin-indieauth": "dev-master",
+        "fkooman/rest-plugin-mellon": "dev-master",
         "php": ">=5.3.3",
         "twig/twig": "~1.15"
     }

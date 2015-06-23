@@ -2,6 +2,7 @@
 
 authenticationPlugin = "BasicAuthentication"
 ;authenticationPlugin = "MellonAuthentication"
+;authenticationPlugin = "IndieAuthAuthentication"
 
 ; the access token expiry time (in seconds)
 accessTokenExpiry = 3600
