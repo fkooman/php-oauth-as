@@ -18,7 +18,7 @@
 namespace fkooman\OAuth\Server;
 
 use fkooman\Http\Request;
-use fkooman\Rest\Plugin\UserInfo;
+use fkooman\Rest\Plugin\Authentication\UserInfoInterface;
 use fkooman\Rest\Service;
 use fkooman\Http\RedirectResponse;
 use fkooman\Http\Response;
@@ -45,20 +45,20 @@ class ApprovalsService extends Service
 
         $this->get(
             '*',
-            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+            function (Request $request, UserInfoInterface $userInfo) use ($compatThis) {
                 return $compatThis->getApprovals($request, $userInfo);
             }
         );
 
         $this->delete(
             '*',
-            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+            function (Request $request, UserInfoInterface $userInfo) use ($compatThis) {
                 return $compatThis->deleteApproval($request, $userInfo);
             }
         );
     }
 
-    public function getApprovals(Request $request, UserInfo $userInfo)
+    public function getApprovals(Request $request, UserInfoInterface $userInfo)
     {
         $approvals = $this->db->getApprovals($userInfo->getUserId());
 
@@ -75,7 +75,7 @@ class ApprovalsService extends Service
         return $response;
     }
 
-    public function deleteApproval(Request $request, UserInfo $userInfo)
+    public function deleteApproval(Request $request, UserInfoInterface $userInfo)
     {
         $id = $request->getUrl()->getQueryParameter('id');
         $this->db->deleteApproval(

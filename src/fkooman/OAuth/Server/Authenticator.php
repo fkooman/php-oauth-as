@@ -59,7 +59,7 @@ class Authenticator
 
                 return password_hash($userList[$userId], PASSWORD_DEFAULT);
             },
-            'OAuth Server'
+            array('realm' => 'OAuth Server')
         );
     }
 

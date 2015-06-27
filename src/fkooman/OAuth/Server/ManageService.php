@@ -18,7 +18,7 @@
 namespace fkooman\OAuth\Server;
 
 use fkooman\Http\Request;
-use fkooman\Rest\Plugin\UserInfo;
+use fkooman\Rest\Plugin\Authentication\UserInfoInterface;
 use fkooman\Rest\Service;
 use fkooman\Http\RedirectResponse;
 use fkooman\Http\Response;
@@ -45,7 +45,7 @@ class ManageService extends Service
 
         $this->get(
             '*',
-            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+            function (Request $request, UserInfoInterface $userInfo) use ($compatThis) {
                 $id = $request->getUrl()->getQueryParameter('id');
                 if (null !== $id) {
                     // specific client requested
@@ -58,7 +58,7 @@ class ManageService extends Service
 
         $this->put(
             '*',
-            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+            function (Request $request, UserInfoInterface $userInfo) use ($compatThis) {
                 $id = $request->getUrl()->getQueryParameter('id');
                 $redirectTo = $request->getUrl()->getRootUrl();
 
@@ -68,7 +68,7 @@ class ManageService extends Service
 
         $this->post(
             '*',
-            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+            function (Request $request, UserInfoInterface $userInfo) use ($compatThis) {
                 $redirectTo = $request->getUrl()->getRootUrl();
 
                 return $compatThis->addClient($request->getPostParameters(), $redirectTo);
@@ -77,7 +77,7 @@ class ManageService extends Service
 
         $this->delete(
             '*',
-            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+            function (Request $request, UserInfoInterface $userInfo) use ($compatThis) {
                 $id = $request->getUrl()->getQueryParameter('id');
                 $redirectTo = $request->getUrl()->getRootUrl();
 
