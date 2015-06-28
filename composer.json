@@ -8,7 +8,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "fkooman\\OAuth\\Server": "src/"
+            "fkooman\\OAuth\\Server\\": "src/"
         }
     },
     "description": "OAuth 2.0 Authorization Server",
@@ -19,11 +19,11 @@
         "ext-pdo": "*",
         "fkooman/ini": "~0.2.0",
         "fkooman/json": "~0.6.0",
-        "fkooman/rest": "dev-master",
-        "fkooman/rest-plugin-basic": "dev-master",
-        "fkooman/rest-plugin-bearer": "dev-master",
-        "fkooman/rest-plugin-indieauth": "dev-master",
-        "fkooman/rest-plugin-mellon": "dev-master",
+        "fkooman/rest": "~0.9.0",
+        "fkooman/rest-plugin-basic": "~0.6.0",
+        "fkooman/rest-plugin-bearer": "~0.5.0",
+        "fkooman/rest-plugin-indieauth": "~0.5.0",
+        "fkooman/rest-plugin-mellon": "~0.4.0",
         "php": ">=5.3.3",
         "twig/twig": "~1.15"
     }
