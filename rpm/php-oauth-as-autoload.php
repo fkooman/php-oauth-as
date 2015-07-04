@@ -13,9 +13,6 @@ $loader = new UniversalClassLoader();
 $loader->registerNamespaces(
     array(
         'fkooman\\OAuth\\Server' => $baseDir.'/src',
-        'fkooman\\Rest\\Plugin\\Bearer' => $vendorDir,
-        'fkooman\\Rest\\Plugin\\Basic' => $vendorDir,
-        'fkooman\\Rest\\Plugin\\Mellon' => $vendorDir,
         'fkooman\\Rest' => $vendorDir,
         'fkooman\\Json' => $vendorDir,
         'fkooman\\Ini' => $vendorDir,
