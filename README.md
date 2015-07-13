@@ -167,6 +167,15 @@ integrate with this OAuth 2.0 AS service using
 [Composer](https://getcomposer.org). Or see the project 
 [site](https://github.com/fkooman/php-lib-rest-plugin-bearer).
 
+# Management
+It is possible to manage the clients by going to: 
+        
+    https://localhost/php-oauth-as/manage.php
+
+You can remove the approvals by going to:
+
+    https://localhost/php-oauth-as/approvals.php
+
 # License
 Licensed under the GNU Affero General Public License as published by the Free 
 Software Foundation, either version 3 of the License, or (at your option) any 
