@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/fkooman/php-oauth-as.png?branch=master)](https://travis-ci.org/fkooman/php-oauth-as)
 
+**NOTE: CURRENT VERSION AND LATEST RELEASE ARE NOT SECURE, DO NOT USE!!!**
+
 # Introduction
 This is an OAuth 2.0 Authorization Server written in PHP that is easy to 
 integrate with your existing REST services, whether or not they are written in
