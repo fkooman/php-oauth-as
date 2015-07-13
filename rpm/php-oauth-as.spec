@@ -2,7 +2,7 @@
 %global github_name      php-oauth-as
 
 Name:       php-oauth-as
-Version:    0.4.0
+Version:    0.4.1
 Release:    1%{?dist}
 Summary:    OAuth 2.0 Authorization Server written in PHP
 
@@ -32,14 +32,14 @@ Requires:   php-composer(fkooman/ini) >= 0.2.0
 Requires:   php-composer(fkooman/ini) < 0.3.0
 Requires:   php-composer(fkooman/rest) >= 0.9.0
 Requires:   php-composer(fkooman/rest) < 0.10.0
-Requires:   php-composer(fkooman/rest-plugin-bearer) >= 0.5.1
+Requires:   php-composer(fkooman/rest-plugin-bearer) >= 0.5.3
 Requires:   php-composer(fkooman/rest-plugin-bearer) < 0.6.0
 Requires:   php-composer(fkooman/rest-plugin-basic) >= 0.6.1
 Requires:   php-composer(fkooman/rest-plugin-basic) < 0.7.0
 Requires:   php-composer(fkooman/rest-plugin-mellon) >= 0.4.0
 Requires:   php-composer(fkooman/rest-plugin-mellon) < 0.5.0
-Requires:   php-composer(fkooman/rest-plugin-indieauth) >= 0.4.0
-Requires:   php-composer(fkooman/rest-plugin-indieauth) < 0.5.0
+Requires:   php-composer(fkooman/rest-plugin-indieauth) >= 0.5.2
+Requires:   php-composer(fkooman/rest-plugin-indieauth) < 0.6.0
 Requires:   php-pear(pear.twig-project.org/Twig) >= 1.15
 Requires:   php-pear(pear.twig-project.org/Twig) < 2.0
 Requires:   php-pear(pear.symfony.com/ClassLoader) >= 2.3.9
@@ -112,6 +112,9 @@ fi
 %license agpl-3.0.txt
 
 %changelog
+* Mon Jul 13 2015 François Kooman <fkooman@tuxed.net> - 0.4.1-1
+- update to 0.4.1
+
 * Mon Jul 13 2015 François Kooman <fkooman@tuxed.net> - 0.4.0-1
 - update to 0.4.0
 

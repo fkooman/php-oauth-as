@@ -1,5 +1,8 @@
 # Changes
 
+## 0.4.1
+- fix RPM dependency issue
+
 ## 0.4.0
 - remove entitlements completely, this is up to the resource server
 - update `fkooman/rest`
