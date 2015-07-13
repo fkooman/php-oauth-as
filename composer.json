@@ -25,8 +25,8 @@
         "fkooman/json": "~0.6.0",
         "fkooman/rest": "~0.9.0",
         "fkooman/rest-plugin-basic": "~0.6.1",
-        "fkooman/rest-plugin-bearer": "~0.5.1",
-        "fkooman/rest-plugin-indieauth": "~0.5.0",
+        "fkooman/rest-plugin-bearer": "~0.5.3",
+        "fkooman/rest-plugin-indieauth": "~0.5.2",
         "fkooman/rest-plugin-mellon": "~0.4.0",
         "php": ">=5.3.3",
         "twig/twig": "~1.15"
