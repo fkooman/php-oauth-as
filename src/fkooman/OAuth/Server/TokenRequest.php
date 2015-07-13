@@ -80,7 +80,7 @@ class TokenRequest
     public function setGrantType($grantType)
     {
         $this->checkString($grantType, 'grant_type');
-        
+
         if (!in_array($grantType, array('authorization_code', 'refresh_token'))) {
             throw new BadRequestException('invalid_request', 'grant_type contains unsupported grant_type');
         }

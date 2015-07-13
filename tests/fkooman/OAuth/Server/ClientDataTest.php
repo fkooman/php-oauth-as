@@ -38,7 +38,7 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
         );
     }
 
-   /**
+    /**
      * @dataProvider validProviderFromArray
      */
     public function testValidFromArray($id, $secret, $type, $redirectUri, $name, $allowedScope, $icon, $description, $contactEmail)
@@ -53,7 +53,7 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
                 'allowed_scope' => $allowedScope,
                 'icon' => $icon,
                 'description' => $description,
-                'contact_email' => $contactEmail
+                'contact_email' => $contactEmail,
             )
         );
         $this->assertEquals($id, $c->getId());
@@ -67,7 +67,7 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($contactEmail, $c->getContactEmail());
     }
 
-   /**
+    /**
      * @dataProvider invalidProviderFromArray
      */
     public function testInvalidFromArray($id, $secret, $type, $redirectUri, $name, $allowedScope, $icon, $description, $contactEmail, $exceptionMessage)
@@ -83,7 +83,7 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
                     'allowed_scope' => $allowedScope,
                     'icon' => $icon,
                     'description' => $description,
-                    'contact_email' => $contactEmail
+                    'contact_email' => $contactEmail,
                 )
             );
             $this->assertTrue(false);
@@ -109,7 +109,7 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
                 'redirect_uri' => 'https://www.example.org/callback',
                 'name' => 'Foo',
                 'type' => 'code',
-                'secret' => 'foo'
+                'secret' => 'foo',
             )
         );
 
@@ -125,7 +125,7 @@ class ClientDataTest extends PHPUnit_Framework_TestCase
                 'redirect_uri' => 'https://www.example.org/callback/[0-9]+',
                 'name' => 'Foo',
                 'type' => 'code',
-                'secret' => 'foo'
+                'secret' => 'foo',
             )
         );
 

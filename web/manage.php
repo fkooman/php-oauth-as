@@ -17,7 +17,7 @@
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use fkooman\Ini\IniReader;
-use fkooman\OAuth\Server\ApprovalsService;
+use fkooman\OAuth\Server\ManageService;
 use fkooman\OAuth\Server\Authenticator;
 use fkooman\Rest\PluginRegistry;
 use fkooman\OAuth\Server\PdoStorage;
@@ -39,7 +39,7 @@ $db = new PDO(
 $auth = new Authenticator($iniReader);
 $authenticationPlugin = $auth->getAuthenticationPlugin();
 
-$service = new ApprovalsService(
+$service = new ManageService(
     new PdoStorage($db)
 );
 

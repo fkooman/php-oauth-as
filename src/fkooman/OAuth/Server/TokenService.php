@@ -18,7 +18,7 @@
 namespace fkooman\OAuth\Server;
 
 use fkooman\Rest\Service;
-use fkooman\Rest\Plugin\UserInfo;
+use fkooman\Rest\Plugin\Authentication\UserInfoInterface;
 use fkooman\Http\Request;
 use fkooman\Http\Exception\BadRequestException;
 use fkooman\Http\JsonResponse;
@@ -38,8 +38,6 @@ class TokenService extends Service
     public function __construct(PdoStorage $db, IO $io = null, $accessTokenExpiry = 3600)
     {
         parent::__construct();
-        $this->setPathInfoRedirect(false);
-
         $this->db = $db;
 
         if (null === $io) {
@@ -53,13 +51,13 @@ class TokenService extends Service
 
         $this->post(
             '*',
-            function (Request $request, UserInfo $userInfo) use ($compatThis) {
+            function (Request $request, UserInfoInterface $userInfo) use ($compatThis) {
                 return $compatThis->postToken($request, $userInfo);
             }
         );
     }
 
-    public function postToken(Request $request, UserInfo $userInfo)
+    public function postToken(Request $request, UserInfoInterface $userInfo)
     {
         $tokenRequest = new TokenRequest($request);
 
@@ -103,7 +101,7 @@ class TokenService extends Service
 
         $response = new JsonResponse();
         $response->setHeaders(array('Cache-Control' => 'no-store', 'Pragma' => 'no-cache'));
-        $response->setContent($accessToken);
+        $response->setBody($accessToken);
 
         return $response;
     }

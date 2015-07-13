@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/fkooman/php-oauth-as.png?branch=master)](https://travis-ci.org/fkooman/php-oauth-as)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/fkooman/php-oauth-as/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/fkooman/php-oauth-as/?branch=master)
 
 **NOTE: CURRENT VERSION AND LATEST RELEASE ARE NOT SECURE, DO NOT USE!!!**
 
@@ -11,17 +12,12 @@ Part of the development of this software was made possible by
 [SURFnet](https://www.surfnet.nl).
 
 # Features
-* Authorization Code and Implicit Grant support
+* Authorization code and implicit grant profile support
 * `BasicAuthenication` Backend (using username/password)
 * `MellonAuthentication` Backend (SAML)
-* `SimpleSamlAuthentication` Backend (SAML) **DEPRECATED** use 
-  `MellonAuthentication` instead
 * PDO database backend support
-* Token Introspection for Resource Servers
-* Management API to manage client registration and authorizations
-
-# Screenshot
-![oauth_consent](https://github.com/fkooman/php-oauth-as/raw/master/docs/oauth_consent.png)
+* Token introspection for resource servers
+* Management interfaces to manage client registration and authorized clients
 
 # Installation
 The prefered method of installation is to use the RPM packages. The RPM 
@@ -40,27 +36,10 @@ Restart Apache:
 
     $ sudo service httpd restart
 
-You can now configure the OAuth server in `/etc/php-oauth-as/oauth.ini` and set
-up the entitlements in `/etc/php-oauth-as/entitlements.json` for access to the
-management API. After this is done you can initialize the database and add some 
-clients:
+You can now configure the OAuth server in `/etc/php-oauth-as/oauth.ini`. After 
+this is done you can initialize the database.
 
     $ sudo -u apache php-oauth-as-initdb
-    $ sudo -u apache php-oauth-as-register clients.json
-
-The `clients.json` file contains some information on the installation clients
-you want to install. These could for instance contain the client management and 
-authorization management clients. See below for more information on these 
-clients. If you want to use the hosted management clients on `php-oauth.net` 
-you can run the following:
-
-    $ sudo -u apache php-oauth-as-register https://www.php-oauth.net/app/config.json
-
-This is actually secure because the access token used to access the API never
-leaves the browser. Now you can use the management applications on 
-[https://www.php-oauth.net](https://www.php-oauth.net) to manage your server on
-`https://localhost/php-oauth-as`. The default for the installed RPM packages, 
-and the development environment below.
 
 # Development Requirements
 On Fedora/CentOS:
@@ -85,28 +64,32 @@ CentOS 7 and should also work on RHEL 6 and RHEL 7.
     $ sudo chown apache.apache data
     $ sudo semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/php-oauth-as/data(/.*)?'
     $ sudo restorecon -R /var/www/php-oauth-as/data
-    $ cd config
-    $ cp oauth.ini.defaults oauth.ini
+    $ cp config/oauth.ini.defaults config/oauth.ini
 
 Edit `oauth.ini` to match the configuration. You need to at least modify the
-following lines, and set them to the values shown here:
+following line, and set it to the value shown here:
 
-    entitlementsFile = "/var/www/php-oauth-as/config/entitlements.json"
     dsn = "sqlite:/var/www/php-oauth-as/data/db.sqlite"
 
-Now continue with the configuration:
-
-    $ cp entitlements.json.example entitlements.json
-
-You can modify the `entitlements.json` file to list your own user ID to 
-specify the `manage` entitlement. By default the `admin` user ID has this
-entitlement.
+Now initialize the database:
 
     $ sudo -u apache bin/php-oauth-as-initdb 
-    $ sudo -u apache bin/php-oauth-as-register https://www.php-oauth.net/app/config.json
 
-Copy paste the contents of the Apache section (see below) in the file 
-`/etc/httpd/conf.d/php-oauth-as.conf`.
+Copy paste the contents of the Apache section in the file
+`/etc/httpd/conf.d/php-oauth-as.conf`:
+
+    Alias /php-oauth-as /var/www/php-oauth-as/web
+
+    <Directory /var/www/php-oauth-as/web>
+        AllowOverride None
+
+        Require local
+        #Require all granted
+
+        SetEnvIfNoCase ^Authorization$ "(.+)" HTTP_AUTHORIZATION=$1
+    </Directory>
+
+Now restart Apache:
 
     $ sudo service httpd restart
 
@@ -114,100 +97,25 @@ If you ever remove the software, you can also remove the SELinux context:
 
     $ sudo semanage fcontext -d -t httpd_sys_rw_content_t '/var/www/php-oauth-as/data(/.*)?'
 
-# Apache
-This is the Apache configuration you use for development. Place it in 
-`/etc/httpd/conf.d/php-oauth-as.conf` and don't forget to restart Apache:
-
-    Alias /php-oauth-as /var/www/php-oauth-as/web
-
-    <Directory /var/www/php-oauth-as/web>
-        AllowOverride None
-        Options FollowSymLinks
-
-        <IfModule mod_authz_core.c>
-          # Apache 2.4
-          Require local
-        </IfModule>
-        <IfModule !mod_authz_core.c>
-          # Apache 2.2
-          Order Deny,Allow
-          Deny from All
-          Allow from 127.0.0.1
-          Allow from ::1
-        </IfModule>
-        
-        # CORS
-        <FilesMatch "api.php">
-            Header set Access-Control-Allow-Origin "*"
-            Header set Access-Control-Allow-Headers "Authorization, Content-Type"
-            Header set Access-Control-Allow-Methods "POST, PUT, GET, DELETE, OPTIONS"
-        </FilesMatch>
-
-        <FilesMatch "authorize.php">
-            # CSP: https://developer.mozilla.org/en-US/docs/Security/CSP
-            Header set Content-Security-Policy "default-src 'self'"
-
-            # X-Frame-Options: https://developer.mozilla.org/en-US/docs/HTTP/X-Frame-Options
-            Header set X-Frame-Options DENY
-        </FilesMatch>
-
-        RewriteEngine On
-        RewriteCond %{HTTP:Authorization} ^(.+)$
-        RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-
-        # HSTS: https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security
-        #Header set Strict-Transport-Security max-age=604800
-    </Directory>
-
-Restart Apache with `service httpd restart`.
-
 # Templates
-The template `views/askAuthorization.twig` can be copied to 
-`config/views/askAuthorization.twig` and modified there. One can update the 
-HTML and also point to an alternative CSS style to customize it for your
-particular API service.
+The templates in the `views` folder can be copied to the `config/views` folder
+and overridden that way. If you install through the RPM package you can copy
+the files from `/usr/share/php-oauth-as/views` to `/etc/php-oauth-as/views` and
+modify them there. There you can also update them to point to a different CSS
+file for example.
 
 # Authentication
-There are currently three plugins provided for user authentication:
+There ares some plugins provided for user authentication:
 
 * `BasicAuthentication` - Simple static username/password authentication 
   configured through `config/oauth.ini` (**DEFAULT**)
 * `MellonAuthentication` - Plugin for SAML authentication
-* `SimpleSamlAuthentication` - Plugin for SAML authentication (**DEPRECATED**)
 
 You can configure which plugin to use by modifying the 
 `authenticationPlugin` setting in `config/oauth.ini`.
 
 You do need to configure these authentication backends separately. See the 
 respective documentation for those projects.
-
-## Entitlements
-This OAuth server also uses *entitlements*. Entitlements are certain access 
-rights a particular user using an API has. For instance, you can configure a
-user to have `manage` rights on the API of the Authorization Server. 
-
-These entitlements can be provided through a static configuration file 
-in `config/entitlements.json`. 
-
-Entitlements are needed because sometimes you want users to be able to use the
-provided API, but not be able to manage client registration, or on some APIs, 
-some users have more rights. For instance, a special user can access data for
-all users through the API while regular users can only access their own data.
-
-The API for managing the authorization server supports the 
-`http://php-oauth.net/entitlement/manage` entitlement in order to be able to 
-modify application registrations. If for instance the authentication backend 
-has a user `admin` and you want to give this user the entitlement to manage the 
-application registrations, you would put that in `config/entitlements.json`:
-
-    {
-        "admin": [
-            "http://php-oauth.net/entitlement/manage"
-        ]
-    }
-
-Now, whenever the `admin` user successfully authenticates it can manage clients
-through the API. Users with other IDs will not be able to manage the clients.
 
 # Housekeeping
 In order to delete stale tokens a housekeeping script is available, 
@@ -218,22 +126,7 @@ midnight use the following as a cron entry:
     5 0 * * *     /usr/bin/php-oauth-as-housekeeping
 
 When using SQlite this script should be run as the same user as the web server,
-or as root (not recommended).
-
-# Management Clients
-There are two management clients available:
-
-* [Manage Applications](https://github.com/fkooman/html-manage-applications/)
-* [Manage Authorizations](https://github.com/fkooman/html-manage-authorizations/)
-
-These clients are written in HTML, CSS and JavaScript only and can be hosted on 
-any (static) web server. See the accompanying READMEs for more information.
-For your convenience they are hosted on 
-[https://www.php-oauth.net](https://www.php-oauth.net) so you do not need to 
-setup the applications yourself and can immediately use the hosted versions. 
-The hosted version points to `https://localhost/php-oauth-as/` as the base URL,
-so you can (for now) only use them for development purposes or the Docker 
-image.
+or as root (**NOT RECOMMENDED**).
 
 # Resource Servers
 If you are writing a resource server (RS) an API is available to verify the 
@@ -246,21 +139,22 @@ An example, the RS gets the following `Authorization` header from the client:
 
 Now in order to verify it, the RS can send a request to the OAuth service:
 
-    $ curl -k -s https://localhost/php-oauth-as/introspect.php?token=40da7666a9f76b4b6b87969a7cc06421 | python -mjson.tool
+    $ curl -d 'token=40da7666a9f76b4b6b87969a7cc06421' https://localhost/php-oauth-as/introspect.php
     {
         "active": true,
         "client_id": "2352ea44-612d-448b-be10-6e29562e5130",
-        "exp": 1409564548,
-        "iat": 1409560948,
+        "exp": 1433112094,
+        "iat": 1433108494,
+        "iss": "localhost",
         "scope": "http://php-oauth.net/scope/manage",
         "sub": "admin",
         "token_type": "bearer",
-        "x-entitlement": "http://php-oauth.net/entitlement/manage"
-        ]
+        "user_id": "admin"
     }
     
-The RS can now figure out more about the resource owner. If you provide an 
-invalid access token, the following response is returned:
+This way the RS can figure out more about the resource owner who authorized 
+the client. If you provide an invalid access token, the following response is 
+returned:
 
     {
         "active": false
@@ -269,10 +163,6 @@ invalid access token, the following response is returned:
 If your service needs to provision a user, the field `sub` SHOULD to be used 
 for that. The `scope` field can be used to determine the scope the client was 
 granted by the resource owner.
-
-There is a proprietary extensions to this format: `x-entitlement`. It gives the 
-entitlement values as a space separated list of entitlements, just like the 
-`scope` field.
 
 A plugin for `fkooman/rest`, `fkooman/rest-plugin-bearer` is available to 
 integrate with this OAuth 2.0 AS service using 

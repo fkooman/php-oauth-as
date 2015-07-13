@@ -14,48 +14,40 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\PdoStorage;
 use fkooman\OAuth\Server\TokenService;
 use fkooman\Rest\Plugin\Basic\BasicAuthentication;
-use fkooman\Http\Exception\InternalServerErrorException;
-use fkooman\Http\Exception\HttpException;
+use fkooman\Rest\PluginRegistry;
+use fkooman\Rest\ExceptionHandler;
 
-set_error_handler(
-    function ($errno, $errstr, $errfile, $errline) {
-        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-    }
+ExceptionHandler::register();
+
+$iniReader = IniReader::fromFile(
+    dirname(__DIR__).'/config/oauth.ini'
 );
 
-try {
-    $iniReader = IniReader::fromFile(
-        dirname(__DIR__).'/config/oauth.ini'
-    );
+$db = new PDO(
+    $iniReader->v('PdoStorage', 'dsn'),
+    $iniReader->v('PdoStorage', 'username', false),
+    $iniReader->v('PdoStorage', 'password', false)
+);
 
-    $db = new PDO(
-        $iniReader->v('PdoStorage', 'dsn'),
-        $iniReader->v('PdoStorage', 'username', false),
-        $iniReader->v('PdoStorage', 'password', false)
-    );
+$pdoStorage = new PdoStorage($db);
 
-    $pdoStorage = new PdoStorage($db);
+$basicAuthenticationPlugin = new BasicAuthentication(
+    function ($userId) use ($pdoStorage) {
+        $clientData = $pdoStorage->getClient($userId);
 
-    $basicAuthenticationPlugin = new BasicAuthentication(
-        function ($userId) use ($pdoStorage) {
-            $clientData = $pdoStorage->getClient($userId);
+        return false !== $clientData ? password_hash($clientData->getSecret(), PASSWORD_DEFAULT) : false;
+    },
+    'OAuth Server'
+);
 
-            return false !== $clientData ? password_hash($clientData->getSecret(), PASSWORD_DEFAULT) : false;
-        },
-        'OAuth Server'
-    );
-
-    $tokenService = new TokenService($pdoStorage, null, $iniReader->v('accessTokenExpiry'));
-    $tokenService->registerOnMatchPlugin($basicAuthenticationPlugin);
-
-    $tokenService->run()->sendResponse();
-} catch (Exception $e) {
-    TokenService::handleException($e)->sendResponse();
-}
+$service = new TokenService($pdoStorage, null, $iniReader->v('accessTokenExpiry'));
+$pluginRegistry = new PluginRegistry();
+$pluginRegistry->registerDefaultPlugin($basicAuthenticationPlugin);
+$service->setPluginRegistry($pluginRegistry);
+$service->run()->send();

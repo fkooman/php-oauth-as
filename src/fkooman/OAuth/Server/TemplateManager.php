@@ -38,7 +38,7 @@ class TemplateManager
         $templateDirs[] = $defaultTemplateDir;
 
         $environmentOptions = array(
-            'strict_variables' => true
+            'strict_variables' => true,
         );
 
         if (null !== $cacheDir) {

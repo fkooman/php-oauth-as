@@ -14,36 +14,26 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\TokenIntrospectionService;
 use fkooman\OAuth\Server\PdoStorage;
-use fkooman\Http\Exception\HttpException;
-use fkooman\Http\Exception\InternalServerErrorException;
+use fkooman\Rest\ExceptionHandler;
 
-set_error_handler(
-    function ($errno, $errstr, $errfile, $errline) {
-        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-    }
+ExceptionHandler::register();
+
+$iniReader = IniReader::fromFile(
+    dirname(__DIR__).'/config/oauth.ini'
 );
 
-try {
-    $iniReader = IniReader::fromFile(
-        dirname(__DIR__).'/config/oauth.ini'
-    );
+$db = new PDO(
+    $iniReader->v('PdoStorage', 'dsn'),
+    $iniReader->v('PdoStorage', 'username', false),
+    $iniReader->v('PdoStorage', 'password', false)
+);
 
-    $db = new PDO(
-        $iniReader->v('PdoStorage', 'dsn'),
-        $iniReader->v('PdoStorage', 'username', false),
-        $iniReader->v('PdoStorage', 'password', false)
-    );
-
-    $tokenIntrospectionService = new TokenIntrospectionService(
-        new PdoStorage($db)
-    );
-    $tokenIntrospectionService->run()->sendResponse();
-} catch (Exception $e) {
-    TokenIntrospectionService::handleException($e)->sendResponse();
-}
+$service = new TokenIntrospectionService(
+    new PdoStorage($db)
+);
+$service->run()->send();

@@ -10,28 +10,29 @@
 </head>
 <body>
     <div id="container">
-        <h1>Approvals</h1>
+        <h1>Clients</h1>
         <p>
-            This page is used to revoke permission from applications that you
-            granted access to your data.
+            This page can be used to manage client registrations.
         </p>
 
-        {% if not approvals %}
-            <p class="block">No permissions granted to applications, nothing to revoke <strong>:-)</strong></p>
+        {% if not clients %}
+            <p class="block">No registered clients. Feel free to add some <strong>:-)</strong></p>
         {% else %}
-        <table class="approvals">
+        <table class="clients">
             <tr>
                 <th>Name</th>
-                <th>Scope</th>
                 <th>Actions</th>
             </tr>
 
-            {% for approval in approvals %}
+            {% for client in clients %}
                 <tr>
-                    <td><span title="{{ approval.id|e }}">{{ approval.name|e }}</span></td>
-                    <td><code>{{ approval.scope|e }}</code></td>
+                    <td><span title="{{ client.id|e }}">{{ client.name|e }}</span></td>
                     <td>
-                        <form method="post" action="?id={{ approval.id|e }}">
+                        <form method="get">
+                            <input type="hidden" name="id" value="{{ client.id|e }}">
+                            <button class="info" type="submit">Edit</button>
+                        </form>
+                        <form method="post" action="?id={{ client.id|e }}">
                             <input type="hidden" name="_METHOD" value="DELETE">
                             <button class="err" type="submit">Delete</button>
                         </form>

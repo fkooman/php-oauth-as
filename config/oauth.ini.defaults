@@ -2,27 +2,15 @@
 
 authenticationPlugin = "BasicAuthentication"
 ;authenticationPlugin = "MellonAuthentication"
-;authenticationPlugin = "SimpleSamlAuthentication"
+;authenticationPlugin = "IndieAuthAuthentication"
 
 ; the access token expiry time (in seconds)
 accessTokenExpiry = 3600
-
-; file contains entitlements for users. See included 
-; config/entitlements.json.example for an example. Copy this file to 
-; config/entitlements.json and modify it to set entitlements for user 
-;identifiers you want to give certain entitlements
-entitlementsFile = "/etc/php-oauth-as/entitlements.json"
 
 ; Allow redirect_uri to be a regular expression in the client configuration
 ; THIS IS NOT RECOMMENDED! PLEASE REGISTER THE FULL REDIRECT URI IN THE CLIENT
 ; CONFIGURATION AND USE THE STATE PARAMETER TO KEEP LOCAL STATE
 allowRegExpRedirectUriMatch = false
-
-; Disable the certificate check when contacting the introspection endpoint from
-; the API
-; THIS IS ONLY FOR DEVELOPMENT PURPOSES. DO NOT DISABLE THIS FOR DEPLOYMENT
-; YOU HAVE BEEN WARNED!!!
-;disableServerCertCheck = true
 
 [PdoStorage]
 dsn = "sqlite:/var/lib/php-oauth-as/db.sqlite"
@@ -38,9 +26,3 @@ fkooman = "foobar"
 [MellonAuthentication]
 mellonAttribute = 'MELLON_NAME_ID'
 ;mellonAttribute = 'MELLON_eduPersonTargetedID'
-
-[SimpleSamlAuthentication]
-simpleSamlPath = '/var/www/simplesamlphp'
-authSource = 'default-sp'
-;If no attribute is specified, the persistent NameID value is used
-;userAttribute = 'eduPersonPrincipalName'

@@ -20,11 +20,10 @@ namespace fkooman\OAuth\Server;
 use fkooman\Ini\IniReader;
 use fkooman\Rest\Plugin\Basic\BasicAuthentication;
 use fkooman\Rest\Plugin\Mellon\MellonAuthentication;
-use fkooman\Rest\Plugin\SimpleSaml\SimpleSamlAuthentication;
+use fkooman\Rest\Plugin\IndieAuth\IndieAuthAuthentication;
 
 class Authenticator
 {
-
     /** @var fkooman\Ini\IniReader */
     private $iniReader;
 
@@ -41,8 +40,8 @@ class Authenticator
                 return $this->getBasicAuthenticationPlugin();
             case 'MellonAuthentication':
                 return $this->getMellonAuthenticationPlugin();
-            case 'SimpleSamlAuthentication':
-                return $this->getSimpleSamlAuthenticationPlugin();
+            case 'IndieAuthAuthentication':
+                return $this->getIndieAuthAuthenticationPlugin();
             default:
                 throw new RuntimeException('unsupported authentication plugin');
         }
@@ -51,14 +50,16 @@ class Authenticator
     private function getBasicAuthenticationPlugin()
     {
         $userList = $this->iniReader->v('BasicAuthentication');
+
         return new BasicAuthentication(
             function ($userId) use ($userList) {
                 if (!array_key_exists($userId, $userList)) {
                     return false;
                 }
+
                 return password_hash($userList[$userId], PASSWORD_DEFAULT);
             },
-            'OAuth Server'
+            array('realm' => 'OAuth Server')
         );
     }
 
@@ -69,12 +70,8 @@ class Authenticator
         );
     }
 
-    public function getSimpleSamlAuthenticationPlugin()
+    private function getIndieAuthAuthenticationPlugin()
     {
-        return new SimpleSamlAuthentication(
-            $this->iniReader->v('SimpleSamlAuthentication', 'simpleSamlPath'),
-            $this->iniReader->v('SimpleSamlAuthentication', 'authSource'),
-            $this->iniReader->v('SimpleSamlAuthentication', 'userAttribute', false, null)
-        );
+        return new IndieAuthAuthentication();
     }
 }

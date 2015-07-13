@@ -20,21 +20,14 @@ RUN sed -i 's/Require local/Require all granted/' /etc/httpd/conf.d/php-oauth-as
 RUN sed -i 's/Allow from 127.0.0.1/Allow from All/' /etc/httpd/conf.d/php-oauth-as.conf
 RUN sed -i 's/Allow from ::1//' /etc/httpd/conf.d/php-oauth-as.conf
 
-# disable the certificate check for use within the docker image, as there is
-# no trusted certificate for "localhost" so verification will fail...
-RUN sed -i 's/;disableServerCertCheck/disableServerCertCheck/' /etc/php-oauth-as/oauth.ini
-
 USER apache
 
 # Init Database
 RUN php-oauth-as-initdb
 
-# Register Default Clients
-RUN php-oauth-as-register https://www.php-oauth.net/app/config.json
-
 USER root
 
-# Expose port 443 and set httpd as our entrypoint
+# Expose port 80 and 443 and set httpd as our entrypoint
 EXPOSE 80
 EXPOSE 443
 ENTRYPOINT ["/usr/sbin/httpd"]

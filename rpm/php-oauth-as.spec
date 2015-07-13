@@ -15,31 +15,33 @@ Source2:    php-oauth-as-autoload.php
 
 BuildArch:  noarch
 
-Requires:   php >= 5.3.3
+Requires:   php(language) >= 5.3.3
+Requires:   php-date
+Requires:   php-filter
 Requires:   php-openssl
+Requires:   php-pcre
 Requires:   php-pdo
+Requires:   php-spl
+Requires:   php-standard
+
 Requires:   httpd
 
 Requires:   php-composer(fkooman/json) >= 0.6.0
 Requires:   php-composer(fkooman/json) < 0.7.0
 Requires:   php-composer(fkooman/ini) >= 0.2.0
 Requires:   php-composer(fkooman/ini) < 0.3.0
-Requires:   php-composer(fkooman/rest) >= 0.8.8
-Requires:   php-composer(fkooman/rest) < 0.9.0
-Requires:   php-composer(fkooman/rest-plugin-bearer) >= 0.4.1
-Requires:   php-composer(fkooman/rest-plugin-bearer) < 0.5.0
-Requires:   php-composer(fkooman/rest-plugin-basic) >= 0.5.1
-Requires:   php-composer(fkooman/rest-plugin-basic) < 0.6.0
-Requires:   php-composer(fkooman/rest-plugin-mellon) >= 0.3.1
-Requires:   php-composer(fkooman/rest-plugin-mellon) < 0.4.0
-Requires:   php-composer(fkooman/rest-plugin-simplesaml) >= 0.2.1
-Requires:   php-composer(fkooman/rest-plugin-simplesaml) < 0.3.0
+Requires:   php-composer(fkooman/rest) >= 0.9.0
+Requires:   php-composer(fkooman/rest) < 0.10.0
+Requires:   php-composer(fkooman/rest-plugin-bearer) >= 0.5.1
+Requires:   php-composer(fkooman/rest-plugin-bearer) < 0.6.0
+Requires:   php-composer(fkooman/rest-plugin-basic) >= 0.6.1
+Requires:   php-composer(fkooman/rest-plugin-basic) < 0.7.0
+Requires:   php-composer(fkooman/rest-plugin-mellon) >= 0.4.0
+Requires:   php-composer(fkooman/rest-plugin-mellon) < 0.5.0
+Requires:   php-composer(fkooman/rest-plugin-indieauth) >= 0.4.0
+Requires:   php-composer(fkooman/rest-plugin-indieauth) < 0.5.0
 Requires:   php-pear(pear.twig-project.org/Twig) >= 1.15
 Requires:   php-pear(pear.twig-project.org/Twig) < 2.0
-
-#Starting F21 we can use the composer dependency for Symfony
-#Requires:   php-composer(symfony/classloader) >= 2.3.9
-#Requires:   php-composer(symfony/classloader) < 3.0
 Requires:   php-pear(pear.symfony.com/ClassLoader) >= 2.3.9
 Requires:   php-pear(pear.symfony.com/ClassLoader) < 3.0
 
@@ -78,7 +80,6 @@ cp -pr bin/* ${RPM_BUILD_ROOT}%{_bindir}
 # Config
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as
 cp -p config/oauth.ini.defaults ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as/oauth.ini
-cp -p config/entitlements.json.example ${RPM_BUILD_ROOT}%{_sysconfdir}/php-oauth-as/entitlements.json
 ln -s ../../../etc/php-oauth-as ${RPM_BUILD_ROOT}%{_datadir}/php-oauth-as/config
 
 # Data
@@ -107,7 +108,8 @@ fi
 %{_datadir}/php-oauth-as/views
 %{_datadir}/php-oauth-as/config
 %dir %attr(0700,apache,apache) %{_localstatedir}/lib/php-oauth-as
-%doc CHANGES.md UPGRADING.md README.md agpl-3.0.txt composer.json docs/ config/
+%doc CHANGES.md UPGRADING.md README.md composer.json docs/ config/
+%license agpl-3.0.txt
 
 %changelog
 * Mon Apr 13 2015 François Kooman <fkooman@tuxed.net> - 0.3.1-1

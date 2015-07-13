@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4093f465cd23848158edca5ffd1dd06c",
+    "hash": "438db775125eebe54db98e85d815deda",
     "packages": [
         {
             "name": "fkooman/ini",
@@ -82,19 +82,20 @@
         },
         {
             "name": "fkooman/rest",
-            "version": "0.8.9",
+            "version": "0.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest.git",
-                "reference": "461d49e1f03807293007375b2ebc34af82990dc8"
+                "reference": "a37d259a4552955b034c34f2cf6e6532a313fe40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/461d49e1f03807293007375b2ebc34af82990dc8",
-                "reference": "461d49e1f03807293007375b2ebc34af82990dc8",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest/zipball/a37d259a4552955b034c34f2cf6e6532a313fe40",
+                "reference": "a37d259a4552955b034c34f2cf6e6532a313fe40",
                 "shasum": ""
             },
             "require": {
+                "ext-mbstring": "*",
                 "fkooman/json": "~0.6.0",
                 "php": ">=5.3.3"
             },
@@ -103,13 +104,13 @@
                 "fkooman/rest-plugin-bearer": "Bearer (OAuth) Authentication plugin",
                 "fkooman/rest-plugin-indieauth": "IndieAuth Authentication plugin",
                 "fkooman/rest-plugin-mellon": "Mellon (SAML) Authentication plugin",
-                "fkooman/rest-plugin-simplesaml": "simpleSAMLphp (SAML) Authentication plugin"
+                "fkooman/rest-plugin-tls": "TLS Client Certificate Authentication plugin"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "fkooman\\Http": "src/",
-                    "fkooman\\Rest": "src/"
+                    "fkooman\\Http\\": "src/",
+                    "fkooman\\Rest\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -124,31 +125,31 @@
                 }
             ],
             "description": "Simple PHP library for writing REST services.",
-            "time": "2015-05-28 11:51:36"
+            "time": "2015-06-28 11:43:47"
         },
         {
             "name": "fkooman/rest-plugin-basic",
-            "version": "0.5.1",
+            "version": "0.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest-plugin-basic.git",
-                "reference": "934ba8ff65f2f41ca62d0cb0560ecb89e5d1cccc"
+                "reference": "886a0058299db6a75932b5706a522d5cdc585bcb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-basic/zipball/934ba8ff65f2f41ca62d0cb0560ecb89e5d1cccc",
-                "reference": "934ba8ff65f2f41ca62d0cb0560ecb89e5d1cccc",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-basic/zipball/886a0058299db6a75932b5706a522d5cdc585bcb",
+                "reference": "886a0058299db6a75932b5706a522d5cdc585bcb",
                 "shasum": ""
             },
             "require": {
-                "fkooman/rest": "~0.8.0",
+                "fkooman/rest": "~0.9.0",
                 "ircmaxell/password-compat": "~1.0",
                 "php": ">=5.3.3"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "fkooman\\Rest\\Plugin\\Basic": "src/"
+                    "fkooman\\Rest\\Plugin\\Basic\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -163,31 +164,31 @@
                 }
             ],
             "description": "Basic Authentication plugin for fkooman/rest",
-            "time": "2015-04-12 14:20:48"
+            "time": "2015-06-29 18:55:35"
         },
         {
             "name": "fkooman/rest-plugin-bearer",
-            "version": "0.4.1",
+            "version": "0.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fkooman/php-lib-rest-plugin-bearer.git",
-                "reference": "f010b34336201399ec0af2eacd30672c2158a862"
+                "reference": "214d7cd51084f98403e367f3aaccb9bdd9180784"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/f010b34336201399ec0af2eacd30672c2158a862",
-                "reference": "f010b34336201399ec0af2eacd30672c2158a862",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-bearer/zipball/214d7cd51084f98403e367f3aaccb9bdd9180784",
+                "reference": "214d7cd51084f98403e367f3aaccb9bdd9180784",
                 "shasum": ""
             },
             "require": {
-                "fkooman/rest": "~0.8.1",
+                "fkooman/rest": "~0.9.0",
                 "guzzle/guzzle": "~3.9",
                 "php": ">=5.3.3"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "fkooman\\Rest\\Plugin\\Bearer": "src/"
+                    "fkooman\\Rest\\Plugin\\Bearer\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -202,30 +203,71 @@
                 }
             ],
             "description": "Bearer (OAuth) Authentication plugin for fkooman/rest",
-            "time": "2015-04-30 14:23:31"
+            "time": "2015-06-29 18:56:32"
         },
         {
-            "name": "fkooman/rest-plugin-mellon",
-            "version": "0.3.1",
+            "name": "fkooman/rest-plugin-indieauth",
+            "version": "0.5.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/fkooman/php-lib-rest-plugin-mellon.git",
-                "reference": "0055a02dfec11eea079923fdbcf3dc77c3e12d8b"
+                "url": "https://github.com/fkooman/php-lib-rest-plugin-indieauth.git",
+                "reference": "d7c9e51036b4bd654a668606905dbcafda528b9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-mellon/zipball/0055a02dfec11eea079923fdbcf3dc77c3e12d8b",
-                "reference": "0055a02dfec11eea079923fdbcf3dc77c3e12d8b",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-indieauth/zipball/d7c9e51036b4bd654a668606905dbcafda528b9e",
+                "reference": "d7c9e51036b4bd654a668606905dbcafda528b9e",
                 "shasum": ""
             },
             "require": {
-                "fkooman/rest": "~0.8.0",
+                "ext-openssl": "*",
+                "ext-xml": "*",
+                "fkooman/rest": "~0.9.0",
+                "guzzlehttp/guzzle": "~4.0",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "fkooman\\Rest\\Plugin\\IndieAuth\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "François Kooman",
+                    "email": "fkooman@tuxed.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "IndieAuth plugin for fkooman/rest",
+            "time": "2015-06-28 11:58:20"
+        },
+        {
+            "name": "fkooman/rest-plugin-mellon",
+            "version": "0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fkooman/php-lib-rest-plugin-mellon.git",
+                "reference": "39c6ae0008c3d75f5c27824330bda17b49051377"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-mellon/zipball/39c6ae0008c3d75f5c27824330bda17b49051377",
+                "reference": "39c6ae0008c3d75f5c27824330bda17b49051377",
+                "shasum": ""
+            },
+            "require": {
+                "fkooman/rest": "~0.9.0",
                 "php": ">=5.3.3"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "fkooman\\Rest\\Plugin\\Mellon": "src/"
+                    "fkooman\\Rest\\Plugin\\Mellon\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -240,45 +282,7 @@
                 }
             ],
             "description": "Mellon (SAML) Authentication plugin for fkooman/rest",
-            "time": "2015-04-12 15:43:00"
-        },
-        {
-            "name": "fkooman/rest-plugin-simplesaml",
-            "version": "0.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fkooman/php-lib-rest-plugin-simplesaml.git",
-                "reference": "9cd2497fffc89fbdad89e5988e16519e45f7c3b3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fkooman/php-lib-rest-plugin-simplesaml/zipball/9cd2497fffc89fbdad89e5988e16519e45f7c3b3",
-                "reference": "9cd2497fffc89fbdad89e5988e16519e45f7c3b3",
-                "shasum": ""
-            },
-            "require": {
-                "fkooman/rest": "~0.8.0",
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "fkooman\\Rest\\Plugin\\SimpleSaml": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "François Kooman",
-                    "email": "fkooman@tuxed.net",
-                    "role": "Developer"
-                }
-            ],
-            "description": "simpleSAMLphp (SAML) Authentication plugin for fkooman/rest",
-            "time": "2015-04-12 15:44:47"
+            "time": "2015-06-28 11:55:32"
         },
         {
             "name": "guzzle/guzzle",
@@ -376,6 +380,124 @@
             "time": "2015-03-18 18:23:50"
         },
         {
+            "name": "guzzlehttp/guzzle",
+            "version": "4.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/guzzle.git",
+                "reference": "66fd916e9f9130bc22c51450476823391cb2f67c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/66fd916e9f9130bc22c51450476823391cb2f67c",
+                "reference": "66fd916e9f9130bc22c51450476823391cb2f67c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/streams": "~2.1",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "phpunit/phpunit": "~4.0",
+                "psr/log": "~1.0"
+            },
+            "suggest": {
+                "ext-curl": "Guzzle will use specific adapters if cURL is present"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Guzzle is a PHP HTTP client library and framework for building RESTful web service clients",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "client",
+                "curl",
+                "framework",
+                "http",
+                "http client",
+                "rest",
+                "web service"
+            ],
+            "time": "2014-10-05 19:29:14"
+        },
+        {
+            "name": "guzzlehttp/streams",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/streams.git",
+                "reference": "f91b721d73f0e561410903b3b3c90a5d0e40b534"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/streams/zipball/f91b721d73f0e561410903b3b3c90a5d0e40b534",
+                "reference": "f91b721d73f0e561410903b3b3c90a5d0e40b534",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Stream\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Provides a simple abstraction over streams of data (Guzzle 4+)",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "Guzzle",
+                "stream"
+            ],
+            "time": "2014-08-17 21:15:53"
+        },
+        {
             "name": "ircmaxell/password-compat",
             "version": "v1.0.4",
             "source": {
@@ -419,16 +541,16 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.7.0",
+            "version": "v2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "687039686d0e923429ba6e958d0baa920cd5d458"
+                "reference": "be3c5ff8d503c46768aeb78ce6333051aa6f26d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/687039686d0e923429ba6e958d0baa920cd5d458",
-                "reference": "687039686d0e923429ba6e958d0baa920cd5d458",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/be3c5ff8d503c46768aeb78ce6333051aa6f26d9",
+                "reference": "be3c5ff8d503c46768aeb78ce6333051aa6f26d9",
                 "shasum": ""
             },
             "require": {
@@ -473,20 +595,20 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2015-05-02 15:21:08"
+            "time": "2015-06-08 09:37:21"
         },
         {
             "name": "twig/twig",
-            "version": "v1.18.1",
+            "version": "v1.18.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "9f70492f44398e276d1b81c1b43adfe6751c7b7f"
+                "reference": "e8e6575abf6102af53ec283f7f14b89e304fa602"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/9f70492f44398e276d1b81c1b43adfe6751c7b7f",
-                "reference": "9f70492f44398e276d1b81c1b43adfe6751c7b7f",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/e8e6575abf6102af53ec283f7f14b89e304fa602",
+                "reference": "e8e6575abf6102af53ec283f7f14b89e304fa602",
                 "shasum": ""
             },
             "require": {
@@ -530,7 +652,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-04-19 08:30:27"
+            "time": "2015-06-06 23:31:24"
         }
     ],
     "packages-dev": [],
@@ -540,7 +662,12 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
+        "ext-date": "*",
+        "ext-filter": "*",
         "ext-openssl": "*",
+        "ext-pcre": "*",
+        "ext-pdo": "*",
+        "ext-spl": "*",
         "php": ">=5.3.3"
     },
     "platform-dev": []

@@ -14,45 +14,40 @@
  *  You should have received a copy of the GNU Affero General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
 use fkooman\Ini\IniReader;
 use fkooman\OAuth\Server\PdoStorage;
 use fkooman\OAuth\Server\AuthorizeService;
 use fkooman\OAuth\Server\Authenticator;
-use fkooman\Http\Exception\InternalServerErrorException;
-use fkooman\Http\Exception\HttpException;
+use fkooman\Rest\PluginRegistry;
+use fkooman\Rest\Plugin\ReferrerCheck\ReferrerCheckPlugin;
+use fkooman\Rest\ExceptionHandler;
 
-set_error_handler(
-    function ($errno, $errstr, $errfile, $errline) {
-        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-    }
+ExceptionHandler::register();
+
+$iniReader = IniReader::fromFile(
+    dirname(__DIR__).'/config/oauth.ini'
 );
 
-try {
-    $iniReader = IniReader::fromFile(
-        dirname(__DIR__).'/config/oauth.ini'
-    );
+$db = new PDO(
+    $iniReader->v('PdoStorage', 'dsn'),
+    $iniReader->v('PdoStorage', 'username', false),
+    $iniReader->v('PdoStorage', 'password', false)
+);
 
-    $db = new PDO(
-        $iniReader->v('PdoStorage', 'dsn'),
-        $iniReader->v('PdoStorage', 'username', false),
-        $iniReader->v('PdoStorage', 'password', false)
-    );
+$auth = new Authenticator($iniReader);
+$authenticationPlugin = $auth->getAuthenticationPlugin();
 
-    $auth = new Authenticator($iniReader);
-    $authenticationPlugin = $auth->getAuthenticationPlugin();
+$service = new AuthorizeService(
+    new PdoStorage($db),
+    null,
+    $iniReader->v('accessTokenExpiry'),
+    $iniReader->v('allowRegExpRedirectUriMatch')
+);
 
-    $authorizeService = new AuthorizeService(
-        new PdoStorage($db),
-        null,
-        $iniReader->v('accessTokenExpiry'),
-        $iniReader->v('allowRegExpRedirectUriMatch')
-    );
-    $authorizeService->registerOnMatchPlugin($authenticationPlugin);
-
-    $authorizeService->run()->sendResponse();
-} catch (Exception $e) {
-    AuthorizeService::handleException($e)->sendResponse();
-}
+$pluginRegistry = new PluginRegistry();
+$pluginRegistry->registerDefaultPlugin(new ReferrerCheckPlugin());
+$pluginRegistry->registerDefaultPlugin($authenticationPlugin);
+$service->setPluginRegistry($pluginRegistry);
+$service->run()->send();

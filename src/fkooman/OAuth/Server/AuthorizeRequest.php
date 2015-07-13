@@ -44,11 +44,11 @@ class AuthorizeRequest
 
     public function __construct(Request $request)
     {
-        $this->setClientId($request->getQueryParameter('client_id'));
-        $this->setResponseType($request->getQueryParameter('response_type'));
-        $this->setRedirectUri($request->getQueryParameter('redirect_uri'));
-        $this->setScope($request->getQueryParameter('scope'));
-        $this->setState($request->getQueryParameter('state'));
+        $this->setClientId($request->getUrl()->getQueryParameter('client_id'));
+        $this->setResponseType($request->getUrl()->getQueryParameter('response_type'));
+        $this->setRedirectUri($request->getUrl()->getQueryParameter('redirect_uri'));
+        $this->setScope($request->getUrl()->getQueryParameter('scope'));
+        $this->setState($request->getUrl()->getQueryParameter('state'));
     }
 
     private function checkString($str, $name)
@@ -78,11 +78,11 @@ class AuthorizeRequest
     {
         return $this->clientId;
     }
-    
+
     public function setResponseType($responseType)
     {
         $this->checkString($responseType, 'response_type');
-        
+
         if (!in_array($responseType, array('code', 'token'))) {
             throw new BadRequestException('response_type contains unsupported response_type');
         }
@@ -93,7 +93,7 @@ class AuthorizeRequest
     {
         return $this->responseType;
     }
-        
+
     public function setRedirectUri($redirectUri)
     {
         if (empty($redirectUri)) {

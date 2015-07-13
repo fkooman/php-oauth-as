@@ -20,11 +20,10 @@ namespace fkooman\OAuth\Server;
 use fkooman\Rest\Service;
 use fkooman\Http\JsonResponse;
 use fkooman\Http\Request;
-use fkooman\Json\Json;
 use fkooman\Http\Exception\BadRequestException;
 
 /**
- * Implementation of https://tools.ietf.org/html/draft-richer-oauth-introspection
+ * Implementation of https://tools.ietf.org/html/draft-richer-oauth-introspection.
  */
 class TokenIntrospectionService extends Service
 {
@@ -37,8 +36,6 @@ class TokenIntrospectionService extends Service
     public function __construct(PdoStorage $db, IO $io = null)
     {
         parent::__construct();
-        $this->setPathInfoRedirect(false);
-
         $this->db = $db;
 
         if (null === $io) {
@@ -51,7 +48,7 @@ class TokenIntrospectionService extends Service
         $this->get(
             '*',
             function (Request $request) use ($compatThis) {
-                return $compatThis->getTokenIntrospection($request, $request->getQueryParameter('token'));
+                return $compatThis->getTokenIntrospection($request, $request->getUrl()->getQueryParameter('token'));
             }
         );
 
@@ -75,12 +72,12 @@ class TokenIntrospectionService extends Service
         if (false === $accessToken) {
             // token does not exist
             $tokenInfo = array(
-                'active' => false
+                'active' => false,
             );
         } elseif ($this->io->getTime() > $accessToken['issue_time'] + $accessToken['expires_in']) {
             // token expired
             $tokenInfo = array(
-                'active' => false
+                'active' => false,
             );
         } else {
             // token exists and did not expire
@@ -89,11 +86,11 @@ class TokenIntrospectionService extends Service
                 'exp' => intval($accessToken['issue_time'] + $accessToken['expires_in']),
                 'iat' => intval($accessToken['issue_time']),
                 'scope' => $accessToken['scope'],
-                'iss' => $request->getAbsRoot(),
+                'iss' => $request->getUrl()->getHost(),
                 'client_id' => $accessToken['client_id'],
                 'sub' => $accessToken['resource_owner_id'],
                 'user_id' => $accessToken['resource_owner_id'],
-                'token_type' => 'bearer'
+                'token_type' => 'bearer',
             );
 
             // as long as we have no RS registration we cannot set the audience...
@@ -102,8 +99,8 @@ class TokenIntrospectionService extends Service
 
         $response = new JsonResponse();
         $response->setHeaders(array('Cache-Control' => 'no-store', 'Pragma' => 'no-cache'));
-        $response->setContent($tokenInfo);
-        
+        $response->setBody($tokenInfo);
+
         return $response;
     }
 }
